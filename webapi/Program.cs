@@ -5,6 +5,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+byte[] key = new byte[32]; // 256 bits
+RandomNumberGenerator.Fill(key);
+string secret = Convert.ToBase64String(key);
+Console.WriteLine(secret);
+
 var jwtSecret = builder.Configuration["JWT_SECRET"];
 if (string.IsNullOrEmpty(jwtSecret))
 {

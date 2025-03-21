@@ -769,24 +769,33 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\bishopb\\.nuget\\packages\\": {}
+    "C:\\Users\\Bren\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bishopb\\Documents\\GitHub\\leagueofparis\\webapi\\webapi.csproj",
+      "projectUniqueName": "C:\\Users\\Bren\\Desktop\\leagueofparis\\webapi\\webapi.csproj",
       "projectName": "webapi",
-      "projectPath": "C:\\Users\\bishopb\\Documents\\GitHub\\leagueofparis\\webapi\\webapi.csproj",
-      "packagesPath": "C:\\Users\\bishopb\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bishopb\\Documents\\GitHub\\leagueofparis\\webapi\\obj\\",
+      "projectPath": "C:\\Users\\Bren\\Desktop\\leagueofparis\\webapi\\webapi.csproj",
+      "packagesPath": "C:\\Users\\Bren\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Bren\\Desktop\\leagueofparis\\webapi\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\bishopb\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Bren\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -805,7 +814,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -843,7 +852,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.202/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.103/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
