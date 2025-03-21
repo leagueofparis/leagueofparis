@@ -17,14 +17,7 @@ function Home() {
 	const toggleTheme = () => {
 		const currentTheme = document.documentElement.getAttribute("data-theme");
 
-		var themes = [
-			"paris",
-			"dark",
-			"valentine",
-			"coffee",
-			"halloween",
-			"pastel",
-		];
+		var themes = ["paris", "valentine"];
 
 		var rand = Math.floor(Math.random() * themes.length);
 

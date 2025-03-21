@@ -8,8 +8,59 @@
 	prefersdark: false;
 	color-scheme: light;
 
-	--color-base-100: oklch(63.45% 0.2726 326.66);
-	--color-base-200: oklch(54.11% 0.2307 326.61);
+	/* Base background and text colors (light pinks/purples) */
+	--color-base-100: oklch(98% 0.03 320);
+	--color-base-200: oklch(95% 0.04 320);
+	--color-base-300: oklch(90% 0.05 320);
+	--color-base-content: oklch(15% 0.04 250);
+
+	/* Primary (pink) */
+	--color-primary: oklch(65% 0.25 350);
+	--color-primary-content: oklch(98% 0.02 350);
+
+	/* Secondary (purple) */
+	--color-secondary: oklch(65% 0.25 300);
+	--color-secondary-content: oklch(98% 0.02 300);
+
+	/* Accent (lighter pastel pink/purple) */
+	--color-accent: oklch(80% 0.2 330);
+	--color-accent-content: oklch(15% 0.04 250);
+
+	/* Neutral (a medium gray or purple-gray) */
+	--color-neutral: oklch(40% 0.04 270);
+	--color-neutral-content: oklch(98% 0.01 270);
+
+	/* Info (light purple) */
+	--color-info: oklch(75% 0.18 280);
+	--color-info-content: oklch(98% 0.02 280);
+
+	/* Success (soft greenish-teal to contrast pinks/purples) */
+	--color-success: oklch(65% 0.25 140);
+	--color-success-content: oklch(98% 0.02 140);
+
+	/* Warning (soft golden color) */
+	--color-warning: oklch(80% 0.25 80);
+	--color-warning-content: oklch(20% 0.05 80);
+
+	/* Error (pinkish red) */
+	--color-error: oklch(60% 0.3 25);
+	--color-error-content: oklch(98% 0.02 25);
+
+	/* Border radius */
+	--radius-selector: 1rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.5rem;
+
+	/* Base sizes */
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+
+	/* Border size */
+	--border: 1px;
+
+	/* Effects */
+	--depth: 1;
+	--noise: 0;
 }
 
 @theme {
