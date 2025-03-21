@@ -11,7 +11,7 @@ function Login() {
 		setError("");
 		setMessage("");
 		try {
-			const response = await fetch("/auth/login", {
+			const response = await fetch("/api/auth/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -19,7 +19,7 @@ function Login() {
 				// Sending username and password in the request body
 				body: JSON.stringify({ username, password }),
 			});
-
+			console.log(response);
 			if (response.ok) {
 				const data = await response.json();
 				// Store the token in localStorage
