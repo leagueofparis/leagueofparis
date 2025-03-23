@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "IrLCfO7Mts4=",
+  "dgSpecHash": "aLl+qk+9wKk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Bren\\Desktop\\leagueofparis\\webapi\\webapi.csproj",
+  "projectFilePath": "C:\\Users\\Bren\\Desktop\\random shit\\leagueofparis\\leagueofparis\\webapi\\webapi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Bren\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.3\\microsoft.aspnetcore.authentication.jwtbearer.9.0.3.nupkg.sha512",
     "C:\\Users\\Bren\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.3\\microsoft.aspnetcore.openapi.9.0.3.nupkg.sha512",
