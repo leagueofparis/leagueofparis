@@ -81,14 +81,14 @@ export default function Sudoku() {
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-screen p-4">
-			<h1 className="text-2xl font-bold mb-4">Sudoku</h1>
-			<div className="grid grid-cols-9 border-4">
-				{board.map((row, rIdx) =>
-					row.map((cell, cIdx) => (
-						<input
-							key={`${rIdx}-${cIdx}`}
-							className={`w-10 h-10 text-center text-2xl border focus:bg-yellow-300 focus:outline-none caret-transparent select-none font-bold
+		<div className="flex items-center justify-center min-h-screen overflow-hidden">
+			<div className="flex flex-col items-center justify-center min-h-screen p-8 scale-[1.1]">
+				<div className="grid grid-cols-9 border-4">
+					{board.map((row, rIdx) =>
+						row.map((cell, cIdx) => (
+							<input
+								key={`${rIdx}-${cIdx}`}
+								className={`w-20 h-20 text-center text-5xl border focus:bg-yellow-300 focus:outline-none caret-transparent select-none font-bold
 				${(rIdx + 1) % 3 === 0 && rIdx !== 8 ? "border-b-3" : ""}
 				${(cIdx + 1) % 3 === 0 && cIdx !== 8 ? "border-r-3" : ""}
 				${correctness[rIdx][cIdx] === false ? "text-red-500 border-black" : ""}
@@ -96,22 +96,23 @@ export default function Sudoku() {
 				${isHighlightedRowCol(rIdx, cIdx) ? "bg-yellow-100" : ""}
 				${isHighlightedNumber(cell) ? "bg-yellow-200" : ""}
 				${isHighlightedbox(rIdx, cIdx) ? "bg-yellow-100" : ""}`}
-							type="text"
-							maxLength="2"
-							value={cell}
-							disabled={false}
-							readOnly={isPrefilled(rIdx, cIdx) || isCorrect(rIdx, cIdx)}
-							onChange={(e) => handleChange(rIdx, cIdx, e.target.value)}
-							onFocus={() =>
-								setFocusedCell({
-									row: rIdx,
-									col: cIdx,
-									value: board[rIdx][cIdx],
-								})
-							}
-						/>
-					))
-				)}
+								type="text"
+								maxLength="2"
+								value={cell}
+								disabled={false}
+								readOnly={isPrefilled(rIdx, cIdx) || isCorrect(rIdx, cIdx)}
+								onChange={(e) => handleChange(rIdx, cIdx, e.target.value)}
+								onFocus={() =>
+									setFocusedCell({
+										row: rIdx,
+										col: cIdx,
+										value: board[rIdx][cIdx],
+									})
+								}
+							/>
+						))
+					)}
+				</div>
 			</div>
 		</div>
 	);
