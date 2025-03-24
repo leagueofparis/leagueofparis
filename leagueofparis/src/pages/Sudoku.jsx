@@ -72,6 +72,14 @@ export default function Sudoku() {
 		return sameValue;
 	};
 
+	const isHighlightedbox = (row, col) => {
+		if (focusedCell.row === null || focusedCell.col === null) return false;
+		const sameBox =
+			Math.floor(row / 3) === Math.floor(focusedCell.row / 3) &&
+			Math.floor(col / 3) === Math.floor(focusedCell.col / 3);
+		return sameBox;
+	};
+
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen p-4">
 			<h1 className="text-2xl font-bold mb-4">Sudoku</h1>
@@ -86,7 +94,8 @@ export default function Sudoku() {
 				${correctness[rIdx][cIdx] === false ? "text-red-500 border-black" : ""}
 				${correctness[rIdx][cIdx] === true ? "text-blue-500 border-black" : ""}
 				${isHighlightedRowCol(rIdx, cIdx) ? "bg-yellow-100" : ""}
-				${isHighlightedNumber(cell) ? "bg-yellow-200" : ""}`}
+				${isHighlightedNumber(cell) ? "bg-yellow-200" : ""}
+				${isHighlightedbox(rIdx, cIdx) ? "bg-yellow-100" : ""}`}
 							type="text"
 							maxLength="2"
 							value={cell}
