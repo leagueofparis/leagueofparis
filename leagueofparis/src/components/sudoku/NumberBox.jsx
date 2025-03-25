@@ -1,6 +1,6 @@
 export default function NumberBox({ numsComplete, onNumberClick }) {
 	const isCompleted = (number) => {
-		numsComplete?.includes(number) || false;
+		return numsComplete?.includes(number) || false;
 	};
 	return (
 		<div className="grid grid-cols-9 md:grid-cols-3 md:grid-rows-3">

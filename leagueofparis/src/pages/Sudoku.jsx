@@ -30,7 +30,7 @@ export default function Sudoku() {
 	const [board, setBoard] = useState(initialPuzzle);
 	const [selectedCell, setSelectedCell] = useState(null);
 	const cellRefs = useRef({});
-	const [numsComplete, setNumsComplete] = useState(null);
+	const [numsComplete, setNumsComplete] = useState([]);
 	const [userLocked, setUserLocked] = useState(() =>
 		initialPuzzle.map((row) => row.map((cell) => cell !== ""))
 	);
@@ -130,17 +130,22 @@ export default function Sudoku() {
 			setBoard(newBoard);
 			setUserLocked(newUserLocked);
 
-			const numCount = board.filter(
+			const flatBoard = newBoard.flat();
+			const numCount = flatBoard.filter(
 				(num) => parseInt(num) === parseInt(value)
 			).length;
 
+			console.log(value + " count: " + numCount);
+
 			if (numCount === 9) {
-				setNumsComplete(numsComplete.push(parseInt(value)));
+				setNumsComplete([...numsComplete, parseInt(value)]);
 			}
 		}
 	};
 
 	const handleNumberClick = (number) => {
+		if (numsComplete?.includes(number)) return false;
+
 		handleInput(number.toString());
 	};
 
