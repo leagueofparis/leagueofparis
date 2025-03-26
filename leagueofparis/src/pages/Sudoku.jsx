@@ -140,6 +140,11 @@ export default function Sudoku() {
 			if (numCount === 9) {
 				setNumsComplete([...numsComplete, parseInt(value)]);
 			}
+		} else if (value === "Backspace" || value === "Delete" || value === "0") {
+			const newBoard = board.map((r, rIdx) =>
+				r.map((c, cIdx) => (rIdx === row && cIdx === col ? "" : c))
+			);
+			setBoard(newBoard);
 		}
 	};
 
