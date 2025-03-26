@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Modal from "../components/Modal";
 import Board from "../components/sudoku/Board";
+import HeaderButtons from "../components/HeaderButtons";
 import NumberBox from "../components/sudoku/NumberBox";
 import { FaPause, FaPlay, FaRegSmile } from "react-icons/fa";
 
@@ -99,11 +100,6 @@ export default function Sudoku() {
 
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 	});
-
-	const resetTimer = () => {
-		setElapsedTime(0);
-		localStorage.setItem("sudoku-timer", "0");
-	};
 
 	const handleCellClick = (row, col) => {
 		if (!timerRunning) return;
@@ -265,72 +261,75 @@ export default function Sudoku() {
 	const minutes = Math.floor(elapsedTime / 60);
 
 	return (
-		<div className="flex flex-col md:flex-row items-center justify-center min-h-screen overflow-hidden">
-			<div className="flex flex-col items-center justify-center">
-				<div className="flex justify-center items-center">
-					<p className="text-2xl font-mono">
-						{String(minutes).padStart(2, "0")}:
-						{String(seconds).padStart(2, "0")}
-					</p>
-					<button
-						onClick={() => setTimerRunning((prev) => !prev)}
-						className="px-4 cursor-pointer"
-					>
-						{timerRunning ? <FaPause /> : <FaPlay />}
-					</button>
-				</div>
-
-				<div className="flex flex-col items-center justify-center p-8 pt-2 pb-4">
-					<Board
-						board={board}
-						selectedCell={selectedCell}
-						prefilled={initialPuzzle}
-						solution={solution}
-						onCellClick={handleCellClick}
-						onCellFocus={handleCellFocus}
-						onCellKeyDown={handleKeyDown}
-						cellRefs={cellRefs}
-						paused={!timerRunning}
-						candidates={candidates}
-						isComplete={isComplete}
-					/>
-				</div>
-			</div>
-			<div className="flex flex-col justify-center items-center">
-				<div className="flex gap-1">
-					<button
-						className="bg-blue-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
-						onClick={() => win()}
-					>
-						Win
-					</button>
-					<button
-						className="bg-red-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
-						onClick={() => reset()}
-					>
-						Reset
-					</button>
-				</div>
-
-				<NumberBox
-					numsComplete={numsComplete}
-					onNumberClick={handleNumberClick}
-				/>
-			</div>
-			<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-				<div className="flex flex-col justify-center items-center">
-					<h2 className="text-4xl font-bold mb-2">Congrats!</h2>
-					<p className="mb-4 text-2xl mt-8">
-						You completed the puzzle in&nbsp;
-						<span className="font-bold">
+		<div className="flex items-center flex-col min-h-screen overflow-hidden">
+			<HeaderButtons />
+			<div className="flex flex-col md:flex-row items-center justify-center overflow-hidden">
+				<div className="flex flex-col items-center justify-center">
+					<div className="flex justify-center items-center">
+						<p className="text-2xl font-mono">
 							{String(minutes).padStart(2, "0")}:
 							{String(seconds).padStart(2, "0")}
-						</span>
-						.
-					</p>
-					<FaRegSmile className="text-[72px] mt-24" />
+						</p>
+						<button
+							onClick={() => setTimerRunning((prev) => !prev)}
+							className="px-4 cursor-pointer"
+						>
+							{timerRunning ? <FaPause /> : <FaPlay />}
+						</button>
+					</div>
+
+					<div className="flex flex-col items-center justify-center p-8 pt-2 pb-4">
+						<Board
+							board={board}
+							selectedCell={selectedCell}
+							prefilled={initialPuzzle}
+							solution={solution}
+							onCellClick={handleCellClick}
+							onCellFocus={handleCellFocus}
+							onCellKeyDown={handleKeyDown}
+							cellRefs={cellRefs}
+							paused={!timerRunning}
+							candidates={candidates}
+							isComplete={isComplete}
+						/>
+					</div>
 				</div>
-			</Modal>
+				<div className="flex flex-col justify-center items-center">
+					<div className="flex gap-1">
+						<button
+							className="bg-blue-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							onClick={() => win()}
+						>
+							Win
+						</button>
+						<button
+							className="bg-red-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							onClick={() => reset()}
+						>
+							Reset
+						</button>
+					</div>
+
+					<NumberBox
+						numsComplete={numsComplete}
+						onNumberClick={handleNumberClick}
+					/>
+				</div>
+				<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+					<div className="flex flex-col justify-center items-center">
+						<h2 className="text-4xl font-bold mb-2">Congrats!</h2>
+						<p className="mb-4 text-2xl mt-8">
+							You completed the puzzle in&nbsp;
+							<span className="font-bold">
+								{String(minutes).padStart(2, "0")}:
+								{String(seconds).padStart(2, "0")}
+							</span>
+							.
+						</p>
+						<FaRegSmile className="text-[72px] mt-24" />
+					</div>
+				</Modal>
+			</div>
 		</div>
 	);
 }
