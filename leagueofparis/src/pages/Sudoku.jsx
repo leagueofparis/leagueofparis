@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
+import Modal from "../components/Modal";
 import Board from "../components/sudoku/Board";
 import NumberBox from "../components/sudoku/NumberBox";
-import { FaPause, FaPlay } from "react-icons/fa";
+import { FaPause, FaPlay, FaRegSmile } from "react-icons/fa";
 
 const initialPuzzle = [
 	[5, 3, "", "", 7, "", "", "", ""],
@@ -35,6 +36,17 @@ export default function Sudoku() {
 	const [userLocked, setUserLocked] = useState(() =>
 		initialPuzzle.map((row) => row.map((cell) => cell !== ""))
 	);
+	const [candidateMode, setCandidateMode] = useState(false);
+	const [candidates, setCandidates] = useState(
+		Array(9)
+			.fill()
+			.map(() =>
+				Array(9)
+					.fill()
+					.map(() => new Set())
+			)
+	);
+	const [isComplete, setIsComplete] = useState(false);
 
 	useEffect(() => {
 		if (selectedCell) {
@@ -94,41 +106,71 @@ export default function Sudoku() {
 	};
 
 	const handleCellClick = (row, col) => {
+		if (!timerRunning) return;
+
 		setSelectedCell([row, col]);
 	};
 
 	const handleCellFocus = (row, col) => {
+		if (!timerRunning) return;
+
 		setSelectedCell([row, col]);
 	};
 
-	const handleKeyDown = (e, row, col, value) => {
-		const key = e.key;
-		if (!selectedCell) return;
-
-		if (e.keyCode >= 37 && e.keyCode <= 40) {
-			switch (e.keyCode) {
-				case 37:
-					setSelectedCell([row, Math.max(col - 1, 0)]);
-					break;
-				case 38:
-					setSelectedCell([Math.max(row - 1, 0), col]);
-					break;
-				case 39:
-					setSelectedCell([row, Math.min(col + 1, 8)]);
-					break;
-				case 40:
-					setSelectedCell([Math.min(row + 1, 8), col]);
-					break;
+	useEffect(() => {
+		const handleGlobalArrowKeys = (e) => {
+			if (!selectedCell && e.keyCode >= 37 && e.keyCode <= 40) {
+				e.preventDefault();
+				setSelectedCell([0, 0]);
+				return;
 			}
+
+			if (selectedCell) {
+				const [row, col] = selectedCell;
+				switch (e.keyCode) {
+					case 37:
+						setSelectedCell([row, Math.max(col - 1, 0)]);
+						break;
+					case 38:
+						setSelectedCell([Math.max(row - 1, 0), col]);
+						break;
+					case 39:
+						setSelectedCell([row, Math.min(col + 1, 8)]);
+						break;
+					case 40:
+						setSelectedCell([Math.min(row + 1, 8), col]);
+						break;
+				}
+			}
+
+			if (e.repeat) {
+				setTimeout({}, 1000);
+			}
+		};
+
+		document.addEventListener("keydown", handleGlobalArrowKeys);
+		return () => document.removeEventListener("keydown", handleGlobalArrowKeys);
+	}, [selectedCell]);
+
+	const handleKeyDown = (e) => {
+		const key = e.key;
+		if (!selectedCell) {
+			return;
 		}
 
 		handleInput(key);
 	};
 
 	const handleInput = (value) => {
+		if (!timerRunning) return;
+
+		if (!selectedCell) return;
+
 		const [row, col] = selectedCell;
 		if (isLocked(row, col)) return;
 		if (value >= "1" && value <= "9") {
+			if (candidateMode) return handleCandidateInput(value);
+
 			const correct = solution[row][col].toString() === value;
 
 			const newBoard = board.map((r, rIdx) =>
@@ -149,17 +191,35 @@ export default function Sudoku() {
 				(num) => parseInt(num) === parseInt(value)
 			).length;
 
-			console.log(value + " count: " + numCount);
-
 			if (numCount === 9) {
 				setNumsComplete([...numsComplete, parseInt(value)]);
 			}
+
+			const totalNumCount = flatBoard.filter(
+				(num) => num !== "" && Number(num)
+			).length;
+
+			if (totalNumCount === 81) win();
 		} else if (value === "Backspace" || value === "Delete" || value === "0") {
 			const newBoard = board.map((r, rIdx) =>
 				r.map((c, cIdx) => (rIdx === row && cIdx === col ? "" : c))
 			);
 			setBoard(newBoard);
 		}
+	};
+
+	const handleCandidateInput = (value) => {
+		if (!selectedCell) return;
+
+		const [rowI, colI] = selectedCell;
+		setCandidates((prev) => {
+			const updated = prev.map((row, r) =>
+				row.map((cell, c) =>
+					r === rowI && c === colI ? new Set([...cell, value]) : cell
+				)
+			);
+			return updated;
+		});
 	};
 
 	const handleNumberClick = (number) => {
@@ -170,6 +230,35 @@ export default function Sudoku() {
 
 	const isLocked = (row, col) => {
 		return userLocked[row][col];
+	};
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const win = () => {
+		setBoard(solution);
+
+		setIsComplete(true);
+		setTimerRunning(false);
+		setIsModalOpen(true);
+	};
+
+	const reset = () => {
+		setIsComplete(false);
+		setElapsedTime(0);
+		setTimerRunning(true);
+		setIsModalOpen(false);
+		setBoard(initialPuzzle);
+		setNumsComplete([]);
+		setSelectedCell(null);
+		setCandidates(
+			Array(9)
+				.fill()
+				.map(() =>
+					Array(9)
+						.fill()
+						.map(() => new Set())
+				)
+		);
 	};
 
 	const seconds = elapsedTime % 60;
@@ -202,13 +291,46 @@ export default function Sudoku() {
 						onCellKeyDown={handleKeyDown}
 						cellRefs={cellRefs}
 						paused={!timerRunning}
+						candidates={candidates}
+						isComplete={isComplete}
 					/>
 				</div>
 			</div>
-			<NumberBox
-				numsComplete={numsComplete}
-				onNumberClick={handleNumberClick}
-			/>
+			<div className="flex flex-col justify-center items-center">
+				<div className="flex gap-1">
+					<button
+						className="bg-blue-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+						onClick={() => win()}
+					>
+						Win
+					</button>
+					<button
+						className="bg-red-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+						onClick={() => reset()}
+					>
+						Reset
+					</button>
+				</div>
+
+				<NumberBox
+					numsComplete={numsComplete}
+					onNumberClick={handleNumberClick}
+				/>
+			</div>
+			<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+				<div className="flex flex-col justify-center items-center">
+					<h2 className="text-4xl font-bold mb-2">Congrats!</h2>
+					<p className="mb-4 text-2xl mt-8">
+						You completed the puzzle in&nbsp;
+						<span className="font-bold">
+							{String(minutes).padStart(2, "0")}:
+							{String(seconds).padStart(2, "0")}
+						</span>
+						.
+					</p>
+					<FaRegSmile className="text-[72px] mt-24" />
+				</div>
+			</Modal>
 		</div>
 	);
 }

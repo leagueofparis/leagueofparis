@@ -12,6 +12,8 @@ export default function Board({
 	onCellKeyDown,
 	cellRefs,
 	paused,
+	candidates,
+	isComplete,
 }) {
 	const getHighlightType = (row, col, value) => {
 		let type = "";
@@ -21,6 +23,8 @@ export default function Board({
 		if (!selectedCell) {
 			type = type === "prefilled" ? type : null;
 		} else {
+			if (isComplete) return type === "prefilled" ? type : null;
+
 			const [selRow, selCol] = selectedCell;
 			const selectedValue = board[selRow][selCol];
 
@@ -45,15 +49,18 @@ export default function Board({
 	const getCellColor = (row, col, value) => {
 		if (isPrefilled(row, col, value)) return "text-black";
 
+		value = value.toString();
 		if (value !== "" && solution[row][col].toString() === value) {
-			return "text-blue-600";
+			return "text-[#DC15E6]";
 		}
 
 		return "text-black";
 	};
 
 	return (
-		<div className="grid grid-cols-9 border-5">
+		<div
+			className={`grid grid-cols-9 border-5 ${paused ? "pointer-events-none" : ""}`}
+		>
 			{board.map((row, rowIndex) =>
 				row.map((value, colIndex) => {
 					const key = `${rowIndex}-${colIndex}`;
@@ -73,7 +80,8 @@ export default function Board({
 							onKeyDown={onCellKeyDown}
 							highlightType={highlightType}
 							cellRef={cellRefs.current[key]}
-							paused={paused}
+							paused={paused && !isComplete}
+							candidates={candidates[rowIndex][colIndex]}
 						/>
 					);
 				})
