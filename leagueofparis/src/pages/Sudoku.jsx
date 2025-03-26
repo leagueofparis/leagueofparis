@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Board from "../components/sudoku/Board";
 import NumberBox from "../components/sudoku/NumberBox";
+import { FaPause, FaPlay } from "react-icons/fa";
 
 const initialPuzzle = [
 	[5, 3, "", "", 7, "", "", "", ""],
@@ -49,8 +50,8 @@ export default function Sudoku() {
 	useEffect;
 
 	const [elapsedTime, setElapsedTime] = useState(() => {
-		const saved = localStorage.getItem("sudoku-timer-start");
-		return saved ? Date.now() - parseInt(saved, 10) : 0;
+		const saved = localStorage.getItem("sudoku-timer");
+		return saved ? parseInt(saved, 10) : 0;
 	});
 
 	const [timerRunning, setTimerRunning] = useState(true);
@@ -59,24 +60,25 @@ export default function Sudoku() {
 		if (!timerRunning) return;
 
 		const interval = setInterval(() => {
-			const start = parseInt(localStorage.getItem("sudoku-timer-start"), 10);
-			if (start) {
-				setElapsedTime(Date.now() - start);
-			}
+			setElapsedTime((prev) => {
+				const updated = prev + 1;
+				localStorage.setItem("sudoku-timer", updated.toString());
+				return updated;
+			});
 		}, 1000);
 
 		return () => clearInterval(interval);
 	}, [timerRunning]);
 
 	useEffect(() => {
-		if (!localStorage.getItem("sudoku-timer-start")) {
-			localStorage.setItem("sudoku-timer-start", Date.now().toString());
+		if (!localStorage.getItem("sudoku-timer")) {
+			localStorage.setItem("sudoku-timer", 0);
 		}
 	}, []);
 
 	const resetTimer = () => {
-		localStorage.setItem("sudoku-timer-start", Date.now().toString());
 		setElapsedTime(0);
+		localStorage.setItem("sudoku-timer", "0");
 	};
 
 	const handleCellClick = (row, col) => {
@@ -158,16 +160,26 @@ export default function Sudoku() {
 		return userLocked[row][col];
 	};
 
-	const seconds = Math.floor(elapsedTime / 1000) % 60;
-	const minutes = Math.floor(elapsedTime / 1000 / 60);
+	const seconds = elapsedTime % 60;
+	const minutes = Math.floor(elapsedTime / 60);
 
 	return (
 		<div className="flex flex-col md:flex-row items-center justify-center min-h-screen overflow-hidden">
 			<div className="flex flex-col items-center justify-center">
-				<p className="text-2xl font-mono pb-4">
-					{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
-				</p>
-				<div className="flex flex-col items-center justify-center p-8">
+				<div className="flex justify-center items-center">
+					<p className="text-2xl font-mono">
+						{String(minutes).padStart(2, "0")}:
+						{String(seconds).padStart(2, "0")}
+					</p>
+					<button
+						onClick={() => setTimerRunning((prev) => !prev)}
+						className="px-4 cursor-pointer"
+					>
+						{timerRunning ? <FaPause /> : <FaPlay />}
+					</button>
+				</div>
+
+				<div className="flex flex-col items-center justify-center p-8 pt-2 pb-4">
 					<Board
 						board={board}
 						selectedCell={selectedCell}
@@ -177,6 +189,7 @@ export default function Sudoku() {
 						onCellFocus={handleCellFocus}
 						onCellKeyDown={handleKeyDown}
 						cellRefs={cellRefs}
+						paused={!timerRunning}
 					/>
 				</div>
 			</div>

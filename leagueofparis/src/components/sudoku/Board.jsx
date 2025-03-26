@@ -11,6 +11,7 @@ export default function Board({
 	onCellFocus,
 	onCellKeyDown,
 	cellRefs,
+	paused,
 }) {
 	const getHighlightType = (row, col, value) => {
 		let type = "";
@@ -34,7 +35,6 @@ export default function Board({
 			)
 				return "rowcol";
 		}
-
 		return type;
 	};
 
@@ -73,6 +73,7 @@ export default function Board({
 							onKeyDown={onCellKeyDown}
 							highlightType={highlightType}
 							cellRef={cellRefs.current[key]}
+							paused={paused}
 						/>
 					);
 				})

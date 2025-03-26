@@ -8,6 +8,7 @@ export default function Cell({
 	onKeyDown,
 	highlightType,
 	cellRef,
+	paused,
 }) {
 	const highlightClass =
 		{
@@ -15,6 +16,7 @@ export default function Cell({
 			number: "bg-yellow-200",
 			rowcol: "bg-yellow-100",
 			prefilled: "bg-fuchsia-200",
+			blur: "blur-sm",
 		}[highlightType] || "";
 
 	return (
@@ -32,7 +34,8 @@ export default function Cell({
 				focus:bg-yellow-300 focus:outline-none caret-transparent select-none font-bold
 				${(row + 1) % 3 === 0 && row !== 8 ? "border-b-3" : ""}
 				${(col + 1) % 3 === 0 && col !== 8 ? "border-r-3" : ""}
-				${highlightClass} ${color}`}
+				${highlightClass} ${color}
+				${paused ? "blur" : ""}`}
 			style={{
 				width: "clamp(2rem, 9vw, 5rem)",
 				height: "clamp(2rem, 9vw, 5rem)",
