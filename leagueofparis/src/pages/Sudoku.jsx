@@ -76,6 +76,18 @@ export default function Sudoku() {
 		}
 	}, []);
 
+	useEffect(() => {
+		const handleVisibilityChange = () => {
+			if (document.hidden) {
+				setTimerRunning(false);
+			} else {
+				setTimerRunning(true);
+			}
+		};
+
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+	});
+
 	const resetTimer = () => {
 		setElapsedTime(0);
 		localStorage.setItem("sudoku-timer", "0");
