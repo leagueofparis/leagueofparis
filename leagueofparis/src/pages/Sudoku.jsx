@@ -30,7 +30,17 @@ const solution = [
 ];
 
 export default function Sudoku() {
-	const [board, setBoard] = useState(initialPuzzle);
+	const [board, setBoard] = useState(() => {
+		const stored = localStorage.getItem("sudoku-board");
+		if (stored) {
+			try {
+				return JSON.parse(stored);
+			} catch {
+				console.warn("Invalid board in storage, using default");
+			}
+		}
+		return initialPuzzle;
+	});
 	const [selectedCell, setSelectedCell] = useState(null);
 	const cellRefs = useRef({});
 	const [numsComplete, setNumsComplete] = useState([]);
@@ -229,6 +239,17 @@ export default function Sudoku() {
 	};
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	useEffect(() => {
+		const storedBoard = localStorage.getItem("sudoku-board");
+		if (storedBoard) {
+			setBoard(JSON.parse(storedBoard));
+		}
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem("sudoku-board", JSON.stringify(board));
+	}, [board]);
 
 	const win = () => {
 		setBoard(solution);
