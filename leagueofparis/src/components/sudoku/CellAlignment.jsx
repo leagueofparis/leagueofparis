@@ -1,12 +1,13 @@
 export function getAlignment(candidateMode, value) {
 	let className = "";
 
-	if (!candidateMode) className = "justify-center items-center";
-	else {
-		className = "text-[24px] ";
-
+	if (!candidateMode) {
+		className = "justify-center items-center";
+	} else {
+		className = "sm:text-[24px] ";
 		const leftPadding = "pl-[7px]";
 		const rightPadding = "pr-[7px]";
+
 		switch (value) {
 			case 1:
 				className += leftPadding;
@@ -30,12 +31,13 @@ export function getAlignment(candidateMode, value) {
 				className += `items-end ${leftPadding}`;
 				break;
 			case 8:
-				className += `justify-center items-end`;
+				className += "justify-center items-end";
 				break;
 			case 9:
 				className += `justify-end items-end ${rightPadding}`;
 				break;
 		}
 	}
+
 	return className;
 }
