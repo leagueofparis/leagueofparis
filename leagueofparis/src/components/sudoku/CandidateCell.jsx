@@ -21,12 +21,9 @@ export default function CandidateCell({
 				return (
 					<div
 						key={i}
-						className={`w-full h-full flex ${justify} ${items} group text-gray-500 ${
+						className={`w-full h-full flex ${justify} ${items} group text-gray-500 text-[10px] md:text-[16px] ${
 							selected ? "cursor-pointer" : "pointer-events-none"
 						}`}
-						style={{
-							fontSize: "clamp(1rem, 1vh, 3rem)",
-						}}
 						onClick={selected ? (e) => onClick(i + 1, e) : undefined}
 					>
 						<div
