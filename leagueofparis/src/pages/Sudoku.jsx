@@ -101,9 +101,15 @@ export default function Sudoku() {
 	useEffect(() => {
 		const handleVisibilityChange = () => {
 			if (document.hidden) {
-				setTimerRunning(false);
+				setSudokuState((prev) => ({
+					...prev,
+					timerRunning: false,
+				}));
 			} else {
-				setTimerRunning(true);
+				setSudokuState((prev) => ({
+					...prev,
+					timerRunning: true,
+				}));
 			}
 		};
 		document.addEventListener("visibilitychange", handleVisibilityChange);
