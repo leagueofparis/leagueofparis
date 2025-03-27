@@ -128,7 +128,13 @@ export default function Sudoku() {
 	};
 
 	useEffect(() => {
-		const handleGlobalArrowKeys = (e) => {
+		const handleGlobalKeys = (e) => {
+			if (e.keyCode == 32)
+				setSudokuState((prev) => ({
+					...prev,
+					timerRunning: !prev.timerRunning,
+				}));
+
 			if (!selectedCell && e.keyCode >= 37 && e.keyCode <= 40) {
 				e.preventDefault();
 				setSudokuState((prev) => ({ ...prev, selectedCell: [0, 0] }));
@@ -169,9 +175,11 @@ export default function Sudoku() {
 				setTimeout(() => {}, 1000);
 			}
 		};
-		document.addEventListener("keydown", handleGlobalArrowKeys);
-		return () => document.removeEventListener("keydown", handleGlobalArrowKeys);
+		document.addEventListener("keydown", handleGlobalKeys);
+		return () => document.removeEventListener("keydown", handleGlobalKeys);
 	}, [selectedCell]);
+
+	useEffect(() => {});
 
 	const handleKeyDown = (e) => {
 		const key = e.key;
