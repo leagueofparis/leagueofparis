@@ -3,7 +3,9 @@ import Modal from "../components/Modal";
 import Board from "../components/sudoku/Board";
 import HeaderButtons from "../components/HeaderButtons";
 import NumberBox from "../components/sudoku/NumberBox";
-import { FaPause, FaPlay, FaRegSmile } from "react-icons/fa";
+import { FaPause, FaPlay, FaRegSmile, FaPencilAlt } from "react-icons/fa";
+import Toggle from "../components/Toggle";
+import useSudokuStorage from "../hooks/useSudokuStorage";
 
 const initialPuzzle = [
 	[5, 3, "", "", 7, "", "", "", ""],
@@ -29,35 +31,47 @@ const solution = [
 	[3, 4, 5, 2, 8, 6, 1, 7, 9],
 ];
 
+// Create a combined initial state for persistence.
+const initialSudokuState = {
+	board: initialPuzzle,
+	selectedCell: null,
+	elapsedTime: 0,
+	candidateMode: false,
+	candidates: Array(9)
+		.fill()
+		.map(() =>
+			Array(9)
+				.fill()
+				.map(() => new Set())
+		),
+	timerRunning: true,
+};
+
 export default function Sudoku() {
-	const [board, setBoard] = useState(() => {
-		const stored = localStorage.getItem("sudoku-board");
-		if (stored) {
-			try {
-				return JSON.parse(stored);
-			} catch {
-				console.warn("Invalid board in storage, using default");
-			}
-		}
-		return initialPuzzle;
-	});
-	const [selectedCell, setSelectedCell] = useState(null);
-	const cellRefs = useRef({});
+	// Use the custom hook to persist board, selectedCell, elapsedTime, candidateMode, and candidates.
+	const [sudokuState, setSudokuState] = useSudokuStorage(initialSudokuState);
+	const {
+		board,
+		selectedCell,
+		elapsedTime,
+		candidateMode,
+		candidates,
+		timerRunning,
+	} = sudokuState;
+
+	// Other state values that we don't need to persist.
 	const [numsComplete, setNumsComplete] = useState([]);
-	const [userLocked, setUserLocked] = useState(() =>
+	const [userLocked, setUserLocked] = useState(
 		initialPuzzle.map((row) => row.map((cell) => cell !== ""))
 	);
-	const [candidateMode, setCandidateMode] = useState(false);
-	const [candidates, setCandidates] = useState(
-		Array(9)
-			.fill()
-			.map(() =>
-				Array(9)
-					.fill()
-					.map(() => new Set())
-			)
-	);
 	const [isComplete, setIsComplete] = useState(false);
+
+	const cellRefs = useRef({});
+	const selectedCellRef = useRef(null);
+
+	useEffect(() => {
+		selectedCellRef.current = selectedCell;
+	}, [selectedCell]);
 
 	useEffect(() => {
 		if (selectedCell) {
@@ -70,35 +84,20 @@ export default function Sudoku() {
 		}
 	}, [selectedCell]);
 
-	useEffect;
-
-	const [elapsedTime, setElapsedTime] = useState(() => {
-		const saved = localStorage.getItem("sudoku-timer");
-		return saved ? parseInt(saved, 10) : 0;
-	});
-
-	const [timerRunning, setTimerRunning] = useState(true);
-
+	// Timer effect: update elapsedTime in our persisted state.
 	useEffect(() => {
-		if (!timerRunning) return;
-
 		const interval = setInterval(() => {
-			setElapsedTime((prev) => {
-				const updated = prev + 1;
-				localStorage.setItem("sudoku-timer", updated.toString());
-				return updated;
-			});
+			if (timerRunning) {
+				setSudokuState((prev) => ({
+					...prev,
+					elapsedTime: prev.elapsedTime + 1,
+				}));
+			}
 		}, 1000);
-
 		return () => clearInterval(interval);
-	}, [timerRunning]);
+	}, [timerRunning, setSudokuState]);
 
-	useEffect(() => {
-		if (!localStorage.getItem("sudoku-timer")) {
-			localStorage.setItem("sudoku-timer", 0);
-		}
-	}, []);
-
+	// Pause timer when the document becomes hidden.
 	useEffect(() => {
 		const handleVisibilityChange = () => {
 			if (document.hidden) {
@@ -107,175 +106,182 @@ export default function Sudoku() {
 				setTimerRunning(true);
 			}
 		};
-
 		document.addEventListener("visibilitychange", handleVisibilityChange);
-	});
+		return () =>
+			document.removeEventListener("visibilitychange", handleVisibilityChange);
+	}, []);
 
 	const handleCellClick = (row, col) => {
 		if (!timerRunning) return;
-
-		setSelectedCell([row, col]);
+		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
 	};
 
 	const handleCellFocus = (row, col) => {
 		if (!timerRunning) return;
-
-		setSelectedCell([row, col]);
+		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
 	};
 
 	useEffect(() => {
 		const handleGlobalArrowKeys = (e) => {
 			if (!selectedCell && e.keyCode >= 37 && e.keyCode <= 40) {
 				e.preventDefault();
-				setSelectedCell([0, 0]);
+				setSudokuState((prev) => ({ ...prev, selectedCell: [0, 0] }));
 				return;
 			}
-
 			if (selectedCell) {
 				const [row, col] = selectedCell;
 				switch (e.keyCode) {
 					case 37:
-						setSelectedCell([row, Math.max(col - 1, 0)]);
+						setSudokuState((prev) => ({
+							...prev,
+							selectedCell: [row, Math.max(col - 1, 0)],
+						}));
 						break;
 					case 38:
-						setSelectedCell([Math.max(row - 1, 0), col]);
+						setSudokuState((prev) => ({
+							...prev,
+							selectedCell: [Math.max(row - 1, 0), col],
+						}));
 						break;
 					case 39:
-						setSelectedCell([row, Math.min(col + 1, 8)]);
+						setSudokuState((prev) => ({
+							...prev,
+							selectedCell: [row, Math.min(col + 1, 8)],
+						}));
 						break;
 					case 40:
-						setSelectedCell([Math.min(row + 1, 8), col]);
+						setSudokuState((prev) => ({
+							...prev,
+							selectedCell: [Math.min(row + 1, 8), col],
+						}));
+						break;
+					default:
 						break;
 				}
 			}
-
 			if (e.repeat) {
-				setTimeout({}, 1000);
+				setTimeout(() => {}, 1000);
 			}
 		};
-
 		document.addEventListener("keydown", handleGlobalArrowKeys);
 		return () => document.removeEventListener("keydown", handleGlobalArrowKeys);
 	}, [selectedCell]);
 
 	const handleKeyDown = (e) => {
 		const key = e.key;
-		if (!selectedCell) {
-			return;
-		}
-
+		if (!selectedCell) return;
 		handleInput(key);
-	};
-
-	const handleInput = (value) => {
-		if (!timerRunning) return;
-
-		if (!selectedCell) return;
-
-		const [row, col] = selectedCell;
-		if (isLocked(row, col)) return;
-		if (value >= "1" && value <= "9") {
-			if (candidateMode) return handleCandidateInput(value);
-
-			const correct = solution[row][col].toString() === value;
-
-			const newBoard = board.map((r, rIdx) =>
-				r.map((c, cIdx) => (rIdx === row && cIdx === col ? value : c))
-			);
-
-			const newUserLocked = userLocked.map((r, rIdx) =>
-				r.map((locked, cIdx) =>
-					rIdx === row && cIdx === col ? correct || locked : locked
-				)
-			);
-
-			setBoard(newBoard);
-			setUserLocked(newUserLocked);
-
-			const flatBoard = newBoard.flat();
-			const numCount = flatBoard.filter(
-				(num) => parseInt(num) === parseInt(value)
-			).length;
-
-			if (numCount === 9) {
-				setNumsComplete([...numsComplete, parseInt(value)]);
-			}
-
-			const totalNumCount = flatBoard.filter(
-				(num) => num !== "" && Number(num)
-			).length;
-
-			if (totalNumCount === 81) win();
-		} else if (value === "Backspace" || value === "Delete" || value === "0") {
-			const newBoard = board.map((r, rIdx) =>
-				r.map((c, cIdx) => (rIdx === row && cIdx === col ? "" : c))
-			);
-			setBoard(newBoard);
-		}
-	};
-
-	const handleCandidateInput = (value) => {
-		if (!selectedCell) return;
-
-		const [rowI, colI] = selectedCell;
-		setCandidates((prev) => {
-			const updated = prev.map((row, r) =>
-				row.map((cell, c) =>
-					r === rowI && c === colI ? new Set([...cell, value]) : cell
-				)
-			);
-			return updated;
-		});
-	};
-
-	const handleNumberClick = (number) => {
-		if (numsComplete?.includes(number)) return false;
-
-		handleInput(number.toString());
 	};
 
 	const isLocked = (row, col) => {
 		return userLocked[row][col];
 	};
 
+	const handleInput = (value) => {
+		if (!timerRunning || !selectedCell) return;
+		const [row, col] = selectedCell;
+		if (isLocked(row, col)) return;
+		if (value >= "1" && value <= "9") {
+			if (candidateMode) return handleCandidateInput(value);
+			const correct = solution[row][col].toString() === value;
+			const newBoard = board.map((r, rIdx) =>
+				r.map((c, cIdx) => (rIdx === row && cIdx === col ? value : c))
+			);
+			const newUserLocked = userLocked.map((r, rIdx) =>
+				r.map((locked, cIdx) =>
+					rIdx === row && cIdx === col ? correct || locked : locked
+				)
+			);
+			setSudokuState((prev) => ({ ...prev, board: newBoard }));
+			setUserLocked(newUserLocked);
+
+			const flatBoard = newBoard.flat();
+			const numCount = flatBoard.filter(
+				(num) => parseInt(num) === parseInt(value)
+			).length;
+			if (numCount === 9) {
+				setNumsComplete([...numsComplete, parseInt(value)]);
+			}
+			const totalNumCount = flatBoard.filter(
+				(num) => num !== "" && Number(num)
+			).length;
+			if (totalNumCount === 81) win();
+		} else if (value === "Backspace" || value === "Delete" || value === "0") {
+			const newBoard = board.map((r, rIdx) =>
+				r.map((c, cIdx) => (rIdx === row && cIdx === col ? "" : c))
+			);
+			setSudokuState((prev) => ({ ...prev, board: newBoard }));
+		}
+	};
+
+	const handleCandidateInput = (value) => {
+		if (!selectedCell) return;
+		const [rowI, colI] = selectedCell;
+		setSudokuState((prev) => {
+			const updatedCandidates = candidates.map((row, r) =>
+				row.map((cell, c) => {
+					if (r === rowI && c === colI) {
+						const currentSet = new Set(cell);
+						const val = parseInt(value);
+						if (currentSet.has(val)) {
+							currentSet.delete(val);
+						} else {
+							currentSet.add(val);
+						}
+						// Normalize: fill 9 slots with numbers or ""
+						return Array.from({ length: 9 }, (_, i) =>
+							currentSet.has(i + 1) ? i + 1 : ""
+						);
+					}
+					return cell;
+				})
+			);
+			return { ...prev, candidates: updatedCandidates };
+		});
+	};
+
+	const handleCandidateCellClick = (row, col, value) => {
+		const currentSelected = selectedCellRef.current;
+		if (!currentSelected) {
+			setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
+			return;
+		}
+		const [selRow, selCol] = currentSelected;
+		if (selRow === row && selCol === col) {
+			handleCandidateInput(value);
+		} else {
+			setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
+		}
+	};
+
+	const handleNumberClick = (number) => {
+		if (numsComplete?.includes(number)) return false;
+		handleInput(number.toString());
+	};
+
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	useEffect(() => {
-		const storedBoard = localStorage.getItem("sudoku-board");
-		if (storedBoard) {
-			setBoard(JSON.parse(storedBoard));
-		}
-	}, []);
-
-	useEffect(() => {
-		localStorage.setItem("sudoku-board", JSON.stringify(board));
-	}, [board]);
-
 	const win = () => {
-		setBoard(solution);
-
+		setSudokuState((prev) => ({
+			...prev,
+			board: solution,
+			selectedCell: null,
+		}));
 		setIsComplete(true);
-		setTimerRunning(false);
+		setSudokuState((prev) => ({ ...prev, timerRunning: !prev.timerRunning }));
 		setIsModalOpen(true);
 	};
 
 	const reset = () => {
 		setIsComplete(false);
-		setElapsedTime(0);
-		setTimerRunning(true);
 		setIsModalOpen(false);
-		setBoard(initialPuzzle);
+		setSudokuState(initialSudokuState);
 		setNumsComplete([]);
-		setSelectedCell(null);
-		setCandidates(
-			Array(9)
-				.fill()
-				.map(() =>
-					Array(9)
-						.fill()
-						.map(() => new Set())
-				)
-		);
+		setUserLocked(initialPuzzle.map((row) => row.map((cell) => cell !== "")));
+	};
+
+	const toggleCandidateMode = () => {
+		setSudokuState((prev) => ({ ...prev, candidateMode: !prev.candidateMode }));
 	};
 
 	const seconds = elapsedTime % 60;
@@ -292,7 +298,12 @@ export default function Sudoku() {
 							{String(seconds).padStart(2, "0")}
 						</p>
 						<button
-							onClick={() => setTimerRunning((prev) => !prev)}
+							onClick={() =>
+								setSudokuState((prev) => ({
+									...prev,
+									timerRunning: !prev.timerRunning,
+								}))
+							}
 							className="px-4 cursor-pointer"
 						>
 							{timerRunning ? <FaPause /> : <FaPlay />}
@@ -312,28 +323,33 @@ export default function Sudoku() {
 							paused={!timerRunning}
 							candidates={candidates}
 							isComplete={isComplete}
+							candidateMode={candidateMode}
+							onCandidateCellClick={handleCandidateCellClick}
 						/>
 					</div>
 				</div>
 				<div className="flex flex-col justify-center items-center">
-					<div className="flex gap-1">
+					<div className="flex gap-1 justify-center items-center">
 						<button
 							className="bg-blue-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
-							onClick={() => win()}
+							onClick={win}
 						>
 							Win
 						</button>
 						<button
 							className="bg-red-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
-							onClick={() => reset()}
+							onClick={reset}
 						>
 							Reset
 						</button>
+						<Toggle isOn={candidateMode} onToggle={toggleCandidateMode} />
+						<FaPencilAlt />
 					</div>
 
 					<NumberBox
 						numsComplete={numsComplete}
 						onNumberClick={handleNumberClick}
+						candidateMode={candidateMode}
 					/>
 				</div>
 				<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

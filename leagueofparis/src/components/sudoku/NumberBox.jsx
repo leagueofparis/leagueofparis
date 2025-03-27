@@ -1,6 +1,11 @@
 import { FaTimes } from "react-icons/fa";
+import { getAlignment } from "./CellAlignment";
 
-export default function NumberBox({ numsComplete, onNumberClick }) {
+export default function NumberBox({
+	numsComplete,
+	onNumberClick,
+	candidateMode,
+}) {
 	const isCompleted = (number) => {
 		return numsComplete?.includes(number) || false;
 	};
@@ -8,7 +13,7 @@ export default function NumberBox({ numsComplete, onNumberClick }) {
 	const clamp = {
 		width: "clamp(2rem, 9vw, 5rem)",
 		height: "clamp(4rem, 12vw, 7rem)",
-		fontSize: "clamp(1.2rem, 5vw, 3rem)",
+		fontSize: candidateMode ? "" : "clamp(1.2rem, 5vw, 3rem)",
 	};
 
 	return (
@@ -17,8 +22,9 @@ export default function NumberBox({ numsComplete, onNumberClick }) {
 				{Array.from({ length: 9 }).map((_, i) => (
 					<div
 						key={i}
-						className={`m-1 font-bold flex justify-center items-center cursor-pointer rounded-lg
-					${isCompleted(i + 1) ? "bg-gray-100 opacity-50" : "bg-gray-300"}`}
+						className={`m-1 font-bold flex cursor-pointer rounded-lg
+					${isCompleted(i + 1) ? "bg-gray-100 opacity-50" : "bg-gray-300"}
+					${getAlignment(candidateMode, i + 1)}`}
 						style={clamp}
 						onClick={() => onNumberClick(i + 1)}
 					>
