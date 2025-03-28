@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace webapi.Controllers
@@ -15,39 +16,48 @@ namespace webapi.Controllers
 		}
 
 		[HttpGet("today/{difficulty}")]
-		public IActionResult GetTodayPuzzle(string difficulty = "easy")
+		public async Task<IActionResult> GetTodayPuzzle(string difficulty = "easy")
 		{
-			if (!Enum.TryParse<Difficulty>(difficulty, true, out var parsedDifficulty)) // true = ignore case
+			try
 			{
-				return BadRequest("Invalid difficulty");
-			}
-
-			var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-			DailySudokuPuzzle? puzzle = _db.DailySudokuPuzzles.FirstOrDefault(p => p.Date == today && p.Difficulty == parsedDifficulty);
-
-			if (puzzle == null)
-			{
-				SudokuGenerator? generator = new();
-				var (puzzleBoard, solutionBoard) = generator.Generate(parsedDifficulty);
-
-				puzzle = new DailySudokuPuzzle
+				if (!Enum.TryParse<Difficulty>(difficulty, true, out var parsedDifficulty))
 				{
-					Date = today,
-					Difficulty = parsedDifficulty,
-					Puzzle = JsonConvert.SerializeObject(puzzleBoard),
-					Solution = JsonConvert.SerializeObject(solutionBoard)
-				};
+					return BadRequest("Invalid difficulty");
+				}
 
-				_db.DailySudokuPuzzles.Add(puzzle);
-				_db.SaveChanges();
+				var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+				DailySudokuPuzzle? puzzle = await _db.DailySudokuPuzzles
+					.FirstOrDefaultAsync(p => p.Date == today && p.Difficulty == parsedDifficulty);
+
+				if (puzzle == null)
+				{
+					SudokuGenerator generator = new();
+					var (puzzleBoard, solutionBoard) = generator.Generate(parsedDifficulty);
+
+					puzzle = new DailySudokuPuzzle
+					{
+						Date = today,
+						Difficulty = parsedDifficulty,
+						Puzzle = JsonConvert.SerializeObject(puzzleBoard),
+						Solution = JsonConvert.SerializeObject(solutionBoard)
+					};
+
+					_db.DailySudokuPuzzles.Add(puzzle);
+					_db.SaveChanges();
+				}
+
+				return Ok(new
+				{
+					puzzle = JsonConvert.DeserializeObject<int?[][]>(puzzle.Puzzle),
+					solution = JsonConvert.DeserializeObject<int[][]>(puzzle.Solution)
+				});
 			}
-
-			return Ok(new
+			catch (Exception ex)
 			{
-				puzzle = JsonConvert.DeserializeObject<int?[][]>(puzzle.Puzzle),
-				solution = JsonConvert.DeserializeObject<int[][]>(puzzle.Solution)
-			});
+				Console.WriteLine($"Sudoku error: {ex.Message}");
+				return StatusCode(500, "Internal server error.");
+			}
 		}
 	}
 }
