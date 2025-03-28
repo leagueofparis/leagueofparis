@@ -305,7 +305,9 @@ export default function Sudoku() {
 	useEffect(() => {
 		const fetchPuzzle = async () => {
 			try {
-				const response = await fetch(`${import.meta.env.VITE_API_URL}/users`);
+				const response = await fetch(
+					`${import.meta.env.VITE_API_URL}/sudoku/today/easy`
+				);
 				if (!response.ok) throw new Error("Failed to fetch puzzle");
 
 				const data = await response.json();
