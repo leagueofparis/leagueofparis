@@ -275,3 +275,4 @@ __pycache__/
 
 appsettings.Development.json
 webapi/out
+.env
