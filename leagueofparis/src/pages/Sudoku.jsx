@@ -310,8 +310,10 @@ export default function Sudoku() {
 
 				const data = await response.json();
 				setPuzzle(data);
+				console.log(data);
 			} catch (err) {
 				setError(err.message);
+				console.log(err);
 			}
 		};
 
