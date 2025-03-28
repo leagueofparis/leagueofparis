@@ -65,7 +65,8 @@ export default function Sudoku() {
 		initialPuzzle.map((row) => row.map((cell) => cell !== ""))
 	);
 	const [isComplete, setIsComplete] = useState(false);
-
+	const [puzzle, setPuzzle] = useState(null);
+	const [error, setError] = useState(null);
 	const cellRefs = useRef({});
 	const selectedCellRef = useRef(null);
 
@@ -177,7 +178,7 @@ export default function Sudoku() {
 		};
 		document.addEventListener("keydown", handleGlobalKeys);
 		return () => document.removeEventListener("keydown", handleGlobalKeys);
-	}, [selectedCell]);
+	}, [selectedCell, setSudokuState]);
 
 	useEffect(() => {});
 
@@ -301,8 +302,24 @@ export default function Sudoku() {
 	const seconds = elapsedTime % 60;
 	const minutes = Math.floor(elapsedTime / 60);
 
+	useEffect(() => {
+		const fetchPuzzle = async () => {
+			try {
+				const response = await fetch(`${import.meta.env.VITE_API_URL}/users`);
+				if (!response.ok) throw new Error("Failed to fetch puzzle");
+
+				const data = await response.json();
+				setPuzzle(data);
+			} catch (err) {
+				setError(err.message);
+			}
+		};
+
+		fetchPuzzle();
+	}, []);
 	return (
 		<div className="flex items-center flex-col min-h-screen overflow-hidden">
+			<div>{puzzle}</div>
 			<HeaderButtons />
 			<div className="flex flex-col md:flex-row items-center justify-center overflow-hidden">
 				<div className="flex flex-col items-center justify-center">
