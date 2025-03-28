@@ -24,7 +24,8 @@ builder.Services.AddCors(options =>
 	options.AddPolicy("AllowReactApp",
 		builder => builder.WithOrigins("http://localhost:3000", "https://leagueofparis.com")
 						  .AllowAnyMethod()
-						  .AllowAnyHeader());
+						  .AllowAnyHeader()
+						  .AllowCredentials());
 });
 
 builder.Services.AddAuthentication(options =>
@@ -61,6 +62,7 @@ var app = builder.Build();
 
 // Use CORS policy
 app.UseCors("AllowReactApp");
+app.UseAuthentication();
 
 if (app.Environment.IsDevelopment())
 {
