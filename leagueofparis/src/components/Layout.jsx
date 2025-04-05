@@ -1,17 +1,16 @@
 import HeaderButtons from "./HeaderButtons";
 import { useEffect, useState } from "react";
-import { supabase } from "../utilities/supabase";
 
 export default function Layout({ children }) {
 	async function signIn() {
-		console.log("sign");
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: "discord",
-			options: {
-				redirectTo: "http://localhost:3001/auth/callback",
-			},
-		});
-		console.log(data);
+		// console.log("sign");
+		// const { data, error } = await supabase.auth.signInWithOAuth({
+		// 	provider: "discord",
+		// 	options: {
+		// 		redirectTo: "http://localhost:3001/auth/callback",
+		// 	},
+		// });
+		// console.log(data);
 	}
 
 	return (
