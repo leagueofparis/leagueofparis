@@ -50,7 +50,10 @@ namespace webapi.Controllers
 				return Ok(new
 				{
 					puzzle = JsonConvert.DeserializeObject<int?[][]>(puzzle.Puzzle),
-					solution = JsonConvert.DeserializeObject<int[][]>(puzzle.Solution)
+					solution = JsonConvert.DeserializeObject<int[][]>(puzzle.Solution),
+					difficulty,
+					date = today
+
 				});
 			}
 			catch (Exception ex)

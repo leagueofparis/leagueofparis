@@ -9,19 +9,15 @@ import {
 	FaYoutube,
 } from "react-icons/fa";
 import TwitchEmbed from "../components/TwitchEmbed";
-import HeaderButtons from "../components/HeaderButtons";
 
 function Home() {
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
 	//text-teal-400 hover:text-teal-100
-
 	return (
 		<div
 			id="link-container"
-			data-theme="paris"
 			className="flex items-center flex-col h-[90vh] rounded-3xl p-4"
 		>
-			<HeaderButtons />
 			<img src={MainImage} className="w-36 rounded-full"></img>
 			<h1 className="text-4xl font-bold whitespace-nowrap">League of Paris</h1>
 			<div className="flex space-x-4 py-4">

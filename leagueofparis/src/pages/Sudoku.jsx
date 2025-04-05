@@ -7,49 +7,37 @@ import { FaPause, FaPlay, FaRegSmile, FaPencilAlt } from "react-icons/fa";
 import Toggle from "../components/Toggle";
 import useSudokuStorage from "../hooks/useSudokuStorage";
 
-const initialPuzzle = [
-	[5, 3, "", "", 7, "", "", "", ""],
-	[6, "", "", 1, 9, 5, "", "", ""],
-	["", 9, 8, "", "", "", "", 6, ""],
-	[8, "", "", "", 6, "", "", "", 3],
-	[4, "", "", 8, "", 3, "", "", 1],
-	[7, "", "", "", 2, "", "", "", 6],
-	["", 6, "", "", "", "", 2, 8, ""],
-	["", "", "", 4, 1, 9, "", "", 5],
-	["", "", "", "", 8, "", "", 7, 9],
-];
+const placeholderBoard = Array(9)
+	.fill()
+	.map(() => Array(9).fill(""));
+const placeholderCandidates = Array(9)
+	.fill()
+	.map(() =>
+		Array(9)
+			.fill()
+			.map(() => new Set())
+	);
 
-const solution = [
-	[5, 3, 4, 6, 7, 8, 9, 1, 2],
-	[6, 7, 2, 1, 9, 5, 3, 4, 8],
-	[1, 9, 8, 3, 4, 2, 5, 6, 7],
-	[8, 5, 9, 7, 6, 1, 4, 2, 3],
-	[4, 2, 6, 8, 5, 3, 7, 9, 1],
-	[7, 1, 3, 9, 2, 4, 8, 5, 6],
-	[9, 6, 1, 5, 3, 7, 2, 8, 4],
-	[2, 8, 7, 4, 1, 9, 6, 3, 5],
-	[3, 4, 5, 2, 8, 6, 1, 7, 9],
-];
-
-// Create a combined initial state for persistence.
-const initialSudokuState = {
-	board: initialPuzzle,
+const defaultInitialState = {
+	board: placeholderBoard,
 	selectedCell: null,
 	elapsedTime: 0,
 	candidateMode: false,
-	candidates: Array(9)
-		.fill()
-		.map(() =>
-			Array(9)
-				.fill()
-				.map(() => new Set())
-		),
+	candidates: placeholderCandidates,
 	timerRunning: true,
+	difficulty: "easy",
+	date: getDateOnly(new Date()),
 };
 
+function getDateOnly(date) {
+	return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 export default function Sudoku() {
-	// Use the custom hook to persist board, selectedCell, elapsedTime, candidateMode, and candidates.
-	const [sudokuState, setSudokuState] = useSudokuStorage(initialSudokuState);
+	const [solution, setSolution] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [sudokuState, setSudokuState] = useSudokuStorage(defaultInitialState);
 	const {
 		board,
 		selectedCell,
@@ -57,18 +45,44 @@ export default function Sudoku() {
 		candidateMode,
 		candidates,
 		timerRunning,
+		difficulty,
+		date,
 	} = sudokuState;
 
-	// Other state values that we don't need to persist.
 	const [numsComplete, setNumsComplete] = useState([]);
 	const [userLocked, setUserLocked] = useState(
-		initialPuzzle.map((row) => row.map((cell) => cell !== ""))
+		placeholderBoard.map((row) => row.map((cell) => cell !== ""))
 	);
 	const [isComplete, setIsComplete] = useState(false);
-	const [puzzle, setPuzzle] = useState(null);
-	const [error, setError] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const cellRefs = useRef({});
 	const selectedCellRef = useRef(null);
+
+	useEffect(() => {
+		const fetchPuzzle = async () => {
+			try {
+				const response = await fetch(
+					`${import.meta.env.VITE_API_URL}/sudoku/today/easy`
+				);
+				if (!response.ok) throw new Error("Failed to fetch puzzle");
+				const data = await response.json();
+				setSudokuState((prev) => ({
+					...prev,
+					board: data.puzzle,
+					timerRunning: true,
+				}));
+				setUserLocked(data.puzzle.map((row) => row.map((cell) => cell !== "")));
+				setSolution(data.solution);
+				setLoading(false);
+			} catch (err) {
+				setError(err.message);
+				setLoading(false);
+			}
+		};
+
+		fetchPuzzle();
+	}, []);
 
 	useEffect(() => {
 		selectedCellRef.current = selectedCell;
@@ -85,7 +99,6 @@ export default function Sudoku() {
 		}
 	}, [selectedCell]);
 
-	// Timer effect: update elapsedTime in our persisted state.
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (timerRunning) {
@@ -98,44 +111,26 @@ export default function Sudoku() {
 		return () => clearInterval(interval);
 	}, [timerRunning, setSudokuState]);
 
-	// Pause timer when the document becomes hidden.
 	useEffect(() => {
 		const handleVisibilityChange = () => {
-			if (document.hidden) {
-				setSudokuState((prev) => ({
-					...prev,
-					timerRunning: false,
-				}));
-			} else {
-				setSudokuState((prev) => ({
-					...prev,
-					timerRunning: true,
-				}));
-			}
+			setSudokuState((prev) => ({
+				...prev,
+				timerRunning: !document.hidden,
+			}));
 		};
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		return () =>
 			document.removeEventListener("visibilitychange", handleVisibilityChange);
 	}, []);
 
-	const handleCellClick = (row, col) => {
-		if (!timerRunning) return;
-		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
-	};
-
-	const handleCellFocus = (row, col) => {
-		if (!timerRunning) return;
-		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
-	};
-
 	useEffect(() => {
 		const handleGlobalKeys = (e) => {
-			if (e.keyCode == 32)
+			if (e.keyCode === 32) {
 				setSudokuState((prev) => ({
 					...prev,
 					timerRunning: !prev.timerRunning,
 				}));
-
+			}
 			if (!selectedCell && e.keyCode >= 37 && e.keyCode <= 40) {
 				e.preventDefault();
 				setSudokuState((prev) => ({ ...prev, selectedCell: [0, 0] }));
@@ -168,36 +163,18 @@ export default function Sudoku() {
 							selectedCell: [Math.min(row + 1, 8), col],
 						}));
 						break;
-					default:
-						break;
 				}
-			}
-			if (e.repeat) {
-				setTimeout(() => {}, 1000);
 			}
 		};
 		document.addEventListener("keydown", handleGlobalKeys);
 		return () => document.removeEventListener("keydown", handleGlobalKeys);
-	}, [selectedCell, setSudokuState]);
-
-	useEffect(() => {});
-
-	const handleKeyDown = (e) => {
-		const key = e.key;
-		if (!selectedCell) return;
-		handleInput(key);
-	};
-
-	const isLocked = (row, col) => {
-		return userLocked[row][col];
-	};
+	}, [selectedCell]);
 
 	const handleInput = (value) => {
-		if (!timerRunning || !selectedCell) return;
+		if (!timerRunning || !selectedCell || !solution) return;
 		const [row, col] = selectedCell;
-		if (isLocked(row, col)) return;
+		if (userLocked[row][col]) return;
 		if (value >= "1" && value <= "9") {
-			if (candidateMode) return handleCandidateInput(value);
 			const correct = solution[row][col].toString() === value;
 			const newBoard = board.map((r, rIdx) =>
 				r.map((c, cIdx) => (rIdx === row && cIdx === col ? value : c))
@@ -214,19 +191,22 @@ export default function Sudoku() {
 			const numCount = flatBoard.filter(
 				(num) => parseInt(num) === parseInt(value)
 			).length;
-			if (numCount === 9) {
-				setNumsComplete([...numsComplete, parseInt(value)]);
-			}
+			if (numCount === 9) setNumsComplete([...numsComplete, parseInt(value)]);
 			const totalNumCount = flatBoard.filter(
 				(num) => num !== "" && Number(num)
 			).length;
 			if (totalNumCount === 81) win();
-		} else if (value === "Backspace" || value === "Delete" || value === "0") {
+		} else if (["Backspace", "Delete", "0"].includes(value)) {
 			const newBoard = board.map((r, rIdx) =>
 				r.map((c, cIdx) => (rIdx === row && cIdx === col ? "" : c))
 			);
 			setSudokuState((prev) => ({ ...prev, board: newBoard }));
 		}
+	};
+
+	const handleKeyDown = (e) => {
+		if (!selectedCell) return;
+		handleInput(e.key);
 	};
 
 	const handleCandidateInput = (value) => {
@@ -238,12 +218,7 @@ export default function Sudoku() {
 					if (r === rowI && c === colI) {
 						const currentSet = new Set(cell);
 						const val = parseInt(value);
-						if (currentSet.has(val)) {
-							currentSet.delete(val);
-						} else {
-							currentSet.add(val);
-						}
-						// Normalize: fill 9 slots with numbers or ""
+						currentSet.has(val) ? currentSet.delete(val) : currentSet.add(val);
 						return Array.from({ length: 9 }, (_, i) =>
 							currentSet.has(i + 1) ? i + 1 : ""
 						);
@@ -253,6 +228,16 @@ export default function Sudoku() {
 			);
 			return { ...prev, candidates: updatedCandidates };
 		});
+	};
+
+	const handleCellClick = (row, col) => {
+		if (!timerRunning) return;
+		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
+	};
+
+	const handleCellFocus = (row, col) => {
+		if (!timerRunning) return;
+		setSudokuState((prev) => ({ ...prev, selectedCell: [row, col] }));
 	};
 
 	const handleCandidateCellClick = (row, col, value) => {
@@ -270,11 +255,11 @@ export default function Sudoku() {
 	};
 
 	const handleNumberClick = (number) => {
-		if (numsComplete?.includes(number)) return false;
-		handleInput(number.toString());
+		if (numsComplete.includes(number)) return;
+		candidateMode
+			? handleCandidateInput(number.toString())
+			: handleInput(number.toString());
 	};
-
-	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const win = () => {
 		setSudokuState((prev) => ({
@@ -283,16 +268,18 @@ export default function Sudoku() {
 			selectedCell: null,
 		}));
 		setIsComplete(true);
-		setSudokuState((prev) => ({ ...prev, timerRunning: !prev.timerRunning }));
+		setSudokuState((prev) => ({ ...prev, timerRunning: false }));
 		setIsModalOpen(true);
 	};
 
 	const reset = () => {
 		setIsComplete(false);
 		setIsModalOpen(false);
-		setSudokuState(initialSudokuState);
+		setSudokuState(defaultInitialState);
 		setNumsComplete([]);
-		setUserLocked(initialPuzzle.map((row) => row.map((cell) => cell !== "")));
+		setUserLocked(
+			placeholderBoard.map((row) => row.map((cell) => cell !== ""))
+		);
 	};
 
 	const toggleCandidateMode = () => {
@@ -302,29 +289,11 @@ export default function Sudoku() {
 	const seconds = elapsedTime % 60;
 	const minutes = Math.floor(elapsedTime / 60);
 
-	useEffect(() => {
-		const fetchPuzzle = async () => {
-			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/sudoku/today/easy`
-				);
-				if (!response.ok) throw new Error("Failed to fetch puzzle");
+	if (loading || !solution) return <div>Loading puzzle...</div>;
+	if (error) return <div>Error: {error}</div>;
 
-				const data = await response.json();
-				setPuzzle(data);
-				console.log(data);
-			} catch (err) {
-				setError(err.message);
-				console.log(err);
-			}
-		};
-
-		fetchPuzzle();
-	}, []);
 	return (
 		<div className="flex items-center flex-col min-h-screen overflow-hidden">
-			<div>{puzzle}</div>
-			<HeaderButtons />
 			<div className="flex flex-col md:flex-row items-center justify-center overflow-hidden">
 				<div className="flex flex-col items-center justify-center">
 					<div className="flex justify-center items-center">
@@ -344,12 +313,11 @@ export default function Sudoku() {
 							{timerRunning ? <FaPause /> : <FaPlay />}
 						</button>
 					</div>
-
 					<div className="flex flex-col items-center justify-center p-8 pt-2 pb-4">
 						<Board
 							board={board}
 							selectedCell={selectedCell}
-							prefilled={initialPuzzle}
+							prefilled={board} // Assume initial cells
 							solution={solution}
 							onCellClick={handleCellClick}
 							onCellFocus={handleCellFocus}
@@ -380,7 +348,6 @@ export default function Sudoku() {
 						<Toggle isOn={candidateMode} onToggle={toggleCandidateMode} />
 						<FaPencilAlt />
 					</div>
-
 					<NumberBox
 						numsComplete={numsComplete}
 						onNumberClick={handleNumberClick}
