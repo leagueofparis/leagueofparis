@@ -13,7 +13,9 @@ public class SudokuGenerator
 {
 	private static readonly Random _random = new();
 
-	public (int[,], int[,]) Generate(Difficulty difficulty)
+	// Now returns a tuple where the puzzle board is a string array
+	// (with empty strings for removed cells) and the solution remains an int array.
+	public (string[,], int[,]) Generate(Difficulty difficulty)
 	{
 		int[,] board = new int[9, 9];
 		FillBoard(board);
@@ -31,7 +33,10 @@ public class SudokuGenerator
 			_ => 40
 		};
 
-		int[,] puzzle = RemoveCells((int[,])board.Clone(), 81 - clues);
+		int[,] puzzleInt = RemoveCells((int[,])board.Clone(), 81 - clues);
+
+		// Convert the puzzle board to a string board, using empty string for 0.
+		string[,] puzzle = ConvertBoardToString(puzzleInt);
 
 		return (puzzle, solution);
 	}
@@ -114,5 +119,20 @@ public class SudokuGenerator
 			}
 		}
 		return board;
+	}
+
+	// Helper method to convert an integer board to a string board.
+	// Any cell with 0 becomes an empty string.
+	private string[,] ConvertBoardToString(int[,] board)
+	{
+		string[,] result = new string[9, 9];
+		for (int row = 0; row < 9; row++)
+		{
+			for (int col = 0; col < 9; col++)
+			{
+				result[row, col] = board[row, col] == 0 ? "" : board[row, col].ToString();
+			}
+		}
+		return result;
 	}
 }

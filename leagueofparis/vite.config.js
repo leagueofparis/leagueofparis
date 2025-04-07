@@ -15,6 +15,11 @@ export default defineConfig({
 				// Optional: rewrite the path if your API doesn't have '/api' prefix
 				rewrite: (path) => path.replace(/^\/api/, ""),
 			},
+			"/auth": {
+				target: "http://localhost:3001",
+				changeOrigin: false,
+				secure: false,
+			},
 		},
 		host: true,
 		port: 3000,
