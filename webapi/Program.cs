@@ -55,7 +55,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("Supabase"))
+	options.UseNpgsql(builder.Configuration.GetConnectionString("Supabase"), npgsqlOptions =>
+	{
+		npgsqlOptions.CommandTimeout(60); // Set command timeout to 60 seconds
+		npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null); // Retry on failure
+	})
 );
 
 var app = builder.Build();
