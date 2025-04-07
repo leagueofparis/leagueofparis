@@ -67,13 +67,13 @@ function deserializeState(data, initialState) {
  */
 export default function useSudokuStorage(initialState) {
 	const [state, setState] = useState(() => {
-		const stored = localStorage.getItem("sudoku-save");
+		const stored = localStorage.getItem("sudokuData");
 		if (stored) {
 			try {
 				const parsed = JSON.parse(stored);
 				return deserializeState(parsed, initialState);
 			} catch (err) {
-				console.warn("Failed to parse stored sudoku-save:", err);
+				console.warn("Failed to parse stored sudokuData:", err);
 			}
 		}
 		return initialState;
@@ -81,7 +81,7 @@ export default function useSudokuStorage(initialState) {
 
 	useEffect(() => {
 		const dataToSave = serializeState(state);
-		localStorage.setItem("sudoku-save", JSON.stringify(dataToSave));
+		localStorage.setItem("sudokuData", JSON.stringify(dataToSave));
 	}, [state]);
 
 	return [state, setState];
