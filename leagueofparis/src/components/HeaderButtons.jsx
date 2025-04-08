@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { ToggleTheme } from "../utilities/ToggleTheme";
 import { FaSun, FaMoon, FaTh } from "react-icons/fa";
-import SignInButton from "./SignInButton";
+import SignInButton from "./SignInButton"; // Adjust the path as necessary
+import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
 
 export default function HeaderButtons({ onSignIn }) {
 	const [theme, setTheme] = useState("parislight");
@@ -28,7 +29,7 @@ export default function HeaderButtons({ onSignIn }) {
 			<div className="flex items-center gap-4">
 				<button>
 					<img
-						src="/src/assets/images/paris.png" // Adjust the path as necessary
+						src={ParisLogo} // Adjust the path as necessary
 						alt="League of Paris Logo"
 						className="h-16 w-16 rounded-full cursor-pointer pt-2"
 						onClick={() => redirectUrl("")} // Redirect to home page

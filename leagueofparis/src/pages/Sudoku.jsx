@@ -407,13 +407,13 @@ export default function Sudoku() {
 				<div className="flex flex-col justify-center items-center">
 					<div className="flex gap-1 justify-center items-center">
 						<button
-							className="bg-blue-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							className="bg-secondary text-base-100 px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
 							onClick={win}
 						>
 							Win
 						</button>
 						<button
-							className="bg-red-400 text-white px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							className="bg-primary text-accent px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
 							onClick={reset}
 						>
 							Reset

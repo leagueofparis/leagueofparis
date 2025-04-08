@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import React from "react";
-import MainImage from "../assets/images/8cba602f0e5daec4a16bd7a8b4046489.jpg";
+import MainImage from "../../public/images/pfp.jpg";
 import {
 	FaInstagram,
 	FaTwitch,

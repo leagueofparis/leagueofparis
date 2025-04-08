@@ -17,12 +17,12 @@ export default function Cell({
 }) {
 	const highlightClass =
 		{
-			selected: "bg-yellow-400",
-			number: "bg-yellow-300",
-			rowcol: "bg-yellow-100",
+			selected: "bg-warning",
+			number: "bg-accent",
+			rowcol: "bg-primary",
 			prefilled: "bg-fuchsia-200",
 			blur: "blur-sm",
-		}[highlightType] || "";
+		}[highlightType] || "bg-neutral";
 
 	const onCanCellClick = (e, value) => {
 		if (highlightType !== "selected") {
@@ -73,7 +73,7 @@ export default function Cell({
 			)}
 
 			{isDuplicateValue ? (
-				<div className="w-3 h-3 rounded-full bg-red-500 absolute bottom-0 right-0 mr-1 mb-1"></div>
+				<div className="w-3 h-3 rounded-full bg-error absolute bottom-0 right-0 mr-1 mb-1"></div>
 			) : (
 				""
 			)}
