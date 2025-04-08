@@ -7,6 +7,7 @@ import {
 	FaDiscord,
 	FaTiktok,
 	FaYoutube,
+	FaSpotify,
 } from "react-icons/fa";
 import TwitchEmbed from "../components/TwitchEmbed";
 
@@ -55,6 +56,13 @@ function Home() {
 					rel="noopener noreferrer"
 				>
 					<FaYoutube size={36} className={iconClasses} />
+				</a>
+				<a
+					href="https://open.spotify.com/user/3o21ubwap21drbbd11dmjdtr4?si=5c06565a676f4651"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<FaSpotify size={36} className={iconClasses} />
 				</a>
 			</div>
 			{/* <ul className="mt-4 space-y-2">

@@ -4,4 +4,5 @@ export function ToggleTheme() {
 	const newTheme = currentTheme === "parislight" ? "parisdark" : "parislight";
 
 	document.documentElement.setAttribute("data-theme", newTheme);
+	localStorage.setItem("theme", newTheme); // Save the new theme to localStorage
 }

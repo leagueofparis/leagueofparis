@@ -1,5 +1,4 @@
 import HeaderButtons from "./HeaderButtons";
-import { useEffect, useState } from "react";
 
 export default function Layout({ children }) {
 	async function signIn() {
@@ -14,9 +13,11 @@ export default function Layout({ children }) {
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col">
-			<header className="text-right flex justify-end items-center">
-				<HeaderButtons onSignIn={signIn} />
+		<div className="min-h-screen flex flex-col overflow-x-hidden">
+			<header className="w-full">
+				<div className="flex justify-between items-center w-full px-4">
+					<HeaderButtons onSignIn={signIn} />
+				</div>
 			</header>
 			<main className="flex-grow">{children}</main>
 			<footer className="text-center">
