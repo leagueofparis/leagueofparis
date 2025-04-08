@@ -34,9 +34,9 @@ export default function HeaderButtons({ onSignIn }) {
 						onClick={() => redirectUrl("")} // Redirect to home page
 					/>
 				</button>
-				<h2>About Me</h2>
+				{/* <h2>About Me</h2>
 				<h2>Portfolio</h2>
-				<h2>Games</h2>
+				<h2>Games</h2> */}
 			</div>
 			<div className="flex gap-2 items-center">
 				<button
