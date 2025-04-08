@@ -44,7 +44,7 @@ namespace webapi.Controllers
 					};
 
 					_db.DailySudokuPuzzles.Add(puzzle);
-					_db.SaveChanges();
+					await _db.SaveChangesAsync();
 				}
 
 				return Ok(new

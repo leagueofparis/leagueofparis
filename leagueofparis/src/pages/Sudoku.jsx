@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, use } from "react";
 import Modal from "../components/Modal";
 import Board from "../components/sudoku/Board";
 import HeaderButtons from "../components/HeaderButtons";
@@ -19,14 +19,16 @@ const placeholderCandidates = Array(9)
 	);
 
 const defaultInitialState = {
+	prefilled: placeholderBoard,
 	board: placeholderBoard,
+	solution: placeholderBoard,
 	selectedCell: null,
 	elapsedTime: 0,
 	candidateMode: false,
 	candidates: placeholderCandidates,
 	timerRunning: true,
 	difficulty: "easy",
-	date: getDateOnly(new Date()),
+	date: null,
 };
 
 function getDateOnly(date) {
@@ -34,12 +36,13 @@ function getDateOnly(date) {
 }
 
 export default function Sudoku() {
-	const [solution, setSolution] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [sudokuState, setSudokuState] = useSudokuStorage(defaultInitialState);
 	const {
+		prefilled,
 		board,
+		solution,
 		selectedCell,
 		elapsedTime,
 		candidateMode,
@@ -51,29 +54,86 @@ export default function Sudoku() {
 
 	const [numsComplete, setNumsComplete] = useState([]);
 	const [userLocked, setUserLocked] = useState(
-		placeholderBoard.map((row) => row.map((cell) => cell !== ""))
+		placeholderBoard.map((row) =>
+			row.map((cell) => cell !== null && cell !== "")
+		)
 	);
 	const [isComplete, setIsComplete] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const cellRefs = useRef({});
 	const selectedCellRef = useRef(null);
+	const hasFetched = useRef(false);
 
 	useEffect(() => {
 		const fetchPuzzle = async () => {
+			if (hasFetched.current) return;
+			hasFetched.current = true;
 			try {
+				// Check localStorage for existing puzzle
+				const storedData = JSON.parse(localStorage.getItem("sudokuData"));
+				const today = getDateOnly(new Date()).toISOString();
+				if (
+					storedData &&
+					storedData.date === today &&
+					storedData.difficulty === sudokuState.difficulty
+				) {
+					console.log("Using stored puzzle from localStorage");
+					// Use stored puzzle and solution
+					setSudokuState((prev) => ({
+						...prev,
+						board: storedData.board,
+						timerRunning: true,
+					}));
+					setUserLocked(
+						storedData.board.map((row) =>
+							row.map((cell) => cell !== null && cell !== "")
+						)
+					);
+					setLoading(false);
+					return;
+				}
+
+				// Fetch new puzzle from API
 				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/sudoku/today/easy`
+					`https://leagueofparis-webapi.onrender.com/api/sudoku/today/${sudokuState.difficulty}`
 				);
 				if (!response.ok) throw new Error("Failed to fetch puzzle");
 				const data = await response.json();
-				setSudokuState((prev) => ({
-					...prev,
-					board: data.puzzle,
+
+				console.log("Fetched new puzzle from API", data);
+				// Convert prefilled cells to strings
+				const puzzleAsStrings = data.puzzle.map((row) =>
+					row.map((cell) => (cell !== null ? cell.toString() : ""))
+				);
+
+				// Save puzzle and solution to localStorage
+				const newPuzzleData = {
+					board: puzzleAsStrings,
+					solution: data.solution,
+					date: today,
+					difficulty: sudokuState.difficulty,
+				};
+
+				console.log("Saving puzzle to localStorage", newPuzzleData);
+
+				setSudokuState(() => ({
+					...defaultInitialState, // Start with defaultInitialState
+					prefilled: puzzleAsStrings,
+					board: puzzleAsStrings,
+					solution: data.solution,
+					difficulty: sudokuState.difficulty,
+					date: today,
 					timerRunning: true,
 				}));
-				setUserLocked(data.puzzle.map((row) => row.map((cell) => cell !== "")));
-				setSolution(data.solution);
+
+				localStorage.setItem("sudokuData", sudokuState);
+
+				setUserLocked(
+					data.puzzle.map((row) =>
+						row.map((cell) => cell !== null && cell !== "")
+					)
+				);
 				setLoading(false);
 			} catch (err) {
 				setError(err.message);
@@ -82,7 +142,7 @@ export default function Sudoku() {
 		};
 
 		fetchPuzzle();
-	}, []);
+	}, [sudokuState.difficulty]);
 
 	useEffect(() => {
 		selectedCellRef.current = selectedCell;
@@ -175,6 +235,7 @@ export default function Sudoku() {
 		const [row, col] = selectedCell;
 		if (userLocked[row][col]) return;
 		if (value >= "1" && value <= "9") {
+			console.log("handleInput", value);
 			const correct = solution[row][col].toString() === value;
 			const newBoard = board.map((r, rIdx) =>
 				r.map((c, cIdx) => (rIdx === row && cIdx === col ? value : c))
@@ -273,13 +334,25 @@ export default function Sudoku() {
 	};
 
 	const reset = () => {
-		setIsComplete(false);
-		setIsModalOpen(false);
-		setSudokuState(defaultInitialState);
-		setNumsComplete([]);
-		setUserLocked(
-			placeholderBoard.map((row) => row.map((cell) => cell !== ""))
-		);
+		// Reset to the initial state from localStorage
+		const storedData = JSON.parse(localStorage.getItem("sudokuData"));
+		if (storedData) {
+			setSudokuState((prev) => ({
+				...prev,
+				board: storedData.board,
+				selectedCell: null,
+				elapsedTime: 0,
+				timerRunning: true,
+			}));
+			setUserLocked(
+				storedData.board.map((row) =>
+					row.map((cell) => cell !== null && cell !== "")
+				)
+			);
+			setNumsComplete([]);
+			setIsComplete(false);
+			setIsModalOpen(false);
+		}
 	};
 
 	const toggleCandidateMode = () => {
@@ -317,7 +390,7 @@ export default function Sudoku() {
 						<Board
 							board={board}
 							selectedCell={selectedCell}
-							prefilled={board} // Assume initial cells
+							prefilled={prefilled} // Assume initial cells
 							solution={solution}
 							onCellClick={handleCellClick}
 							onCellFocus={handleCellFocus}
