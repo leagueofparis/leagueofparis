@@ -8,6 +8,9 @@ DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 builder.Configuration.AddEnvironmentVariables();
 
 var jwtSecret = builder.Configuration["JWT_SECRET"];

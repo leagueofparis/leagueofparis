@@ -18,11 +18,11 @@ export default function Cell({
 	const highlightClass =
 		{
 			selected: "bg-warning",
-			number: "bg-accent",
-			rowcol: "bg-primary",
-			prefilled: "bg-fuchsia-200",
+			number: "bg-orange-300",
+			rowcol: "bg-orange-200",
+			prefilled: "bg-stone-200",
 			blur: "blur-sm",
-		}[highlightType] || "bg-neutral";
+		}[highlightType] || "bg-base-300";
 
 	const onCanCellClick = (e, value) => {
 		if (highlightType !== "selected") {
