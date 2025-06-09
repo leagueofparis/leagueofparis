@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { uploadImage, invokeEdgeFunction } from "../supabaseClient";
+import {
+	uploadImage,
+	invokeEdgeFunction,
+	getImageUrl,
+} from "../supabaseClient";
 
 async function validateUploadKey(key) {
 	const { data, error } = await invokeEdgeFunction("validate-secret", key);
@@ -13,6 +17,7 @@ function UploadContainer({ title, folder, multiple = false }) {
 	const [file, setFile] = useState(null);
 	const [status, setStatus] = useState("");
 	const [key, setKey] = useState("");
+	const [message, setMessage] = useState("");
 
 	const handleChange = (e) => {
 		if (multiple) {
@@ -30,23 +35,60 @@ function UploadContainer({ title, folder, multiple = false }) {
 			setStatus("Invalid upload key.");
 			return;
 		}
-		if (!file) {
+		if (!file || (multiple && file.length === 0)) {
 			setStatus("Please select a file.");
 			return;
 		}
+
 		setStatus("Uploading...");
+
 		try {
 			if (multiple) {
 				for (const f of file) {
-					await uploadImage(f, folder);
+					await uploadImage(f, folder); // still upload to Supabase if ne
 				}
 			} else {
 				await uploadImage(file, folder);
+				await sendDiscordWebhook(message || `New upload to ${folder}`, file);
 			}
+
 			setStatus("Upload successful!");
 			setFile(null);
+			setMessage("");
 		} catch (err) {
 			setStatus("Upload failed: " + err.message);
+		}
+	};
+
+	const sendDiscordWebhook = async (message, file) => {
+		const webhookUrl =
+			"https://discord.com/api/webhooks/1381780518999162900/j-QCrbbynbM75BURLg-2BaUmoXt9qSf1vuWDJfjdP4-6FDOivu4ZG2OiGyLReH3NOwQQ";
+
+		const formData = new FormData();
+		formData.append("file", file, file.name); // attach file from input
+
+		formData.append(
+			"payload_json",
+			JSON.stringify({
+				content: message || "File uploaded!",
+				username: "Paris",
+				avatar_url:
+					"https://cdn.discordapp.com/avatars/1288610223896006778/59676ebfb59a83ead87a69a69ccb085c.webp?size=1024",
+				// No embeds!
+			})
+		);
+
+		try {
+			const res = await fetch(webhookUrl, {
+				method: "POST",
+				body: formData,
+			});
+			if (!res.ok) {
+				const errorText = await res.text();
+				console.error("Discord webhook error:", errorText);
+			}
+		} catch (error) {
+			console.error("Failed to send webhook:", error);
 		}
 	};
 
@@ -67,6 +109,15 @@ function UploadContainer({ title, folder, multiple = false }) {
 					value={key}
 					onChange={(e) => setKey(e.target.value)}
 				/>
+				{folder === "schedules" && (
+					<input
+						type="text"
+						placeholder="Schedule message (optional)"
+						className="input input-bordered w-full max-w-xs mb-3"
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
+					/>
+				)}
 				<button
 					onClick={handleUpload}
 					className="btn btn-primary w-full"

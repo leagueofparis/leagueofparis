@@ -36,7 +36,7 @@ export default function WeeklyImage() {
 			<img
 				src={currentImage}
 				alt="Weekly featured image"
-				className="w-full h-auto rounded-lg shadow-lg"
+				className="w-full h-auto rounded-b-lg"
 			/>
 		</div>
 	);
