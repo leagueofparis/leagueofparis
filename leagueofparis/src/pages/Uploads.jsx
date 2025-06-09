@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-	uploadImage,
-	invokeEdgeFunction,
-	getImageUrl,
-} from "../supabaseClient";
+import { uploadImage, invokeEdgeFunction } from "../supabaseClient";
 
 async function validateUploadKey(key) {
 	const { data, error } = await invokeEdgeFunction("validate-secret", key);
