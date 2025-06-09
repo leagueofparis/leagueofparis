@@ -19,8 +19,8 @@ export default function Layout({ children }) {
 					<HeaderButtons onSignIn={signIn} />
 				</div>
 			</header>
-			<main className="flex-grow">{children}</main>
-			<footer className="text-center">
+			<main className="flex-grow pb-8">{children}</main>
+			<footer className="text-center mt-auto py-4">
 				<p>
 					&copy; {new Date().getFullYear()} League of Paris. All rights
 					reserved.

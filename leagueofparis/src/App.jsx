@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Sudoku from "./pages/Sudoku";
 import Layout from "./components/Layout";
+import Uploads from "./pages/Uploads";
+import RecentUpload from "./pages/RecentUpload";
 
 function App() {
 	//load the theme from localStorage on initial load
@@ -32,6 +34,15 @@ function App() {
 						</Layout>
 					}
 				/>
+				<Route
+					path="/uploads"
+					element={
+						<Layout>
+							<Uploads />
+						</Layout>
+					}
+				/>
+				<Route path="/recent-uploads" element={<RecentUpload />} />
 				{/* other routes */}
 			</Routes>
 		</Router>

@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.6.1",
-		"@supabase/supabase-js": "^2.49.4",
+		"@supabase/supabase-js": "^2.50.0",
 		"@tailwindcss/vite": "^4.0.15",
 		"cookie-parser": "^1.4.7",
 		"daisyui": "^5.0.9",
