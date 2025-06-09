@@ -40,13 +40,13 @@ export default function HeaderButtons({ onSignIn }) {
 				<h2>Games</h2> */}
 			</div>
 			<div className="flex gap-2 items-center">
-				<button
+				{/* <button
 					onClick={() => redirectUrl("sudoku")}
 					className="p-0 cursor-pointer"
 					title="Play Sudoku"
 				>
 					<FaTh size={24} />
-				</button>
+				</button> */}
 
 				<button
 					onClick={handleToggleTheme}
@@ -56,7 +56,7 @@ export default function HeaderButtons({ onSignIn }) {
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
 
-				<SignInButton />
+				{/* <SignInButton /> */}
 			</div>
 		</div>
 	);

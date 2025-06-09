@@ -18,7 +18,7 @@ export default function Cell({
 	const highlightClass =
 		{
 			selected: "bg-warning",
-			number: "bg-orange-300",
+			number: "bg-yellow-300",
 			rowcol: "bg-orange-200",
 			prefilled: "bg-stone-200",
 			blur: "blur-sm",
@@ -49,7 +49,7 @@ export default function Cell({
 			data-row={row}
 			data-col={col}
 			data-value={value}
-			className={`text-center flex justify-center items-center border border-black leading-[0.95]
+			className={`text-center flex justify-center items-center border border-primary leading-[0.95]
 				focus:outline-none caret-transparent select-none font-bold cursor-pointer relative
 				${(row + 1) % 3 === 0 && row !== 8 ? "border-b-3" : ""}
 				${(col + 1) % 3 === 0 && col !== 8 ? "border-r-3" : ""}

@@ -22,8 +22,8 @@ export default function NumberBox({
 				{Array.from({ length: 9 }).map((_, i) => (
 					<div
 						key={i}
-						className={`m-1 font-bold flex cursor-pointer rounded-lg text-accent
-					${isCompleted(i + 1) ? "bg-base-200 opacity-50" : "bg-neutral"}
+						className={`m-1 font-bold flex cursor-pointer rounded-lg text-primary-content
+					${isCompleted(i + 1) ? "bg-neutral opacity-50" : "bg-primary"}
 					${getAlignment(candidateMode, i + 1)}`}
 						style={clamp}
 						onClick={() => onNumberClick(i + 1)}
@@ -34,7 +34,7 @@ export default function NumberBox({
 			</div>
 			<div
 				key={0}
-				className="m-1 font-bold flex justify-center items-center cursor-pointer rounded-lg bg-neutral text-accent
+				className="m-1 font-bold flex justify-center items-center cursor-pointer rounded-lg bg-primary text-primary-content
 							[--w:clamp(2rem,27vh,5rem)] [--h:clamp(2rem,9vw,5rem)] [--fs:clamp(1.2rem,5vw,3rem)]
 							md:[--w:clamp(4rem,20vw,16rem)] md:[--h:clamp(4rem,12vw,6rem)] md:[--fs:clamp(1.5rem,4vw,2.5rem)]"
 				style={{

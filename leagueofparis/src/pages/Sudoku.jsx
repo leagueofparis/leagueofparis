@@ -339,10 +339,11 @@ export default function Sudoku() {
 		if (storedData) {
 			setSudokuState((prev) => ({
 				...prev,
-				board: storedData.board,
+				board: storedData.prefilled,
 				selectedCell: null,
 				elapsedTime: 0,
 				timerRunning: true,
+				candidates: placeholderCandidates,
 			}));
 			setUserLocked(
 				storedData.board.map((row) =>
@@ -407,13 +408,13 @@ export default function Sudoku() {
 				<div className="flex flex-col justify-center items-center">
 					<div className="flex gap-1 justify-center items-center">
 						<button
-							className="bg-secondary text-base-100 px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							className="bg-success text-primary-content px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
 							onClick={win}
 						>
 							Win
 						</button>
 						<button
-							className="bg-primary text-accent px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
+							className="bg-neutral text-primary-content px-4 py-2 rounded cursor-pointer font-bold text-xl max-w-[16rem]"
 							onClick={reset}
 						>
 							Reset
