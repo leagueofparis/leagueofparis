@@ -7,7 +7,7 @@ const TwitchEmbed = () => {
 		script.src = "https://embed.twitch.tv/embed/v1.js";
 		script.addEventListener("load", () => {
 			new window.Twitch.Embed("twitch-embed", {
-				width: "480px",
+				width: "355px",
 				height: 200,
 				channel: "leagueofparis",
 				layout: "video",
