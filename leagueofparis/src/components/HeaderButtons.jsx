@@ -3,8 +3,10 @@ import { ToggleTheme } from "../utilities/ToggleTheme";
 import { FaSun, FaMoon, FaTh } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
+import { isAuthenticated, getToken } from "../utilities/auth";
+import { jwtDecode } from "jwt-decode";
 
-export default function HeaderButtons({ onSignIn }) {
+export default function HeaderButtons({ onSignIn, onSignOut }) {
 	const [theme, setTheme] = useState("parislight");
 
 	useEffect(() => {
@@ -23,6 +25,14 @@ export default function HeaderButtons({ onSignIn }) {
 	const redirectUrl = (page) => {
 		document.location.href = "/" + page;
 	};
+
+	useEffect(() => {
+		const token = getToken();
+		if (token) {
+			const decoded = jwtDecode(token);
+			console.log(decoded);
+		}
+	}, []);
 
 	return (
 		<div className="flex items-center justify-between w-full">
@@ -56,7 +66,12 @@ export default function HeaderButtons({ onSignIn }) {
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
 
-				{/* <SignInButton /> */}
+				{/* <SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
+				{isAuthenticated() && (
+					<button onClick={onSignOut}>
+						<img src={ParisLogo} alt="League of Paris Logo" />
+					</button>
+				)} */}
 			</div>
 		</div>
 	);
