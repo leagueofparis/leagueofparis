@@ -85,7 +85,12 @@ function Home() {
 			{mobile && (
 				<div className="flex flex-col items-center justify-center gap-4 w-full">
 					<div>
-						<TwitchEmbed width="355px" height={200} key="mobile-twitch-embed" />
+						<TwitchEmbed
+							width="355px"
+							height={200}
+							key="mobile-twitch-embed"
+							className="rounded-lg overflow-hidden"
+						/>
 					</div>
 					<div>
 						<Schedule />
@@ -105,6 +110,7 @@ function Home() {
 							width="667px"
 							height={375}
 							key="desktop-twitch-embed"
+							className="rounded-lg overflow-hidden"
 						/>
 						<Schedule />
 					</div>

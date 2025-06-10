@@ -8,16 +8,17 @@ export default defineConfig({
 		proxy: {
 			// Change '/api' to match the path you use for your API requests
 			"/api": {
-				target: "http://localhost:5159", // Replace with your API's port
+				target: import.meta.env.VITE_API_URL, // Replace with your API's port
 				changeOrigin: true,
 				secure: false,
 				// Optional: rewrite the path if your API doesn't have '/api' prefix
 				rewrite: (path) => path.replace(/^\/api/, ""),
 			},
 			"/auth": {
-				target: "http://localhost:3001",
-				changeOrigin: false,
+				target: import.meta.env.VITE_API_URL,
+				changeOrigin: true,
 				secure: false,
+				rewrite: (path) => path.replace(/^\/auth/, "/api/auth"),
 			},
 		},
 		host: true,

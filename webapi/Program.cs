@@ -18,6 +18,9 @@ if (string.IsNullOrEmpty(jwtSecret))
 {
 	throw new Exception("JWT_SECRET environment variable is required");
 }
+
+builder.Services.AddHttpClient();
+
 // Add services to the container.
 builder.Services.AddControllers();
 

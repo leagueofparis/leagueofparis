@@ -10,7 +10,7 @@
 		"start": "serve -s dist",
 		"start:server": "node src/utilities/express.js",
 		"start:client": "vite",
-		"dev": "concurrently \"npm run start:server\" \"npm run start:client\""
+		"dev": "concurrently \"npm run start:client\""
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.6.1",

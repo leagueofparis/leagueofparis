@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import Sudoku from "./pages/Sudoku";
 import Layout from "./components/Layout";
 import Uploads from "./pages/Uploads";
-import RecentUpload from "./pages/RecentUpload";
+import AuthCallback from "./pages/AuthCallback";
 
 function App() {
 	//load the theme from localStorage on initial load
@@ -42,8 +42,15 @@ function App() {
 						</Layout>
 					}
 				/>
-				<Route path="/recent-uploads" element={<RecentUpload />} />
-				{/* other routes */}
+				<Route
+					path="/login"
+					element={
+						<Layout>
+							<Login />
+						</Layout>
+					}
+				/>
+				<Route path="/discord/callback" element={<AuthCallback />} />
 			</Routes>
 		</Router>
 	);

@@ -4,12 +4,35 @@ const TwitchEmbed = ({
 	width = "355px",
 	height = 200,
 	id = "twitch-embed",
+	className = "",
 }) => {
 	useEffect(() => {
 		// Clean up any previous embed
 		const container = document.getElementById(id);
 		if (container) {
 			container.innerHTML = "";
+		}
+
+		// Function to add classes to the iframe
+		const addClassesToIframe = () => {
+			const iframe = container?.querySelector("iframe");
+			if (iframe) {
+				iframe.classList.add(...className.split(" "));
+			}
+		};
+
+		// Create a MutationObserver to watch for the iframe
+		const observer = new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.addedNodes.length) {
+					addClassesToIframe();
+				}
+			});
+		});
+
+		// Start observing the container
+		if (container) {
+			observer.observe(container, { childList: true, subtree: true });
 		}
 
 		// Only add the script if it doesn't exist
@@ -54,14 +77,15 @@ const TwitchEmbed = ({
 			});
 		}
 
-		// Cleanup only the container on unmount
+		// Cleanup
 		return () => {
+			observer.disconnect();
 			const container = document.getElementById(id);
 			if (container) container.innerHTML = "";
 		};
-	}, [width, height, id]);
+	}, [width, height, id, className]);
 
-	return <div id={id} />;
+	return <div id={id} className={className} />;
 };
 
 export default TwitchEmbed;
