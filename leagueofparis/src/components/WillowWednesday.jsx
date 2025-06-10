@@ -3,7 +3,7 @@ import WeeklyImage from "./WeeklyImage";
 
 const WillowWednesday = () => {
 	return (
-		<div className="w-full max-w-[480px] mx-auto p-4">
+		<div className="w-full">
 			<img
 				src="/images/willow_wed_banner.jpg"
 				alt="Willow Wednesday"

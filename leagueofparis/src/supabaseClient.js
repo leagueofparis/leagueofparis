@@ -24,6 +24,22 @@ export async function uploadImage(image, folder) {
 	return data;
 }
 
+export async function getImageUrls(folder) {
+	const { data, error } = await supabase.storage
+		.from(bucket)
+		.list(folder, { limit: 100 });
+	if (error) {
+		throw error;
+	}
+	// Return the public URL for each image
+	return data.map((item) => {
+		const url = supabase.storage
+			.from(bucket)
+			.getPublicUrl(`${folder}/${item.name}`).data.publicUrl;
+		return url;
+	});
+}
+
 export function getImageUrl(path) {
 	return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
@@ -44,13 +60,10 @@ function simpleHash(str) {
 }
 
 export async function getWeeklyImageUrl() {
-	console.log("Fetching images from bucket:", bucket);
-
 	// Directly list the contents of 'willow-wednesdays'
 	const { data, error } = await supabase.storage
 		.from(bucket)
 		.list("willow-wednesdays", { limit: 100 });
-	console.log("Direct list of willow-wednesdays:", data, error);
 
 	if (error) {
 		throw new Error("Error listing willow-wednesdays: " + error.message);
@@ -66,7 +79,6 @@ export async function getWeeklyImageUrl() {
 	const imageUrl = supabase.storage
 		.from(bucket)
 		.getPublicUrl(`willow-wednesdays/${selectedFile.name}`).data.publicUrl;
-	console.log("Selected file:", selectedFile, "Generated URL:", imageUrl);
 	return imageUrl;
 }
 

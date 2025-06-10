@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MainImage from "../../public/images/pfp.jpg";
 import {
 	FaInstagram,
@@ -13,8 +13,22 @@ import TwitchEmbed from "../components/TwitchEmbed";
 import WillowWednesday from "../components/WillowWednesday";
 import { Link } from "react-router-dom";
 import Schedule from "../components/Schedule";
+import ImageCarousel from "../components/ImageCarousel";
+import AboutMe from "../components/AboutMe";
 
 function Home() {
+	const [mobile, setMobile] = useState(false);
+
+	useEffect(() => {
+		function handleResize() {
+			console.log(window.innerWidth);
+			setMobile(window.innerWidth <= 768);
+		}
+		handleResize();
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
 	//text-teal-400 hover:text-teal-100
 	return (
@@ -68,12 +82,42 @@ function Home() {
 					<FaSpotify size={36} className={iconClasses} />
 				</a>
 			</div>
-
-			<div className="flex flex-col items-center justify-center gap-4">
-				<TwitchEmbed />
-				<WillowWednesday />
-				<Schedule />
-			</div>
+			{mobile && (
+				<div className="flex flex-col items-center justify-center gap-4 w-full">
+					<div>
+						<TwitchEmbed width="355px" height={200} key="mobile-twitch-embed" />
+					</div>
+					<div>
+						<Schedule />
+					</div>
+					<div className="w-full">
+						<WillowWednesday />
+					</div>
+					<div className="w-full">
+						<AboutMe />
+					</div>
+				</div>
+			)}
+			{!mobile && (
+				<div className="flex flex-col items-center justify-center gap-4 max-w-[975px]">
+					<div className="flex flex-row items-center justify-center gap-4 w-full">
+						<TwitchEmbed
+							width="667px"
+							height={375}
+							key="desktop-twitch-embed"
+						/>
+						<Schedule />
+					</div>
+					<div className="flex flex-row items-center justify-center gap-4 w-full">
+						<div className="w-1/2">
+							<WillowWednesday />
+						</div>
+						<div className="w-1/2">
+							<AboutMe />
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

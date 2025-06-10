@@ -53,7 +53,7 @@ export default function Schedule({ folder = "schedules", className = "" }) {
 			<img
 				src={imageUrl}
 				alt={fileName}
-				className="rounded-lg max-h-96 object-contain mb-2"
+				className="rounded-lg max-h-[375px] object-contain"
 			/>
 		</div>
 	);
