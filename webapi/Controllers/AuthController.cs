@@ -101,7 +101,9 @@ namespace webapi.Controllers
                     new Claim(JwtRegisteredClaimNames.Sub, userData.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("username", userData.Username),
-                    new Claim("discord_id", userData.Id)
+                    new Claim("discord_id", userData.Id),
+                    new Claim("email", userData.Email),
+					new Claim("avatar", userData.Avatar),
                 };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));

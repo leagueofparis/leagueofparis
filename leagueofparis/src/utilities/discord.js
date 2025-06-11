@@ -1,4 +1,4 @@
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { getToken } from "./auth";
 
 // Get Discord user info from the JWT token
@@ -7,11 +7,14 @@ export function getDiscordUser() {
 	if (!token) return null;
 	try {
 		const decoded = jwtDecode(token);
+		console.log(decoded, "decoded");
 		// Your backend should include these claims in the JWT:
 		// { sub, username, discord_id, ... }
 		return {
 			id: decoded.discord_id,
 			username: decoded.username,
+			avatar: decoded.avatar,
+
 			// add more fields as needed
 		};
 	} catch (e) {
@@ -22,6 +25,7 @@ export function getDiscordUser() {
 export function getDiscordAvatar() {
 	const user = getDiscordUser();
 	if (!user) return null;
+	console.log(user, "user");
 	return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 }
 

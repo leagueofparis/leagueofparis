@@ -5,6 +5,7 @@ import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
 import { isAuthenticated, getToken } from "../utilities/auth";
 import { jwtDecode } from "jwt-decode";
+import { getDiscordAvatar } from "../utilities/discord";
 
 export default function HeaderButtons({ onSignIn, onSignOut }) {
 	const [theme, setTheme] = useState("parislight");
@@ -66,12 +67,18 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
 
-				{/* <SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
+				{!isAuthenticated() && (
+					<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
+				)}
 				{isAuthenticated() && (
-					<button onClick={onSignOut}>
-						<img src={ParisLogo} alt="League of Paris Logo" />
+					<button>
+						<img
+							src={getDiscordAvatar()}
+							className="h-10 w-10 rounded-full cursor-pointer"
+							alt="League of Paris Logo"
+						/>
 					</button>
-				)} */}
+				)}
 			</div>
 		</div>
 	);
