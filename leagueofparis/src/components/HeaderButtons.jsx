@@ -3,7 +3,7 @@ import { ToggleTheme } from "../utilities/ToggleTheme";
 import { FaSun, FaMoon, FaTh } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
-import { isAuthenticated, getToken } from "../utilities/auth";
+import { isAuthenticated, getToken, isInRole } from "../utilities/auth";
 import { jwtDecode } from "jwt-decode";
 import { getDiscordAvatar } from "../utilities/discord";
 
@@ -35,6 +35,20 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 		}
 	}, []);
 
+	const navClass = "text-lg hover:text-primary hover:underline";
+	const navClassActive = "text-primary underline underline-offset-4";
+
+	const isActive = (path) => {
+		return window.location.pathname === path;
+	};
+
+	const navItems = [
+		{ path: "/about", label: "About" },
+		{ path: "/gallery", label: "Gallery" },
+		{ path: "/uploads", label: "Uploads", requiredRole: "admin" },
+		{ path: "/contact", label: "Contact" },
+	];
+
 	return (
 		<div className="flex items-center justify-between w-full">
 			<div className="flex items-center gap-4">
@@ -46,19 +60,21 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 						onClick={() => redirectUrl("")} // Redirect to home page
 					/>
 				</button>
-				{/* <h2>About Me</h2>
-				<h2>Portfolio</h2>
-				<h2>Games</h2> */}
+				{navItems.map((item) =>
+					item.requiredRole ? (
+						isInRole(item.requiredRole) && (
+							<a href={item.path} className={navClass}>
+								{item.label}
+							</a>
+						)
+					) : (
+						<a href={item.path} className={navClass}>
+							{item.label}
+						</a>
+					)
+				)}
 			</div>
 			<div className="flex gap-2 items-center">
-				{/* <button
-					onClick={() => redirectUrl("sudoku")}
-					className="p-0 cursor-pointer"
-					title="Play Sudoku"
-				>
-					<FaTh size={24} />
-				</button> */}
-
 				<button
 					onClick={handleToggleTheme}
 					className="p-0 cursor-pointer"
@@ -67,7 +83,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
 
-				{/* {!isAuthenticated() && (
+				{!isAuthenticated() && (
 					<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
 				)}
 				{isAuthenticated() && (
@@ -78,7 +94,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 							alt="League of Paris Logo"
 						/>
 					</button>
-				)} */}
+				)}
 			</div>
 		</div>
 	);

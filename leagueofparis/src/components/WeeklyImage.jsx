@@ -9,6 +9,7 @@ export default function WeeklyImage() {
 	useEffect(() => {
 		const fetchAndSetImage = async () => {
 			try {
+				console.log("fetching image");
 				const imageUrl = await getWeeklyImageUrl();
 				setCurrentImage(imageUrl);
 				setLoading(false);
@@ -36,7 +37,7 @@ export default function WeeklyImage() {
 			<img
 				src={currentImage}
 				alt="Weekly featured image"
-				className="w-full h-auto rounded-b-lg"
+				className="w-full h-auto rounded-b-lg object-cover max-h-[475px]"
 			/>
 		</div>
 	);

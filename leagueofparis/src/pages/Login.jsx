@@ -50,7 +50,7 @@ function Login() {
 			<div className="card w-full max-w-sm bg-base-200 shadow-xl">
 				<div className="card-body">
 					<h2 className="card-title text-2xl mb-4 justify-center">Login</h2>
-					<form onSubmit={handleSubmit} className="flex flex-col gap-4">
+					{/* <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 						<input
 							type="text"
 							placeholder="Username"
@@ -72,7 +72,7 @@ function Login() {
 						</button>
 					</form>
 
-					<div className="divider">OR</div>
+					<div className="divider">OR</div> */}
 
 					<button
 						onClick={handleDiscordLogin}

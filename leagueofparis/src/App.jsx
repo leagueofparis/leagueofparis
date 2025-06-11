@@ -7,6 +7,8 @@ import Sudoku from "./pages/Sudoku";
 import Layout from "./components/Layout";
 import Uploads from "./pages/Uploads";
 import AuthCallback from "./pages/AuthCallback";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Contact from "./pages/Contact";
 
 function App() {
 	//load the theme from localStorage on initial load
@@ -37,9 +39,11 @@ function App() {
 				<Route
 					path="/uploads"
 					element={
-						<Layout>
-							<Uploads />
-						</Layout>
+						<ProtectedRoute requiredRole="admin">
+							<Layout>
+								<Uploads />
+							</Layout>
+						</ProtectedRoute>
 					}
 				/>
 				<Route
@@ -48,6 +52,16 @@ function App() {
 						<Layout>
 							<Login />
 						</Layout>
+					}
+				/>
+				<Route
+					path="/contact"
+					element={
+						<ProtectedRoute>
+							<Layout>
+								<Contact />
+							</Layout>
+						</ProtectedRoute>
 					}
 				/>
 				<Route path="/discord/callback" element={<AuthCallback />} />

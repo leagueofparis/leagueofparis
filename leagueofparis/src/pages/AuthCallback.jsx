@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { setSupabaseToken } from "../supabaseClient";
 
 function AuthCallback() {
 	const navigate = useNavigate();
@@ -10,6 +11,7 @@ function AuthCallback() {
 		if (token) {
 			// Store the token in localStorage
 			localStorage.setItem("jwtToken", token);
+			setSupabaseToken(token);
 			// Redirect to home page or dashboard
 			navigate("/");
 		} else {
