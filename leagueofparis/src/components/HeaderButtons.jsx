@@ -67,7 +67,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
 
-				{!isAuthenticated() && (
+				{/* {!isAuthenticated() && (
 					<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
 				)}
 				{isAuthenticated() && (
@@ -78,7 +78,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 							alt="League of Paris Logo"
 						/>
 					</button>
-				)}
+				)} */}
 			</div>
 		</div>
 	);
