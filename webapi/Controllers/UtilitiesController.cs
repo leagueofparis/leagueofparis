@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace webapi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UtilitiesController : ControllerBase
     {
