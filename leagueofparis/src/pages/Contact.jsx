@@ -14,7 +14,6 @@ function Contact() {
 	const [captchaToken, setCaptchaToken] = useState("");
 
 	function validateEmail(email) {
-		// Simple email regex
 		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 	}
 
@@ -25,6 +24,12 @@ function Contact() {
 			setStatus("Please fill in all fields.");
 			return;
 		}
+		if (!captchaToken) {
+			setStatus("Please verify you are human.");
+			return;
+		}
+		let emailToUse = email;
+		let usernameToUse = "";
 		if (!user) {
 			if (!email) {
 				setEmailError("Email is required.");
@@ -34,15 +39,18 @@ function Contact() {
 				setEmailError("Please enter a valid email address.");
 				return;
 			}
+		} else {
+			emailToUse = user.email;
+			usernameToUse = user.username;
 		}
 		const contactData = {
 			Subject: "Contact Form Submission",
-			Html: `From: <b>${email}</b><br><br>Subject: <b>${subject}</b><br><br>Message: <b>${message}</b>`,
+			Html: `From: <b>${usernameToUse}</b> (${emailToUse})<br><br>Subject: <b>${subject}</b><br><br>Message: <b>${message}</b>`,
 			CaptchaToken: captchaToken,
 		};
-
+		console.log(contactData, "contactData");
 		try {
-			const token = localStorage.getItem("jwToken");
+			const token = localStorage.getItem("jwtToken");
 			const response = await fetch("/api/email/send-to-me", {
 				method: "POST",
 				headers: {
@@ -137,12 +145,19 @@ function Contact() {
 					<Recaptcha
 						sitekey={RECAPTCHA_SITE_KEY}
 						onChange={handleCaptchaChange}
+						onExpired={() => setCaptchaToken("")}
 					/>
 					<button type="submit" className="btn btn-primary w-full">
 						Send
 					</button>
 					{status && (
-						<div className="mt-2 text-center text-success">{status}</div>
+						<div
+							className={`mt-2 text-center ${
+								status.includes("Please") ? "text-error" : "text-success"
+							}`}
+						>
+							{status}
+						</div>
 					)}
 				</form>
 			</div>
