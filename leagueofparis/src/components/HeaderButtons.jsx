@@ -4,6 +4,7 @@ import { FaSun, FaMoon } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
 import { useUser } from "../contexts/UserContext";
+import ProfileButton from "./ProfileButton";
 
 export default function HeaderButtons({ onSignIn, onSignOut }) {
 	const [theme, setTheme] = useState("parislight");
@@ -77,15 +78,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 						{!user && (
 							<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
 						)}
-						{user && (
-							<button>
-								<img
-									src={user.user_metadata.avatar_url}
-									className="h-10 w-10 rounded-full cursor-pointer"
-									alt={user.user_metadata.full_name}
-								/>
-							</button>
-						)}
+						{user && <ProfileButton />}
 					</>
 				)}
 			</div>
