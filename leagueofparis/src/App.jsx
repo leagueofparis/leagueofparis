@@ -11,7 +11,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
 
 function App() {
-	//load the theme from localStorage on initial load
 	useEffect(() => {
 		const savedTheme = localStorage.getItem("theme") || "parislight";
 		document.documentElement.setAttribute("data-theme", savedTheme);

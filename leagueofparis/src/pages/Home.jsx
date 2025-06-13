@@ -21,7 +21,6 @@ function Home() {
 
 	useEffect(() => {
 		function handleResize() {
-			console.log(window.innerWidth);
 			setMobile(window.innerWidth <= 768);
 		}
 		handleResize();

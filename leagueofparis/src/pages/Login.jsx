@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { supabase } from "../supabaseClient";
 
 function Login() {
 	const [username, setUsername] = useState("");
@@ -34,15 +35,14 @@ function Login() {
 		}
 	};
 
-	const handleDiscordLogin = () => {
-		// Replace with your Discord OAuth2 client ID
-		const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
-		const REDIRECT_URI = import.meta.env.VITE_DISCORD_REDIRECT_URI;
-		const scope = "identify email";
-
-		const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(scope)}`;
-
-		window.location.href = discordAuthUrl;
+	const handleDiscordLogin = async () => {
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider: "discord",
+			options: {
+				redirectTo: window.location.origin,
+			},
+		});
+		console.log(data, error);
 	};
 
 	return (

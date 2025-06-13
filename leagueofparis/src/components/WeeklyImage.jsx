@@ -9,7 +9,6 @@ export default function WeeklyImage() {
 	useEffect(() => {
 		const fetchAndSetImage = async () => {
 			try {
-				console.log("fetching image");
 				const imageUrl = await getWeeklyImageUrl();
 				setCurrentImage(imageUrl);
 				setLoading(false);

@@ -145,11 +145,8 @@ export async function getWeeklyImageUrl() {
 
 	// Pick a file for the week
 	const weekKey = getWeekKey();
-	console.log(weekKey);
 	const index = simpleHash(weekKey) % data.length;
-	console.log(index);
 	const selectedFile = data[index];
-	console.log(selectedFile);
 	const imageUrl = supabase.storage
 		.from(bucket)
 		.getPublicUrl(`willow-wednesdays/${selectedFile.name}`).data.publicUrl;
