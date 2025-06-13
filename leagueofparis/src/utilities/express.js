@@ -31,16 +31,6 @@ app.get("/protected", authenticateUser, (req, res) => {
 	res.json({ message: `Hello, ${req.user.email}` });
 });
 
-// Optional: OAuth redirect handler (if using Supabase magic links or OAuth)
-app.get("/auth/callback", async (req, res) => {
-	console.log(req);
-	const code = req.query.code;
-	const next = req.query.next ?? "/";
-	console.log(code, next);
-	// You can handle this client-side, or use `supabase-js` to exchange the code if needed
-	res.redirect(303, `/${next.slice(1)}`);
-});
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);

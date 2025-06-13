@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Sudoku from "./pages/Sudoku";
 import Layout from "./components/Layout";
 import Uploads from "./pages/Uploads";
-import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
 
@@ -63,7 +62,6 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
-				<Route path="/discord/callback" element={<AuthCallback />} />
 			</Routes>
 		</Router>
 	);

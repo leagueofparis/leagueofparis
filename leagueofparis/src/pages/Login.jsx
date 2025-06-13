@@ -1,15 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 function Login() {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const checkSession = async () => {
+			const {
+				data: { session },
+			} = await supabase.auth.getSession();
+			if (session) {
+				navigate("/");
+			}
+		};
+
+		checkSession();
+	}, [navigate]);
+
 	const handleDiscordLogin = async () => {
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: "discord",
-			options: {
-				redirectTo: import.meta.env.VITE_FRONTEND_URL || window.location.origin,
-			},
-		});
-		console.log(data, error);
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "discord",
+				options: {
+					redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}`,
+					queryParams: {
+						access_type: "offline",
+						prompt: "consent",
+					},
+				},
+			});
+
+			if (error) {
+				console.error("Discord login error:", error);
+			}
+		} catch (error) {
+			console.error("Discord login error:", error);
+		}
 	};
 
 	return (

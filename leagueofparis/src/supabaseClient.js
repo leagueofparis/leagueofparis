@@ -5,13 +5,34 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const bucket = "willow";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+	auth: {
+		flowType: "pkce",
+		autoRefreshToken: true,
+		detectSessionInUrl: true,
+		persistSession: true,
+		storageKey: "supabase.auth.token",
+		storage: {
+			getItem: (key) => {
+				const value = localStorage.getItem(key);
+				return value ? JSON.parse(value) : null;
+			},
+			setItem: (key, value) => {
+				localStorage.setItem(key, JSON.stringify(value));
+			},
+			removeItem: (key) => {
+				localStorage.removeItem(key);
+			},
+		},
+	},
+});
 
 export const setSupabaseToken = (token) => {
-	supabase.auth.setSession({
-		access_token: token,
-		refresh_token: "",
-	});
+	if (token) {
+		localStorage.setItem("supabase.auth.token", JSON.stringify(token));
+	} else {
+		localStorage.removeItem("supabase.auth.token");
+	}
 };
 
 async function convertHeicToJpeg(file) {
