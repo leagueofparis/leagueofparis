@@ -1,45 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { supabase } from "../supabaseClient";
 
 function Login() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [error, setError] = useState("");
-	const [message, setMessage] = useState("");
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setError("");
-		setMessage("");
-		try {
-			const response = await fetch("/api/auth/login", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				// Sending username and password in the request body
-				body: JSON.stringify({ username, password }),
-			});
-			console.log(response);
-			if (response.ok) {
-				const data = await response.json();
-				// Store the token in localStorage
-				localStorage.setItem("jwtToken", data.jwtToken);
-				setMessage("Login successful!");
-				// Optionally, redirect to a protected route or update your app state here.
-			} else {
-				setError("Invalid credentials. Please try again.");
-			}
-		} catch (err) {
-			setError("An error occurred: " + err.message);
-		}
-	};
-
 	const handleDiscordLogin = async () => {
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider: "discord",
 			options: {
-				redirectTo: window.location.origin,
+				redirectTo: import.meta.env.VITE_FRONTEND_URL || window.location.origin,
 			},
 		});
 		console.log(data, error);
@@ -50,30 +17,6 @@ function Login() {
 			<div className="card w-full max-w-sm bg-base-200 shadow-xl">
 				<div className="card-body">
 					<h2 className="card-title text-2xl mb-4 justify-center">Login</h2>
-					{/* <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-						<input
-							type="text"
-							placeholder="Username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							className="input input-bordered w-full"
-							required
-						/>
-						<input
-							type="password"
-							placeholder="Password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							className="input input-bordered w-full"
-							required
-						/>
-						<button type="submit" className="btn btn-primary w-full">
-							Login
-						</button>
-					</form>
-
-					<div className="divider">OR</div> */}
-
 					<button
 						onClick={handleDiscordLogin}
 						className="btn btn-secondary w-full flex items-center justify-center gap-2"
@@ -83,13 +26,6 @@ function Login() {
 						</svg>
 						Login with Discord
 					</button>
-
-					{error && (
-						<div className="alert alert-error mt-4 py-2 px-4">{error}</div>
-					)}
-					{message && (
-						<div className="alert alert-success mt-4 py-2 px-4">{message}</div>
-					)}
 				</div>
 			</div>
 		</div>
