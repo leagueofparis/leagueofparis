@@ -26,7 +26,8 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 		document.location.href = "/" + page;
 	};
 
-	const navClass = "text-lg hover:text-primary hover:underline";
+	const navClass =
+		"text-lg relative group transition-all duration-300 ease-in-out hover:text-primary";
 
 	const navItems = [
 		{ path: "/about", label: "About" },
@@ -52,12 +53,14 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 							return (
 								<a key={item.path} href={item.path} className={navClass}>
 									{item.label}
+									<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
 								</a>
 							);
 						} else if (!item.requiredRole) {
 							return (
 								<a key={item.path} href={item.path} className={navClass}>
 									{item.label}
+									<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
 								</a>
 							);
 						}
