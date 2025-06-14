@@ -36,7 +36,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 		document.location.href = "/" + page;
 	};
 
-	const navClass = `text-lg relative group transition-all duration-300 ease-in-out hover:text-primary ${isMobile ? "w-8" : "w-24"} text-center`;
+	const navClass = `text-[24px] relative group transition-all duration-300 ease-in-out hover:text-primary ${isMobile ? "w-8" : "w-24"} text-center`;
 
 	const navItems = [
 		{ path: "/about", label: "About", icon: <FaInfo /> },
