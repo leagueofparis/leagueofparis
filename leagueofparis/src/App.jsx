@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Uploads from "./pages/Uploads";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
+import { DeviceProvider } from "./contexts/DeviceContext";
 
 function App() {
 	useEffect(() => {
@@ -16,54 +17,56 @@ function App() {
 	}, []);
 
 	return (
-		<Router>
-			<Routes>
-				<Route
-					path="/"
-					element={
-						<Layout>
-							<Home />
-						</Layout>
-					}
-				/>
-				<Route
-					path="/sudoku"
-					element={
-						<Layout>
-							<Sudoku />
-						</Layout>
-					}
-				/>
-				<Route
-					path="/uploads"
-					element={
-						<ProtectedRoute requiredRole="admin">
+		<DeviceProvider>
+			<Router>
+				<Routes>
+					<Route
+						path="/"
+						element={
 							<Layout>
-								<Uploads />
+								<Home />
 							</Layout>
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/login"
-					element={
-						<Layout>
-							<Login />
-						</Layout>
-					}
-				/>
-				<Route
-					path="/contact"
-					element={
-						<ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/sudoku"
+						element={
 							<Layout>
-								<Contact />
+								<Sudoku />
 							</Layout>
-						</ProtectedRoute>
-					}
-				/>
-			</Routes>
-		</Router>
+						}
+					/>
+					<Route
+						path="/uploads"
+						element={
+							<ProtectedRoute requiredRole="admin">
+								<Layout>
+									<Uploads />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/login"
+						element={
+							<Layout>
+								<Login />
+							</Layout>
+						}
+					/>
+					<Route
+						path="/contact"
+						element={
+							<ProtectedRoute>
+								<Layout>
+									<Contact />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+				</Routes>
+			</Router>
+		</DeviceProvider>
 	);
 }
 
