@@ -67,17 +67,31 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					navItems.map((item) => {
 						if (item.requiredRole && profile?.role === item.requiredRole) {
 							return (
-								<a key={item.path} href={item.path} className={navClass}>
-									{isMobile ? item.icon : item.label}
-									<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-								</a>
+								<div className="tooltip tooltip-bottom" data-tip={item.label}>
+									<a
+										key={item.path}
+										href={item.path}
+										className={navClass}
+										title={item.label}
+									>
+										{isMobile ? item.icon : item.label}
+										<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+									</a>
+								</div>
 							);
 						} else if (!item.requiredRole) {
 							return (
-								<a key={item.path} href={item.path} className={navClass}>
-									{isMobile ? item.icon : item.label}
-									<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-								</a>
+								<div className="tooltip tooltip-bottom" data-tip={item.label}>
+									<a
+										key={item.path}
+										href={item.path}
+										className={navClass}
+										title={item.label}
+									>
+										{isMobile ? item.icon : item.label}
+										<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+									</a>
+								</div>
 							);
 						}
 						return null;
