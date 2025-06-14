@@ -7,6 +7,7 @@ import {
 	FaImages,
 	FaUpload,
 	FaEnvelope,
+	FaHamburger,
 } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
@@ -61,42 +62,51 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 						onClick={() => redirectUrl("")}
 					/>
 				</button>
+				{!isMobile && (
+					<div className="flex items-center justify-center gap-4">
+						{!loading &&
+							navItems.map((item) => {
+								if (item.requiredRole && profile?.role === item.requiredRole) {
+									return (
+										<div
+											className="tooltip tooltip-bottom"
+											data-tip={item.label}
+										>
+											<a
+												key={item.path}
+												href={item.path}
+												className={navClass}
+												title={item.label}
+											>
+												{isMobile ? item.icon : item.label}
+												<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+											</a>
+										</div>
+									);
+								} else if (!item.requiredRole) {
+									return (
+										<div
+											className="tooltip tooltip-bottom"
+											data-tip={item.label}
+										>
+											<a
+												key={item.path}
+												href={item.path}
+												className={navClass}
+												title={item.label}
+											>
+												{isMobile ? item.icon : item.label}
+												<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+											</a>
+										</div>
+									);
+								}
+								return null;
+							})}
+					</div>
+				)}
 			</div>
-			<div className="flex items-center justify-center gap-4">
-				{!loading &&
-					navItems.map((item) => {
-						if (item.requiredRole && profile?.role === item.requiredRole) {
-							return (
-								<div className="tooltip tooltip-bottom" data-tip={item.label}>
-									<a
-										key={item.path}
-										href={item.path}
-										className={navClass}
-										title={item.label}
-									>
-										{isMobile ? item.icon : item.label}
-										<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-									</a>
-								</div>
-							);
-						} else if (!item.requiredRole) {
-							return (
-								<div className="tooltip tooltip-bottom" data-tip={item.label}>
-									<a
-										key={item.path}
-										href={item.path}
-										className={navClass}
-										title={item.label}
-									>
-										{isMobile ? item.icon : item.label}
-										<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-									</a>
-								</div>
-							);
-						}
-						return null;
-					})}
-			</div>
+
 			<div className="flex gap-2 items-center">
 				<button
 					onClick={handleToggleTheme}
@@ -105,13 +115,19 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 				>
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
-
+				{/* 
 				{!loading && (
+					<FaHamburger size={24} />
+					// <>
+					// 	{!user && (
+					// 		<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
+					// 	)}
+					// 	{user && <ProfileButton />}
+					// </>
+				)} */}
+				{!loading && isMobile && (
 					<>
-						{!user && (
-							<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
-						)}
-						{user && <ProfileButton />}
+						<FaHamburger size={24} />
 					</>
 				)}
 			</div>

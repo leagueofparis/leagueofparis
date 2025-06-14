@@ -19,10 +19,10 @@ export default function ProfileButton() {
 			</button>
 			<ul
 				tabIndex={0}
-				className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-300 rounded-box w-52"
+				className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-neutral rounded-box w-52"
 			>
 				<li>
-					<a onClick={handleLogout} className="text-primary">
+					<a onClick={handleLogout} className="text-rose-900 font-bold">
 						Logout
 					</a>
 				</li>

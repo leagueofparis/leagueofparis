@@ -108,6 +108,7 @@ function Contact() {
 							value={subject}
 							onChange={(e) => setSubject(e.target.value)}
 							placeholder="Subject"
+							maxLength={50}
 							required
 						/>
 					</div>
@@ -121,8 +122,12 @@ function Contact() {
 							onChange={(e) => setMessage(e.target.value)}
 							placeholder="Your message"
 							rows={5}
+							maxLength={500}
 							required
 						/>
+						<div className="text-xs text-right text-base-content/70 mt-1">
+							Max length: 500 characters
+						</div>
 					</div>
 					{!user && (
 						<div className="form-control w-full">

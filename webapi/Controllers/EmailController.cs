@@ -29,7 +29,7 @@ namespace webapi.Controllers
 			var payload = new
 			{
 				from = "League of Paris <noreply@leagueofparis.com>",
-				to = "brendan612@gmail.com",
+				to = "leagueofparis5@gmail.com",
 				subject = subject,
 				html = html
 			};
