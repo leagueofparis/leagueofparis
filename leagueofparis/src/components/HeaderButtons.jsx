@@ -34,7 +34,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 	const navClass = `text-[24px] relative group transition-all duration-300 ease-in-out hover:text-primary ${isMobile ? "w-8" : "w-24"} text-center`;
 
 	const navItems = [
-		{ path: "/", label: "Home" },
+		{ path: "/", label: "Home", isMobile: true },
 		{ path: "/about", label: "About" },
 		{ path: "/gallery", label: "Gallery" },
 		{
@@ -60,6 +60,9 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					<div className="flex items-center justify-center gap-4">
 						{!loading &&
 							navItems.map((item) => {
+								if (item.isMobile) {
+									return null;
+								}
 								if (item.requiredRole && profile?.role === item.requiredRole) {
 									return (
 										<div
