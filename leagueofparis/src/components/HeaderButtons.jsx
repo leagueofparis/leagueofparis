@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { ToggleTheme } from "../utilities/ToggleTheme";
-import {
-	FaSun,
-	FaMoon,
-	FaInfo,
-	FaImages,
-	FaUpload,
-	FaEnvelope,
-	FaHamburger,
-} from "react-icons/fa";
+import { FaSun, FaMoon, FaHamburger } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
 import { useUser } from "../contexts/UserContext";
@@ -19,6 +11,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 	const [theme, setTheme] = useState("parislight");
 	const { user, profile, loading } = useUser();
 	const { isMobile } = useDevice();
+	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	useEffect(() => {
 		// Detect initial theme from localStorage or classList
@@ -35,20 +28,21 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 
 	const redirectUrl = (page) => {
 		document.location.href = "/" + page;
+		setDrawerOpen(false);
 	};
 
 	const navClass = `text-[24px] relative group transition-all duration-300 ease-in-out hover:text-primary ${isMobile ? "w-8" : "w-24"} text-center`;
 
 	const navItems = [
-		{ path: "/about", label: "About", icon: <FaInfo /> },
-		{ path: "/gallery", label: "Gallery", icon: <FaImages /> },
+		{ path: "/", label: "Home" },
+		{ path: "/about", label: "About" },
+		{ path: "/gallery", label: "Gallery" },
 		{
 			path: "/uploads",
 			label: "Uploads",
 			requiredRole: "admin",
-			icon: <FaUpload />,
 		},
-		{ path: "/contact", label: "Contact", icon: <FaEnvelope /> },
+		{ path: "/contact", label: "Contact" },
 	];
 
 	return (
@@ -78,7 +72,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 												className={navClass}
 												title={item.label}
 											>
-												{isMobile ? item.icon : item.label}
+												{item.label}
 												<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
 											</a>
 										</div>
@@ -95,7 +89,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 												className={navClass}
 												title={item.label}
 											>
-												{isMobile ? item.icon : item.label}
+												{item.label}
 												<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
 											</a>
 										</div>
@@ -115,19 +109,65 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 				>
 					{theme === "parislight" ? <FaMoon size={24} /> : <FaSun size={24} />}
 				</button>
-				{/* 
-				{!loading && (
-					<FaHamburger size={24} />
-					// <>
-					// 	{!user && (
-					// 		<SignInButton onSignIn={onSignIn} onSignOut={onSignOut} />
-					// 	)}
-					// 	{user && <ProfileButton />}
-					// </>
-				)} */}
 				{!loading && isMobile && (
 					<>
-						<FaHamburger size={24} />
+						<div className="drawer drawer-end">
+							<input
+								id="my-drawer"
+								type="checkbox"
+								className="drawer-toggle"
+								checked={drawerOpen}
+								onChange={(e) => setDrawerOpen(e.target.checked)}
+							/>
+							<div className="drawer-content">
+								<label
+									htmlFor="my-drawer"
+									className="btn btn-ghost drawer-button"
+								>
+									<FaHamburger size={24} />
+								</label>
+							</div>
+							<div className="drawer-side z-50">
+								<label
+									htmlFor="my-drawer"
+									aria-label="close sidebar"
+									className="drawer-overlay"
+								></label>
+								<ul className="menu p-4 w-60 text-xl min-h-full bg-base-200 text-base-content">
+									{navItems.map((item) => {
+										if (
+											item.requiredRole &&
+											profile?.role === item.requiredRole
+										) {
+											return (
+												<li key={item.path}>
+													<a
+														onClick={() => redirectUrl(item.path.slice(1))}
+														className="flex items-center gap-2"
+													>
+														{item.icon}
+														{item.label}
+													</a>
+												</li>
+											);
+										} else if (!item.requiredRole) {
+											return (
+												<li key={item.path}>
+													<a
+														onClick={() => redirectUrl(item.path.slice(1))}
+														className="flex items-center gap-2"
+													>
+														{item.icon}
+														{item.label}
+													</a>
+												</li>
+											);
+										}
+										return null;
+									})}
+								</ul>
+							</div>
+						</div>
 					</>
 				)}
 			</div>
