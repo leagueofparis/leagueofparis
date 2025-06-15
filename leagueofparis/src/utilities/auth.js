@@ -1,4 +1,18 @@
 // src/utilities/auth.js
+import { jwtDecode } from "jwt-decode";
+
+export function getUser() {
+	const token = getToken();
+	if (!token) return null;
+
+	try {
+		const decoded = jwtDecode(token);
+		return decoded;
+	} catch (error) {
+		console.error("Error decoding JWT:", error);
+		return null;
+	}
+}
 
 // Get the JWT token from localStorage
 export function getToken() {
@@ -18,6 +32,21 @@ export function removeToken() {
 // Check if the user is authenticated
 export function isAuthenticated() {
 	return !!getToken();
+}
+
+export function isAdmin() {
+	const user = getUser();
+	return user?.role === "admin";
+}
+
+export function isUser() {
+	const user = getUser();
+	return user?.role === "user";
+}
+
+export function isInRole(role) {
+	const user = getUser();
+	return user?.role === role;
 }
 
 // Get the Authorization header for fetch/axios

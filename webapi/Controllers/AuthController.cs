@@ -94,6 +94,16 @@ namespace webapi.Controllers
                 }
 
                 var userData = await userResponse.Content.ReadFromJsonAsync<DiscordUserResponse>();
+				if (userData == null)
+				{
+					return BadRequest("Failed to get Discord user info");
+				}
+
+				var userRole = "user";
+				if (userData.Id == "1288610223896006778" || userData.Id == "105858401497546752")
+				{
+					userRole = "admin";
+				}
 
                 // Create JWT token for the user
                 var claims = new[]
@@ -104,6 +114,7 @@ namespace webapi.Controllers
                     new Claim("discord_id", userData.Id),
                     new Claim("email", userData.Email),
 					new Claim("avatar", userData.Avatar),
+					new Claim("role", userRole)
                 };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));

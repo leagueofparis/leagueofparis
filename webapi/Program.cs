@@ -28,7 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowReactApp",
-		builder => builder.WithOrigins("http://localhost:3000", "https://leagueofparis.com")
+		builder => builder.WithOrigins("http://localhost:3000", "https://leagueofparis.com", "https://www.cron-job.org")
 						  .AllowAnyMethod()
 						  .AllowAnyHeader()
 						  .AllowCredentials());

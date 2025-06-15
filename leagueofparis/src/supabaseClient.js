@@ -1,19 +1,90 @@
 import { createClient } from "@supabase/supabase-js";
+import heic2any from "heic2any";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const bucket = "willow";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+	auth: {
+		flowType: "pkce",
+		autoRefreshToken: true,
+		detectSessionInUrl: true,
+		persistSession: true,
+		storageKey: "supabase.auth.token",
+		storage: {
+			getItem: (key) => {
+				const value = localStorage.getItem(key);
+				return value ? JSON.parse(value) : null;
+			},
+			setItem: (key, value) => {
+				localStorage.setItem(key, JSON.stringify(value));
+			},
+			removeItem: (key) => {
+				localStorage.removeItem(key);
+			},
+		},
+	},
+});
+
+export const setSupabaseToken = (token) => {
+	if (token) {
+		localStorage.setItem("supabase.auth.token", JSON.stringify(token));
+	} else {
+		localStorage.removeItem("supabase.auth.token");
+	}
+};
+
+async function convertHeicToJpeg(file) {
+	// If the file is already a browser-readable image, skip conversion
+	if (
+		file.type === "image/jpeg" ||
+		file.type === "image/png" ||
+		file.type === "image/gif" ||
+		file.type === "image/webp"
+	) {
+		return file;
+	}
+
+	// Only convert if it's actually HEIC
+	if (
+		file.type !== "image/heic" &&
+		!file.name.toLowerCase().endsWith(".heic")
+	) {
+		return file;
+	}
+
+	try {
+		const convertedBlob = await heic2any({
+			blob: file,
+			toType: "image/jpeg",
+			quality: 0.9,
+		});
+
+		const convertedFile = new File(
+			[convertedBlob],
+			file.name.replace(/\.heic$/i, ".jpg"),
+			{ type: "image/jpeg" }
+		);
+
+		return convertedFile;
+	} catch (error) {
+		console.error("Error converting HEIC to JPEG:", file.name, error);
+		return file;
+	}
+}
 
 export async function uploadImage(image, folder) {
-	const fileExtension = image.name.split(".").pop();
+	// Convert HEIC to JPEG if necessary
+	const processedImage = await convertHeicToJpeg(image);
+
+	const fileExtension = processedImage.name.split(".").pop();
 	const fileName = `${Date.now()}.${fileExtension}`;
 	const filePath = `${folder}/${fileName}`;
 
 	const { data, error } = await supabase.storage
 		.from(bucket)
-		.upload(filePath, image, {
+		.upload(filePath, processedImage, {
 			upsert: true,
 		});
 
@@ -45,10 +116,28 @@ export function getImageUrl(path) {
 }
 
 function getWeekKey(date = new Date()) {
-	const firstDay = new Date(date.getFullYear(), 0, 1);
-	const dayOfYear = (date - firstDay + 86400000) / 86400000;
+	// Get the current date
+	const currentDate = new Date(date);
+
+	// Get the day of the week (0 = Sunday, 3 = Wednesday)
+	const dayOfWeek = currentDate.getDay();
+
+	// Calculate days to subtract to get to the most recent Wednesday
+	const daysToSubtract = (dayOfWeek + 4) % 7; // +4 because we want Wednesday (3) to be 0
+
+	// Create a new date for the most recent Wednesday
+	const wednesdayDate = new Date(currentDate);
+	wednesdayDate.setDate(currentDate.getDate() - daysToSubtract);
+
+	// Get the first day of the year
+	const firstDay = new Date(wednesdayDate.getFullYear(), 0, 1);
+
+	// Calculate day of year for the Wednesday
+	const dayOfYear = (wednesdayDate - firstDay + 86400000) / 86400000;
+
+	// Calculate week number
 	const week = Math.ceil((dayOfYear + firstDay.getDay()) / 7);
-	return `${date.getFullYear()}-W${week}`;
+	return `${wednesdayDate.getFullYear()}-W${week}`;
 }
 
 function simpleHash(str) {
@@ -63,7 +152,10 @@ export async function getWeeklyImageUrl() {
 	// Directly list the contents of 'willow-wednesdays'
 	const { data, error } = await supabase.storage
 		.from(bucket)
-		.list("willow-wednesdays", { limit: 100 });
+		.list("willow-wednesdays", {
+			limit: 100,
+			sortBy: { column: "created_at", order: "desc" },
+		});
 
 	if (error) {
 		throw new Error("Error listing willow-wednesdays: " + error.message);

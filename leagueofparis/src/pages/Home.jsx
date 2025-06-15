@@ -8,6 +8,7 @@ import {
 	FaTiktok,
 	FaYoutube,
 	FaSpotify,
+	FaCoffee,
 } from "react-icons/fa";
 import TwitchEmbed from "../components/TwitchEmbed";
 import WillowWednesday from "../components/WillowWednesday";
@@ -21,7 +22,6 @@ function Home() {
 
 	useEffect(() => {
 		function handleResize() {
-			console.log(window.innerWidth);
 			setMobile(window.innerWidth <= 768);
 		}
 		handleResize();
@@ -80,6 +80,13 @@ function Home() {
 					rel="noopener noreferrer"
 				>
 					<FaSpotify size={36} className={iconClasses} />
+				</a>
+				<a
+					href="https://ko-fi.com/leagueofparis"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<FaCoffee size={36} className={iconClasses} />
 				</a>
 			</div>
 			{mobile && (
