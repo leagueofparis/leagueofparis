@@ -9,6 +9,7 @@ import Uploads from "./pages/Uploads";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
 import { DeviceProvider } from "./contexts/DeviceContext";
+import Gallery from "./pages/Gallery";
 
 function App() {
 	useEffect(() => {
@@ -62,6 +63,14 @@ function App() {
 									<Contact />
 								</Layout>
 							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/gallery"
+						element={
+							<Layout>
+								<Gallery />
+							</Layout>
 						}
 					/>
 				</Routes>
