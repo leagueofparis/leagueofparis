@@ -40,11 +40,9 @@ function App() {
 					<Route
 						path="/uploads"
 						element={
-							<ProtectedRoute requiredRole="admin">
-								<Layout>
-									<Uploads />
-								</Layout>
-							</ProtectedRoute>
+							<Layout>
+								<Uploads />
+							</Layout>
 						}
 					/>
 					<Route

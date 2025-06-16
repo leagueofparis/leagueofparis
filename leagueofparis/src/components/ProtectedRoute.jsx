@@ -9,41 +9,56 @@ export default function ProtectedRoute({
 	requireAuth,
 }) {
 	const navigate = useNavigate();
-	const { user, profile } = useUser();
+	const { user, profile, loading } = useUser();
 
 	useEffect(() => {
+		// Don't make any navigation decisions while loading
+		if (loading) return;
+
 		if (requireAuth && !user) {
 			navigate("/login");
 			return;
 		}
 
-		if (requiredRole && requiredRole.includes(",")) {
-			const roles = requiredRole.split(",");
-			if (!roles.some((role) => profile?.role === role)) {
-				navigate("/login");
+		// Only check role requirements if we have a profile
+		if (profile) {
+			console.log(requiredRole);
+			console.log(profile);
+			if (requiredRole && requiredRole.includes(",")) {
+				const roles = requiredRole.split(",");
+				if (!roles.some((role) => profile?.role === role)) {
+					navigate("/login");
+					return;
+				}
+			}
+
+			if (requiredRole && profile?.role !== requiredRole) {
+				navigate("/");
 				return;
 			}
 		}
+	}, [user, profile, requiredRole, requireAuth, navigate, loading]);
 
-		if (requiredRole && profile?.role !== requiredRole) {
-			navigate("/");
-			return;
-		}
-	}, [user, profile, requiredRole, requireAuth, navigate]);
+	// Don't render anything while loading
+	if (loading) {
+		return null;
+	}
 
 	if (requireAuth && !user) {
 		return null;
 	}
 
-	if (requiredRole && requiredRole.includes(",")) {
-		const roles = requiredRole.split(",");
-		if (!roles.some((role) => profile?.role === role)) {
+	if (profile) {
+		if (requiredRole && requiredRole.includes(",")) {
+			const roles = requiredRole.split(",");
+			if (!roles.some((role) => profile?.role === role)) {
+				return null;
+			}
+		}
+
+		if (requiredRole && profile?.role !== requiredRole) {
 			return null;
 		}
-	}
-
-	if (requiredRole && profile?.role !== requiredRole) {
-		return null;
 	}
 
 	return children;
