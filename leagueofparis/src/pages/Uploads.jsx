@@ -88,7 +88,7 @@ function UploadContainer({ title, folder, multiple = false }) {
 				}
 				await uploadImage(file, folder);
 				setIsConverting(false);
-				await sendDiscordWebhook(message || `New upload to ${folder}`, file);
+				//await sendDiscordWebhook(message || `New upload to ${folder}`, file);
 			}
 
 			setStatus("Upload successful!");
