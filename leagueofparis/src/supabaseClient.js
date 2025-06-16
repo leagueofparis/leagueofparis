@@ -74,25 +74,19 @@ async function convertHeicToJpeg(file) {
 	}
 }
 
-export async function uploadImage(image, folder) {
-	// Convert HEIC to JPEG if necessary
-	const processedImage = await convertHeicToJpeg(image);
+export async function uploadImage(file, folder, key) {
+	const formData = new FormData();
+	formData.append("file", file);
+	formData.append("folder", folder);
+	formData.append("key", key);
 
-	const fileExtension = processedImage.name.split(".").pop();
-	const fileName = `${Date.now()}.${fileExtension}`;
-	const filePath = `${folder}/${fileName}`;
+	const response = await invokeEdgeFunction("validate-secret", formData);
 
-	const { data, error } = await supabase.storage
-		.from(bucket)
-		.upload(filePath, processedImage, {
-			upsert: true,
-		});
-
-	if (error) {
-		throw error;
+	if (!response) {
+		throw new Error("Upload failed");
 	}
 
-	return data;
+	return response;
 }
 
 export async function getImageUrls(folder) {
@@ -174,9 +168,9 @@ export async function getWeeklyImageUrl() {
 	return imageUrl;
 }
 
-export async function invokeEdgeFunction(functionName, key) {
+export async function invokeEdgeFunction(functionName, formData) {
 	const { data, error } = await supabase.functions.invoke(functionName, {
-		body: { key: key },
+		body: formData,
 	});
 	if (error) {
 		throw error;
