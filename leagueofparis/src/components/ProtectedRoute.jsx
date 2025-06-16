@@ -16,18 +16,21 @@ export default function ProtectedRoute({
 		if (loading) return;
 
 		if (requireAuth && !user) {
-			navigate("/login");
+			navigate("/login?redirect=" + window.location.pathname);
 			return;
 		}
 
 		// Only check role requirements if we have a profile
 		if (profile) {
-			console.log(requiredRole);
-			console.log(profile);
+			if (profile?.role === "admin") {
+				return;
+			}
+
 			if (requiredRole && requiredRole.includes(",")) {
 				const roles = requiredRole.split(",");
+
 				if (!roles.some((role) => profile?.role === role)) {
-					navigate("/login");
+					navigate("/login?redirect=" + window.location.pathname);
 					return;
 				}
 			}
@@ -49,6 +52,10 @@ export default function ProtectedRoute({
 	}
 
 	if (profile) {
+		if (profile?.role === "admin") {
+			return children;
+		}
+
 		if (requiredRole && requiredRole.includes(",")) {
 			const roles = requiredRole.split(",");
 			if (!roles.some((role) => profile?.role === role)) {

@@ -1,3 +1,4 @@
+import React from "react";
 import { FaTimes } from "react-icons/fa";
 import { getAlignment } from "./CellAlignment";
 
@@ -22,7 +23,7 @@ export default function NumberBox({
 				{Array.from({ length: 9 }).map((_, i) => (
 					<div
 						key={i}
-						className={`m-1 font-bold flex cursor-pointer rounded-lg text-primary-content
+						className={`m-1 font-bold flex cursor-pointer rounded-lg text-neutral-content
 					${isCompleted(i + 1) ? "bg-neutral opacity-50" : "bg-primary"}
 					${getAlignment(candidateMode, i + 1)}`}
 						style={clamp}

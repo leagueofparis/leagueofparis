@@ -18,12 +18,17 @@ function Login() {
 		checkSession();
 	}, [navigate]);
 
+	function getRedirectParam() {
+		const params = new URLSearchParams(window.location.search);
+		return params.get("redirect");
+	}
+
 	const handleDiscordLogin = async () => {
 		try {
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: "discord",
 				options: {
-					redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}`,
+					redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}${getRedirectParam()}`,
 					queryParams: {
 						access_type: "offline",
 						prompt: "consent",

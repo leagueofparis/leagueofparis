@@ -35,7 +35,6 @@ export default function Board({
 
 			if (row === selRow && col === selCol) return "selected";
 			if (value !== "" && value === selectedValue && selectedValue !== "") {
-				console.log(row, col, value);
 				return "number";
 			}
 			if (row === selRow || col === selCol) return "rowcol";
@@ -79,18 +78,18 @@ export default function Board({
 
 	const getCellColor = (row, col, value) => {
 		value = value?.toString() ?? "";
-		if (isPrefilled(row, col, value)) return "text-black";
+		if (isPrefilled(row, col, value)) return "text-neutral-content";
 
 		if (value !== "" && solution[row][col].toString() === value) {
-			return "text-[#DC15E6]";
+			return "text-success";
 		}
 
-		return "text-black";
+		return "text-base-content";
 	};
 
 	return (
 		<div
-			className={`grid grid-cols-9 border-5 ${paused ? "pointer-events-none" : ""}`}
+			className={`grid grid-cols-9 border-5 border-primary ${paused ? "pointer-events-none" : ""}`}
 		>
 			{board.map((row, rowIndex) =>
 				row.map((value, colIndex) => {
@@ -116,6 +115,7 @@ export default function Board({
 							candidateMode={candidateMode}
 							onCandidateCellClick={onCandidateCellClick}
 							isDuplicateValue={isDuplicateValue(rowIndex, colIndex, value)}
+							completed={isComplete}
 						/>
 					);
 				})
