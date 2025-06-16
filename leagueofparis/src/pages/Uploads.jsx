@@ -4,6 +4,7 @@ import { uploadImage, invokeEdgeFunction } from "../supabaseClient";
 async function validateUploadKey(key) {
 	const { data, error } = await invokeEdgeFunction("validate-secret", key);
 	if (error) {
+		console.log(error);
 		throw error;
 	}
 	return data;
@@ -33,12 +34,6 @@ function UploadContainer({ title, folder, multiple = false }) {
 	};
 
 	const handleUpload = async () => {
-		try {
-			await validateUploadKey(key);
-		} catch {
-			setStatus("Invalid upload key.");
-			return;
-		}
 		if (!file || (multiple && file.length === 0)) {
 			setStatus("Please select a file.");
 			return;
@@ -70,7 +65,7 @@ function UploadContainer({ title, folder, multiple = false }) {
 					} else {
 						setStatus(`Uploading ${f.name} (${i + 1}/${file.length})...`);
 					}
-					await uploadImage(f, folder);
+					await uploadImage(f, folder, key);
 					setIsConverting(false);
 				}
 			} else {
@@ -86,7 +81,7 @@ function UploadContainer({ title, folder, multiple = false }) {
 				} else {
 					setStatus(`Uploading ${file.name} (1/1)...`);
 				}
-				await uploadImage(file, folder);
+				await uploadImage(file, folder, key);
 				setIsConverting(false);
 				//await sendDiscordWebhook(message || `New upload to ${folder}`, file);
 			}
