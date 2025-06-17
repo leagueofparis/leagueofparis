@@ -4,6 +4,7 @@ import { uploadImage, invokeEdgeFunction } from "../supabaseClient";
 async function validateUploadKey(key) {
 	const { data, error } = await invokeEdgeFunction("validate-secret", key);
 	if (error) {
+		console.log(error);
 		throw error;
 	}
 	return data;
@@ -14,6 +15,10 @@ function UploadContainer({ title, folder, multiple = false }) {
 	const [status, setStatus] = useState("");
 	const [key, setKey] = useState("");
 	const [message, setMessage] = useState("");
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [totalFiles, setTotalFiles] = useState(0);
+	const [currentFileName, setCurrentFileName] = useState("");
+	const [isConverting, setIsConverting] = useState(false);
 
 	const handleChange = (e) => {
 		if (multiple) {
@@ -22,35 +27,72 @@ function UploadContainer({ title, folder, multiple = false }) {
 			setFile(e.target.files[0]);
 		}
 		setStatus("");
+		setCurrentIndex(0);
+		setTotalFiles(0);
+		setCurrentFileName("");
+		setIsConverting(false);
 	};
 
 	const handleUpload = async () => {
-		try {
-			await validateUploadKey(key);
-		} catch {
-			setStatus("Invalid upload key.");
-			return;
-		}
 		if (!file || (multiple && file.length === 0)) {
 			setStatus("Please select a file.");
 			return;
 		}
 
-		setStatus("Uploading...");
+		if (multiple) {
+			setTotalFiles(file.length);
+		} else {
+			setTotalFiles(1);
+		}
+		setCurrentIndex(0);
+		setStatus("");
 
 		try {
 			if (multiple) {
-				for (const f of file) {
-					await uploadImage(f, folder); // still upload to Supabase if ne
+				for (let i = 0; i < file.length; i++) {
+					const f = file[i];
+					setCurrentIndex(i + 1);
+					setCurrentFileName(f.name);
+					setIsConverting(false);
+
+					// Check if file needs conversion
+					if (
+						f.type === "image/heic" ||
+						f.name.toLowerCase().endsWith(".heic")
+					) {
+						setIsConverting(true);
+						setStatus(`Converting ${f.name} (${i + 1}/${file.length})...`);
+					} else {
+						setStatus(`Uploading ${f.name} (${i + 1}/${file.length})...`);
+					}
+					await uploadImage(f, folder, key);
+					setIsConverting(false);
 				}
 			} else {
-				await uploadImage(file, folder);
-				await sendDiscordWebhook(message || `New upload to ${folder}`, file);
+				setCurrentIndex(1);
+				setCurrentFileName(file.name);
+				setIsConverting(false);
+				if (
+					file.type === "image/heic" ||
+					file.name.toLowerCase().endsWith(".heic")
+				) {
+					setIsConverting(true);
+					setStatus(`Converting ${file.name} (1/1)...`);
+				} else {
+					setStatus(`Uploading ${file.name} (1/1)...`);
+				}
+				await uploadImage(file, folder, key);
+				setIsConverting(false);
+				//await sendDiscordWebhook(message || `New upload to ${folder}`, file);
 			}
 
 			setStatus("Upload successful!");
 			setFile(null);
 			setMessage("");
+			setCurrentIndex(0);
+			setTotalFiles(0);
+			setCurrentFileName("");
+			setIsConverting(false);
 		} catch (err) {
 			setStatus("Upload failed: " + err.message);
 		}
@@ -121,6 +163,22 @@ function UploadContainer({ title, folder, multiple = false }) {
 				>
 					{status === "Uploading..." ? "Uploading..." : "Upload"}
 				</button>
+				{/* Status/Progress Bar */}
+				{totalFiles > 0 && currentIndex > 0 && (
+					<div className="w-full mt-2">
+						<div className="text-center text-sm mb-1">
+							{isConverting
+								? `Converting ${currentFileName} (${currentIndex}/${totalFiles})...`
+								: `Uploading ${currentFileName} (${currentIndex}/${totalFiles})...`}
+						</div>
+						<div className="w-full bg-base-200 rounded-full h-2">
+							<div
+								className="bg-primary h-2 rounded-full transition-all duration-300"
+								style={{ width: `${(currentIndex / totalFiles) * 100}%` }}
+							></div>
+						</div>
+					</div>
+				)}
 				<div
 					className={`mt-2 min-h-[24px] text-center font-medium ${status.includes("failed") || status.includes("Invalid") ? "text-red-200" : status ? "text-success" : ""}`}
 				>
@@ -134,20 +192,21 @@ function UploadContainer({ title, folder, multiple = false }) {
 export default function Uploads() {
 	return (
 		<div className="min-h-screen py-10 px-2">
-			<div className="max-w-3xl mx-auto">
+			<div className="mx-auto max-w-6xl">
 				<h1 className="text-3xl font-extrabold mb-2 text-base-content">
 					Uploads
 				</h1>
 				<p className="mb-8 text-base-content/70 text-lg">
 					Upload files to the appropriate section below.
 				</p>
-				<div className="flex flex-col md:flex-row gap-8 justify-center">
+				<div className="flex flex-col md:flex-row gap-8 justify-center flex-wrap">
 					<UploadContainer title="Schedule Uploads" folder="schedules" />
 					<UploadContainer
 						title="Willow Wednesday Uploads"
 						folder="willow-wednesdays"
 						multiple={true}
 					/>
+					<UploadContainer title="Art Gallery" folder="art" multiple={true} />
 				</div>
 			</div>
 		</div>

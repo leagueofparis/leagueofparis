@@ -1,48 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 function Login() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [error, setError] = useState("");
-	const [message, setMessage] = useState("");
+	const navigate = useNavigate();
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setError("");
-		setMessage("");
-		try {
-			const response = await fetch("/api/auth/login", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				// Sending username and password in the request body
-				body: JSON.stringify({ username, password }),
-			});
-			console.log(response);
-			if (response.ok) {
-				const data = await response.json();
-				// Store the token in localStorage
-				localStorage.setItem("jwtToken", data.jwtToken);
-				setMessage("Login successful!");
-				// Optionally, redirect to a protected route or update your app state here.
-			} else {
-				setError("Invalid credentials. Please try again.");
+	useEffect(() => {
+		const checkSession = async () => {
+			const {
+				data: { session },
+			} = await supabase.auth.getSession();
+			if (session) {
+				navigate("/");
 			}
-		} catch (err) {
-			setError("An error occurred: " + err.message);
+		};
+
+		checkSession();
+	}, [navigate]);
+
+	const handleDiscordLogin = async () => {
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "discord",
+				options: {
+					redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}`,
+					queryParams: {
+						access_type: "offline",
+						prompt: "consent",
+					},
+				},
+			});
+
+			if (error) {
+				console.error("Discord login error:", error);
+			}
+		} catch (error) {
+			console.error("Discord login error:", error);
 		}
-	};
-
-	const handleDiscordLogin = () => {
-		// Replace with your Discord OAuth2 client ID
-		const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
-		const REDIRECT_URI = import.meta.env.VITE_DISCORD_REDIRECT_URI;
-		const scope = "identify email";
-
-		const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(scope)}`;
-
-		window.location.href = discordAuthUrl;
 	};
 
 	return (
@@ -50,30 +44,6 @@ function Login() {
 			<div className="card w-full max-w-sm bg-base-200 shadow-xl">
 				<div className="card-body">
 					<h2 className="card-title text-2xl mb-4 justify-center">Login</h2>
-					<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-						<input
-							type="text"
-							placeholder="Username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							className="input input-bordered w-full"
-							required
-						/>
-						<input
-							type="password"
-							placeholder="Password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							className="input input-bordered w-full"
-							required
-						/>
-						<button type="submit" className="btn btn-primary w-full">
-							Login
-						</button>
-					</form>
-
-					<div className="divider">OR</div>
-
 					<button
 						onClick={handleDiscordLogin}
 						className="btn btn-secondary w-full flex items-center justify-center gap-2"
@@ -83,13 +53,6 @@ function Login() {
 						</svg>
 						Login with Discord
 					</button>
-
-					{error && (
-						<div className="alert alert-error mt-4 py-2 px-4">{error}</div>
-					)}
-					{message && (
-						<div className="alert alert-success mt-4 py-2 px-4">{message}</div>
-					)}
 				</div>
 			</div>
 		</div>
