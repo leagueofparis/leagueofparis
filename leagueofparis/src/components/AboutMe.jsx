@@ -13,48 +13,29 @@ const AboutMe = () => {
 			: 0);
 
 	return (
-		<div className="bg-base-200 rounded-lg shadow-md p-6 w-full max-w-[667px] flex flex-col items-center">
+		<div className="bg-base-200 rounded-lg shadow-md p-6 w-full max-w-[667px] flex flex-col gap-4 items-center">
 			<h2 className="text-2xl font-bold mb-2">About Me</h2>
 			<p className="text-base text-center">
-				Hi there :) My name is Paris and I am new to streaming! If you are
-				reading this, thanks for checking out my page. I hope that you follow
-				and say hello during my next stream!
+				Hi there! My name is Paris and I am a brand new streamer who jumped into
+				the world of gaming and content creation in January of 2025.
 			</p>
-			<div className="mt-4 text-base w-full">
-				<span className="font-semibold">About Me:</span>
-				<ul className="list-disc list-inside ml-4">
-					<li>
-						<span className="font-semibold">Birthday:</span> October 31st{" "}
-						<span className="italic">#Halloween</span>
-					</li>
-					<li>
-						<span className="font-semibold">Age:</span> {age}
-					</li>
-					<li>
-						<span className="font-semibold">Favorite Food:</span> Chocolate
-					</li>
-					<li>
-						<span className="font-semibold">Hobbies:</span> I like to read and
-						do DIY crafts
-					</li>
-				</ul>
-				<span className="font-semibold block mt-2">About Gaming:</span>
-				<ul className="list-disc list-inside ml-4">
-					<li>
-						<span className="font-semibold">What Games?</span> I only play
-						League (send help)
-					</li>
-					<li>
-						<span className="font-semibold">Do You Duo?</span> I am currently
-						trying to SoloQ ranked but was generously gifted an alt account
-						where I will begin duoing soon!
-					</li>
-					<li>
-						<span className="font-semibold">Are You Good?</span> Some days yes,
-						most days no (but I always try!)
-					</li>
-				</ul>
-			</div>
+			<p className="text-base text-center">
+				While I may be new to streaming, and gaming in general, I have already
+				fallen in love with it. I mainly play League of Legends, but
+				occasionally dabble in Minecraft (creative only, because survival is
+				scary), Repo, and intense Mario Kart games on Wii against my brothers…
+				which probably shaped most of my competitiveness and my trust issues.
+			</p>
+			<p className="text-base text-center">
+				I work full time for a non profit during the days, and at night gaming
+				and streaming have become my favorite way to turn off my brain… by
+				getting destroyed on the rift.
+			</p>
+			<p className="text-base text-center">
+				I am incredibly grateful for the amazing community that’s already
+				forming. I cannot wait to keep growing, learning, and ranking up both in
+				game and in life with you all by my side! So, thanks for being here 🙂
+			</p>
 		</div>
 	);
 };
