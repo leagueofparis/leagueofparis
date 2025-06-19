@@ -32,9 +32,11 @@ function App() {
 					<Route
 						path="/sudoku"
 						element={
-							<Layout>
-								<Sudoku />
-							</Layout>
+							<ProtectedRoute requiredRole="user" requireAuth={true}>
+								<Layout>
+									<Sudoku />
+								</Layout>
+							</ProtectedRoute>
 						}
 					/>
 					<Route

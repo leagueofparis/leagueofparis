@@ -14,15 +14,16 @@ export default function Cell({
 	candidateMode,
 	onCandidateCellClick,
 	isDuplicateValue,
+	completed,
 }) {
 	const highlightClass =
 		{
-			selected: "bg-warning",
-			number: "bg-yellow-300",
-			rowcol: "bg-orange-200",
-			prefilled: "bg-stone-200",
+			selected: "bg-accent text-accent-content",
+			number: "bg-primary text-accent-content",
+			rowcol: "bg-accent/50 text-base-content",
+			prefilled: "bg-neutral text-neutral-content",
 			blur: "blur-sm",
-		}[highlightType] || "bg-base-300";
+		}[highlightType] || "bg-base-300 text-base-content";
 
 	const onCanCellClick = (e, value) => {
 		if (highlightType !== "selected") {
@@ -50,11 +51,11 @@ export default function Cell({
 			data-col={col}
 			data-value={value}
 			className={`text-center flex justify-center items-center border border-primary leading-[0.95]
-				focus:outline-none caret-transparent select-none font-bold cursor-pointer relative
+				focus:outline-none focus:ring-2 focus:ring-accent caret-transparent select-none font-bold cursor-pointer relative
 				${(row + 1) % 3 === 0 && row !== 8 ? "border-b-3" : ""}
 				${(col + 1) % 3 === 0 && col !== 8 ? "border-r-3" : ""}
 				${highlightClass} ${color}
-				${paused ? "blur" : ""}`}
+				${paused && !completed ? "blur" : ""}`}
 			style={{
 				width: "clamp(2rem, 9vw, 5rem)",
 				height: "clamp(2rem, 9vw, 5rem)",
