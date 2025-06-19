@@ -109,47 +109,14 @@ export function getImageUrl(path) {
 	return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 
-function getWeekKey(date = new Date()) {
-	// Get the current date
-	const currentDate = new Date(date);
-
-	// Get the day of the week (0 = Sunday, 3 = Wednesday)
-	const dayOfWeek = currentDate.getDay();
-
-	// Calculate days to subtract to get to the most recent Wednesday
-	const daysToSubtract = (dayOfWeek + 4) % 7; // +4 because we want Wednesday (3) to be 0
-
-	// Create a new date for the most recent Wednesday
-	const wednesdayDate = new Date(currentDate);
-	wednesdayDate.setDate(currentDate.getDate() - daysToSubtract);
-
-	// Get the first day of the year
-	const firstDay = new Date(wednesdayDate.getFullYear(), 0, 1);
-
-	// Calculate day of year for the Wednesday
-	const dayOfYear = (wednesdayDate - firstDay + 86400000) / 86400000;
-
-	// Calculate week number
-	const week = Math.ceil((dayOfYear + firstDay.getDay()) / 7);
-	return `${wednesdayDate.getFullYear()}-W${week}`;
-}
-
-function simpleHash(str) {
-	let hash = 0;
-	for (let i = 0; i < str.length; i++) {
-		hash = (hash * 31 + str.charCodeAt(i)) % 2_147_483_647;
-	}
-	return hash;
-}
-
 export async function getWeeklyImageUrl() {
 	// Directly list the contents of 'willow-wednesdays'
-	const { data, error } = await supabase.storage
-		.from(bucket)
-		.list("willow-wednesdays", {
-			limit: 100,
-			sortBy: { column: "created_at", order: "desc" },
-		});
+	const { data, error } = await supabase
+		.from("willow-images")
+		.select("*")
+		.order("created_at", { ascending: false })
+		.limit(1)
+		.single();
 
 	if (error) {
 		throw new Error("Error listing willow-wednesdays: " + error.message);
@@ -157,15 +124,7 @@ export async function getWeeklyImageUrl() {
 	if (!data || data.length === 0) {
 		throw new Error("No images found in willow-wednesdays folder");
 	}
-
-	// Pick a file for the week
-	const weekKey = getWeekKey();
-	const index = simpleHash(weekKey) % data.length;
-	const selectedFile = data[index];
-	const imageUrl = supabase.storage
-		.from(bucket)
-		.getPublicUrl(`willow-wednesdays/${selectedFile.name}`).data.publicUrl;
-	return imageUrl;
+	return getImageUrl("willow-wednesdays/" + data.file_name);
 }
 
 export async function invokeEdgeFunction(functionName, formData) {
