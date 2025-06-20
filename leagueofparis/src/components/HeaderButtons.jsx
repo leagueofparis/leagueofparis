@@ -42,6 +42,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 			label: "Uploads",
 			requiredRole: "admin",
 		},
+		{ path: "/support", label: "Support" },
 		{ path: "/contact", label: "Contact" },
 	];
 

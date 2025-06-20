@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
 import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
+import Support from "./pages/Support";
 
 function App() {
 	useEffect(() => {
@@ -70,6 +71,14 @@ function App() {
 						element={
 							<Layout>
 								<Gallery />
+							</Layout>
+						}
+					/>
+					<Route
+						path="/support"
+						element={
+							<Layout>
+								<Support />
 							</Layout>
 						}
 					/>
