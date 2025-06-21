@@ -35,7 +35,6 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 
 	const navItems = [
 		{ path: "/", label: "Home", isMobile: true },
-		{ path: "/about", label: "About" },
 		{ path: "/gallery", label: "Gallery" },
 		{
 			path: "/uploads",
