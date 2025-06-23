@@ -15,10 +15,11 @@ import { Link } from "react-router-dom";
 import Schedule from "../components/Schedule";
 import ImageCarousel from "../components/ImageCarousel";
 import AboutMe from "../components/AboutMe";
+import { getAnnouncements } from "../supabaseClient";
 
 function Home() {
 	const [mobile, setMobile] = useState(false);
-
+	const [announcements, setAnnouncements] = useState([]);
 	useEffect(() => {
 		function handleResize() {
 			setMobile(window.innerWidth <= 768);
@@ -26,6 +27,14 @@ function Home() {
 		handleResize();
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(() => {
+		const fetchAnnouncements = async () => {
+			const announcements = await getAnnouncements();
+			setAnnouncements(announcements);
+		};
+		fetchAnnouncements();
 	}, []);
 
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
@@ -81,6 +90,28 @@ function Home() {
 					<FaSpotify size={36} className={iconClasses} />
 				</a>
 			</div>
+			{announcements.length > 0 && (
+				<div className="flex flex-col items-center justify-center gap-4 w-full mb-4">
+					<div className="bg-base-200 rounded-lg min-w-[300px] pl-2">
+						{announcements.map((announcement, index) => (
+							<div key={index} className="text-base-content">
+								<label className="label">
+									{new Date(announcement.created_at).toLocaleDateString(
+										"en-US",
+										{
+											month: "short",
+											day: "numeric",
+										}
+									)}
+								</label>
+								<div className="text-3xl font-bold ">
+									{announcement.content}
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
 			{mobile && (
 				<div className="flex flex-col items-center justify-center gap-4 w-full">
 					<div>
