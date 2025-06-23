@@ -178,7 +178,10 @@ export async function getAnnouncements(includeExpired = false) {
 
 	// Only filter out expired announcements if includeExpired is false
 	if (!includeExpired) {
-		query = query.filter("expires_at", "gte", new Date().toISOString());
+		// Filter for announcements where expires_at is null OR expires_at is greater than or equal to current date
+		query = query.or(
+			`expires_at.is.null,expires_at.gte.${new Date().toISOString()}`
+		);
 	}
 
 	const { data, error } = await query;
@@ -187,7 +190,7 @@ export async function getAnnouncements(includeExpired = false) {
 		throw error;
 	}
 
-	// Additional client-side filtering for announcements without expiration dates
+	// Additional client-side filtering for announcements using expiration_date field
 	if (!includeExpired) {
 		const now = new Date();
 		return data.filter((announcement) => {
