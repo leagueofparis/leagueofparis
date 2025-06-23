@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Sudoku from "./pages/Sudoku";
 import Layout from "./components/Layout";
-import Uploads from "./pages/Uploads";
+import ContentManager from "./pages/ContentManager";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Contact from "./pages/Contact";
 import { DeviceProvider } from "./contexts/DeviceContext";
@@ -43,7 +43,7 @@ function App() {
 						path="/uploads"
 						element={
 							<Layout>
-								<Uploads />
+								<ContentManager />
 							</Layout>
 						}
 					/>

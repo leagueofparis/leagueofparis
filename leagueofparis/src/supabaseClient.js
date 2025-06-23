@@ -136,3 +136,65 @@ export async function invokeEdgeFunction(functionName, formData) {
 	}
 	return data;
 }
+
+export async function getAvailableFolders() {
+	const { data, error } = await supabase.storage
+		.from(bucket)
+		.list("", { limit: 100 });
+
+	if (error) {
+		throw error;
+	}
+
+	// Filter out files and only return folders
+	return data
+		.filter((item) => item.id === null) // Folders have null id
+		.map((item) => item.name);
+}
+
+export async function createAnnouncement(content, key, expirationDate = null) {
+	const formData = new FormData();
+	formData.append("content", content);
+	formData.append("key", key);
+	if (expirationDate) {
+		formData.append("expiration_date", expirationDate);
+	}
+
+	const response = await invokeEdgeFunction("create-announcement", formData);
+
+	if (!response) {
+		throw new Error("Failed to create announcement");
+	}
+
+	return response;
+}
+
+export async function getAnnouncements(includeExpired = false) {
+	let query = supabase
+		.from("announcements")
+		.select("*")
+		.order("created_at", { ascending: false })
+		.limit(10);
+
+	// Only filter out expired announcements if includeExpired is false
+	if (!includeExpired) {
+		query = query.filter("expires_at", "gte", new Date().toISOString());
+	}
+
+	const { data, error } = await query;
+
+	if (error) {
+		throw error;
+	}
+
+	// Additional client-side filtering for announcements without expiration dates
+	if (!includeExpired) {
+		const now = new Date();
+		return data.filter((announcement) => {
+			if (!announcement.expiration_date) return true;
+			return new Date(announcement.expiration_date) > now;
+		});
+	}
+
+	return data;
+}

@@ -39,7 +39,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 		{ path: "/gallery", label: "Gallery" },
 		{
 			path: "/uploads",
-			label: "Uploads",
+			label: "Content Manager",
 			requiredRole: "admin",
 		},
 		{ path: "/contact", label: "Contact" },
