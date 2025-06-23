@@ -350,7 +350,7 @@ function ContentManager() {
 							{/* Create Announcement Button */}
 							<button
 								onClick={handleCreateAnnouncement}
-								className="btn btn-secondary w-full"
+								className="btn btn-primary w-full"
 								disabled={
 									loading ||
 									!announcementContent.trim() ||

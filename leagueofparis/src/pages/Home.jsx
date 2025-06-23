@@ -95,6 +95,7 @@ function Home() {
 					<div className="bg-base-200 rounded-lg min-w-[300px] pl-2">
 						{announcements.map((announcement, index) => (
 							<div key={index} className="text-base-content">
+								<span className="label-text">Announcement: </span>
 								<label className="label">
 									{new Date(announcement.created_at).toLocaleDateString(
 										"en-US",
