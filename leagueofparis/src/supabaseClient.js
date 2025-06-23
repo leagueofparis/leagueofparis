@@ -189,7 +189,6 @@ export async function getAnnouncements(includeExpired = false) {
 	if (error) {
 		throw error;
 	}
-
 	// Additional client-side filtering for announcements using expiration_date field
 	if (!includeExpired) {
 		const now = new Date();
