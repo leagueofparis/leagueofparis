@@ -79,20 +79,22 @@ function Contact() {
 
 	return (
 		<div className="flex justify-center">
-			<div className="bg-base-300 p-8 rounded-lg shadow-lg w-full max-w-md">
-				<h1 className="text-2xl font-bold mb-4 text-center">Contact Me!</h1>
-				<div className="text-base-content/70 mb-4 text-center">
+			<div className="bg-base-200 p-8 rounded-lg shadow-lg w-full max-w-md">
+				<h1 className="text-2xl font-bold mb-4 text-center text-primary">
+					Contact Me!
+				</h1>
+				<div className="text-primary/70 mb-4 text-center">
 					Please fill out the form below to contact me.
-					<div className="divider"></div>
+					<div className="divider divider-primary"></div>
 					You can also email me directly at{" "}
 					<a href="mailto:leagueofparis5@gmail.com" className="font-semibold">
 						leagueofparis5@gmail.com
 					</a>
 				</div>
-				<div className="divider"></div>
+				<div className="divider divider-primary"></div>
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
 					{user && (
-						<div className="text-sm text-base-content/70 mb-2">
+						<div className="text-sm text-primary/70 mb-2">
 							Logged in as{" "}
 							<span className="font-semibold">{user.username}</span>
 							{user.email && ` (${user.email})`}
@@ -100,7 +102,7 @@ function Contact() {
 					)}
 					<div className="form-control w-full">
 						<label className="label">
-							<span className="label-text">Subject</span>
+							<span className="label-text text-primary">Subject</span>
 						</label>
 						<input
 							type="text"
@@ -114,7 +116,7 @@ function Contact() {
 					</div>
 					<div className="form-control w-full">
 						<label className="label">
-							<span className="label-text">Message</span>
+							<span className="label-text text-primary">Message</span>
 						</label>
 						<textarea
 							className="textarea textarea-bordered w-full"
@@ -125,14 +127,14 @@ function Contact() {
 							maxLength={500}
 							required
 						/>
-						<div className="text-xs text-right text-base-content/70 mt-1">
+						<div className="text-xs text-right text-primary/70 mt-1">
 							Max length: 500 characters
 						</div>
 					</div>
 					{!user && (
 						<div className="form-control w-full">
 							<label className="label">
-								<span className="label-text">Email</span>
+								<span className="label-text text-primary">Email</span>
 							</label>
 							<input
 								type="email"

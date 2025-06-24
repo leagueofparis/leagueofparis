@@ -3,7 +3,7 @@ import { ToggleTheme } from "../utilities/ToggleTheme";
 import { FaSun, FaMoon, FaHamburger } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
-import NewParisLogo from "../../public/images/emotes/free/parisLogo.png";
+import NewParisLogo from "../../public/images/logo.png";
 import { useUser } from "../contexts/UserContext";
 import ProfileButton from "./ProfileButton";
 import { useDevice } from "../contexts/DeviceContext";
@@ -53,7 +53,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 					<img
 						src={NewParisLogo}
 						alt="League of Paris Logo"
-						className="h-16 w-16 cursor-pointer pt-2"
+						className="h-18 w-auto cursor-pointer p-2"
 						onClick={() => redirectUrl("")}
 					/>
 				</button>

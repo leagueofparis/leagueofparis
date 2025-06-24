@@ -288,9 +288,11 @@ const Support = () => {
 			</div>
 
 			{/* Thank You Message */}
-			<div className="text-center bg-gradient-to-r from-primary to-accent rounded-lg p-8 text-primary-content">
-				<h2 className="text-3xl font-bold mb-4">Thank You! 💕</h2>
-				<p className="text-lg">
+			<div className="text-center bg-base-300 rounded-lg p-8 text-base-content">
+				<h2 className="text-3xl font-bold mb-4 text-base-content">
+					Thank You! 💕
+				</h2>
+				<p className="text-lg text-base-content">
 					Whether you subscribe, donate, or just watch and chat - every bit of
 					support helps me continue doing what I love. You're all amazing and
 					I'm so grateful for this community!
