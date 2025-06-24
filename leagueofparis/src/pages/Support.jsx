@@ -12,6 +12,25 @@ const Support = () => {
 	const twitchChannel = "leagueofparis";
 	const kofiLink = "https://ko-fi.com/leagueofparis";
 
+	const freeEmotes = [
+		{ name: "parisLogo", image: "free/parisLogo.png" },
+		{ name: "parisRaid", image: "free/parisRaid.png" },
+	];
+
+	const tier1Emotes = [
+		{ name: "paris7", image: "tier1/paris7.png" },
+		{ name: "parisBedge", image: "tier1/parisBedge.png" },
+		{ name: "parisBlush", image: "tier1/parisBlush.png" },
+		{ name: "parisJustAGirl", image: "tier1/parisJustAGirl.png" },
+		{ name: "parisLiver", image: "tier1/parisLiver.png" },
+		{ name: "parisMadge", image: "tier1/parisMadge.png" },
+		{ name: "parisOK", image: "tier1/parisOK.png" },
+		{ name: "parisPeeBreak", image: "tier1/parisPeeBreak.png" },
+		{ name: "parisSadge", image: "tier1/parisSadge.png" },
+		{ name: "parisScared", image: "tier1/parisScared.png" },
+		{ name: "parisWillow", image: "tier1/parisWillow.png" },
+	];
+
 	const subscriptionTiers = [
 		{
 			name: "Tier 1",
@@ -23,7 +42,7 @@ const Support = () => {
 				"Chat during Subscriber-Only mode",
 				"Not affected by chat slow-mode",
 			],
-			emotes: ["parisLove", "parisGaming"],
+			emotes: tier1Emotes,
 		},
 		{
 			name: "Tier 2",
@@ -36,13 +55,7 @@ const Support = () => {
 				"Priority chat",
 				"Exclusive content",
 			],
-			emotes: [
-				"parisLove",
-				"parisGaming",
-				"parisLaugh",
-				"parisSad",
-				"parisAngry",
-			],
+			emotes: tier1Emotes,
 		},
 		{
 			name: "Tier 3",
@@ -55,14 +68,7 @@ const Support = () => {
 				"VIP status",
 				"Personal shoutouts",
 			],
-			emotes: [
-				"parisLove",
-				"parisGaming",
-				"parisLaugh",
-				"parisSad",
-				"parisAngry",
-				"parisCool",
-			],
+			emotes: tier1Emotes,
 		},
 	];
 
@@ -109,20 +115,37 @@ const Support = () => {
 					</a>
 				</div>
 
-				{/* Sub Badges Section */}
-				<div className="mb-6">
-					<h3 className="text-lg font-semibold mb-3">Sub Badges</h3>
-					<div className="flex flex-wrap gap-3">
-						{subBadges.map((badge, index) => (
-							<div key={index} className="flex flex-col items-center gap-2">
-								<img
-									src={`/images/subbadges/${badge.image}`}
-									alt={badge.label}
-									className="w-6 h-6 md:w-8 md:h-8"
-								/>
-								<span className="text-sm font-medium">{badge.label}</span>
-							</div>
-						))}
+				{/* Sub badges and emotes */}
+				<div className="mb-6 flex gap-6 justify-start items-center">
+					<div className="">
+						<h3 className="text-lg font-semibold mb-3">Sub Badges</h3>
+						<div className="flex flex-wrap gap-3">
+							{subBadges.map((badge, index) => (
+								<div key={index} className="flex flex-col items-center gap-2">
+									<img
+										src={`/images/subbadges/${badge.image}`}
+										alt={badge.label}
+										className="w-6 h-6 md:w-8 md:h-8"
+									/>
+									<span className="text-sm font-medium">{badge.label}</span>
+								</div>
+							))}
+						</div>
+					</div>
+					<div className="">
+						<h3 className="text-lg font-semibold mb-3">Free Emotes</h3>
+						<div className="flex flex-wrap gap-3">
+							{freeEmotes.map((emote, index) => (
+								<div key={index} className="flex flex-col items-center gap-2">
+									<img
+										src={`/images/emotes/${emote.image}`}
+										alt={emote.name}
+										className="w-6 h-6 md:w-8 md:h-8"
+									/>
+									<span className="text-sm font-medium">{emote.name}</span>
+								</div>
+							))}
+						</div>
 					</div>
 				</div>
 
@@ -158,15 +181,16 @@ const Support = () => {
 									Emotes included:
 								</p>
 								<div className="flex flex-wrap gap-2">
-									{tier.emotes.map((emoteName, idx) => (
+									{tier.emotes.map((emote, index) => (
 										<div
-											key={idx}
-											className="flex items-center gap-1 bg-base-200 rounded px-2 py-1"
+											key={index}
+											className="flex flex-col items-center gap-2"
 										>
-											<div className="w-6 h-6 bg-gradient-to-br from-primary to-accent rounded flex items-center justify-center text-white text-xs font-bold">
-												{emoteName.slice(5, 7).toUpperCase()}
-											</div>
-											<span className="text-xs">{emoteName}</span>
+											<img
+												src={`/images/emotes/${emote.image}`}
+												alt={emote.name}
+												className="w-6 h-6 md:w-8 md:h-8"
+											/>
 										</div>
 									))}
 								</div>
