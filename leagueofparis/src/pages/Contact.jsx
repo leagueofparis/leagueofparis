@@ -79,7 +79,7 @@ function Contact() {
 
 	return (
 		<div className="flex justify-center">
-			<div className="bg-base-200 p-8 rounded-lg shadow-lg w-full max-w-md">
+			<div className="bg-base-300 p-8 rounded-lg shadow-lg w-full max-w-md">
 				<h1 className="text-2xl font-bold mb-4 text-center">Contact Me!</h1>
 				<div className="text-base-content/70 mb-4 text-center">
 					Please fill out the form below to contact me.
@@ -152,7 +152,7 @@ function Contact() {
 						onChange={handleCaptchaChange}
 						onExpired={() => setCaptchaToken("")}
 					/>
-					<button type="submit" className="btn btn-primary w-full">
+					<button type="submit" className="btn btn-accent w-full text-primary">
 						Send
 					</button>
 					{status && (

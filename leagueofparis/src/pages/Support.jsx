@@ -98,8 +98,8 @@ const Support = () => {
 					<div className="flex items-center gap-3">
 						<FaTwitch className="text-4xl text-purple-500" />
 						<div>
-							<h2 className="text-2xl font-bold">Twitch</h2>
-							<p className="text-base-content/70">
+							<h2 className="text-2xl font-bold text-primary">Twitch</h2>
+							<p className="text-primary/70">
 								Subscribe to get exclusive emotes, badges, and perks!
 							</p>
 						</div>
@@ -118,7 +118,9 @@ const Support = () => {
 				{/* Sub badges and emotes */}
 				<div className="mb-6 flex gap-6 justify-start items-center">
 					<div className="">
-						<h3 className="text-lg font-semibold mb-3">Sub Badges</h3>
+						<h3 className="text-lg font-semibold mb-3 text-primary">
+							Sub Badges
+						</h3>
 						<div className="flex flex-wrap gap-3">
 							{subBadges.map((badge, index) => (
 								<div key={index} className="flex flex-col items-center gap-2">
@@ -127,13 +129,17 @@ const Support = () => {
 										alt={badge.label}
 										className="w-6 h-6 md:w-8 md:h-8"
 									/>
-									<span className="text-sm font-medium">{badge.label}</span>
+									<span className="text-sm font-medium text-primary">
+										{badge.label}
+									</span>
 								</div>
 							))}
 						</div>
 					</div>
 					<div className="">
-						<h3 className="text-lg font-semibold mb-3">Free Emotes</h3>
+						<h3 className="text-lg font-semibold mb-3 text-primary">
+							Free Emotes
+						</h3>
 						<div className="flex flex-wrap gap-3">
 							{freeEmotes.map((emote, index) => (
 								<div key={index} className="flex flex-col items-center gap-2">
@@ -142,7 +148,9 @@ const Support = () => {
 										alt={emote.name}
 										className="w-6 h-6 md:w-8 md:h-8"
 									/>
-									<span className="text-sm font-medium">{emote.name}</span>
+									<span className="text-sm font-medium text-primary">
+										{emote.name}
+									</span>
 								</div>
 							))}
 						</div>
@@ -154,13 +162,13 @@ const Support = () => {
 					{subscriptionTiers.map((tier, index) => (
 						<div
 							key={index}
-							className="bg-base-100 rounded-lg p-4 border border-primary/20 hover:border-primary/40 transition-all flex flex-col"
+							className="bg-base-300 rounded-lg p-4 border border-primary/20 hover:border-primary/40 transition-all flex flex-col"
 						>
 							<div className="flex items-center gap-2 mb-3">
 								{tier.icon}
 								<h3 className="text-xl font-bold">{tier.name}</h3>
 							</div>
-							<p className="text-2xl font-bold text-primary mb-2">
+							<p className="text-2xl font-bold text-base-content mb-2">
 								{tier.price}
 							</p>
 							<p className="text-sm text-base-content/70 mb-3">
@@ -217,14 +225,14 @@ const Support = () => {
 				<div className="flex items-center gap-3 mb-6">
 					<FaCoffee className="text-4xl text-orange-500" />
 					<div>
-						<h2 className="text-2xl font-bold">Buy Me a Coffee</h2>
-						<p className="text-base-content/70">
+						<h2 className="text-2xl font-bold text-primary">Buy Me a Coffee</h2>
+						<p className="text-primary/70">
 							One-time support to help keep the streams going!
 						</p>
 					</div>
 				</div>
 
-				<div className="bg-base-100 rounded-lg p-6 text-center">
+				<div className="bg-base-300 rounded-lg p-6 text-center">
 					<div className="max-w-md mx-auto">
 						<h3 className="text-xl font-bold mb-3">Support the Stream</h3>
 						<p className="text-base-content/70 mb-6">
@@ -246,9 +254,11 @@ const Support = () => {
 
 			{/* Other Ways to Support */}
 			<div className="bg-base-200 rounded-lg p-6 shadow-lg">
-				<h2 className="text-2xl font-bold mb-6">Other Ways to Support</h2>
+				<h2 className="text-2xl font-bold mb-6 text-primary">
+					Other Ways to Support
+				</h2>
 				<div className="grid md:grid-cols-2 gap-6">
-					<div className="bg-base-100 rounded-lg p-4">
+					<div className="bg-base-300 rounded-lg p-4">
 						<h3 className="text-lg font-bold mb-2">Watch & Engage</h3>
 						<p className="text-base-content/70 mb-3">
 							Simply watching the stream and engaging in chat helps a lot! Your
@@ -261,7 +271,7 @@ const Support = () => {
 							<li>• Follow on social media</li>
 						</ul>
 					</div>
-					<div className="bg-base-100 rounded-lg p-4">
+					<div className="bg-base-300 rounded-lg p-4">
 						<h3 className="text-lg font-bold mb-2">Spread the Word</h3>
 						<p className="text-base-content/70 mb-3">
 							Help grow the community by sharing my content and introducing

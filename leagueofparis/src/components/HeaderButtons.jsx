@@ -35,14 +35,14 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 
 	const navItems = [
 		{ path: "/", label: "Home", isMobile: true },
-		{ path: "/gallery", label: "Gallery" },
+		{ path: "/gallery", label: "Gallery", tooltip: "Check out my art!" },
 		{
 			path: "/uploads",
 			label: "Content Manager",
 			requiredRole: "admin",
 		},
-		{ path: "/support", label: "Support" },
-		{ path: "/contact", label: "Contact" },
+		{ path: "/support", label: "Support", tooltip: "Support the stream" },
+		{ path: "/contact", label: "Contact", tooltip: "Contact me!" },
 	];
 
 	return (
@@ -66,8 +66,8 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 								if (item.requiredRole && profile?.role === item.requiredRole) {
 									return (
 										<div
-											className="tooltip tooltip-bottom"
-											data-tip={item.label}
+											className="tooltip tooltip-bottom text-primary"
+											data-tip={item.tooltip}
 										>
 											<a
 												key={item.path}
@@ -84,7 +84,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 									return (
 										<div
 											className="tooltip tooltip-bottom"
-											data-tip={item.label}
+											data-tip={item.tooltip}
 										>
 											<a
 												key={item.path}
