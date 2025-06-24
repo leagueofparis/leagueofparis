@@ -9,7 +9,10 @@ export default function Schedule({ folder = "schedules", className = "" }) {
 	const [error, setError] = useState(null);
 
 	// Development mode check
-	const isDev = import.meta.env.DEV || import.meta.env.MODE === "development";
+	const isDev =
+		import.meta.env.DEV ||
+		import.meta.env.MODE === "development" ||
+		window.location.hostname === "dev.leagueofparis.com";
 
 	useEffect(() => {
 		async function fetchRecentImage() {
