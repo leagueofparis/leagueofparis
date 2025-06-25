@@ -11,6 +11,8 @@ import {
 import Heart from "../../public/images/heart.png";
 import HeartAccent from "../../public/images/heart_accent.png";
 import Croissant from "../../public/images/croissant.png";
+import RibbonAccent from "../../public/images/ribbon_accent.png";
+import Wine from "../../public/images/wine.png";
 import SupportOnKofi from "../../public/images/support_on_kofi.png";
 import Kofi from "../../public/images/kofi.png";
 
@@ -50,7 +52,7 @@ const Support = () => {
 			name: "Tier 2",
 			price: "$9.99/month",
 			description: "Enhanced subscription with more perks",
-			icon: <FaStar className="text-yellow-500" />,
+			icon: <img src={RibbonAccent} alt="Ribbon" className="w-6 h-6" />,
 
 			features: [
 				"Ad-free streams",
@@ -63,7 +65,7 @@ const Support = () => {
 			name: "Tier 3",
 			price: "$24.99/month",
 			description: "Premium subscription with maximum benefits",
-			icon: <FaCrown className="text-purple-500" />,
+			icon: <img src={Wine} alt="Wine" className="w-6 h-6" />,
 			features: [
 				"Ad-free streams",
 				"Subscription badge in Discord",
