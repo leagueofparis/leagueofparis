@@ -8,6 +8,12 @@ import {
 	FaGem,
 } from "react-icons/fa";
 
+import Heart from "../../public/images/heart.png";
+import HeartAccent from "../../public/images/heart_accent.png";
+import Croissant from "../../public/images/croissant.png";
+import SupportOnKofi from "../../public/images/support_on_kofi.png";
+import Kofi from "../../public/images/kofi.png";
+
 const Support = () => {
 	const twitchChannel = "leagueofparis";
 	const kofiLink = "https://ko-fi.com/leagueofparis";
@@ -36,7 +42,7 @@ const Support = () => {
 			name: "Tier 1",
 			price: "$5.99/month",
 			description: "Basic subscription with emotes and badges",
-			icon: <FaHeart className="text-red-500" />,
+			icon: <img src={Croissant} alt="Croissant" className="w-6 h-6" />,
 			features: ["Ad-free streams", "Subscription badge in Discord"],
 			emotes: tier1Emotes,
 		},
@@ -160,56 +166,65 @@ const Support = () => {
 							key={index}
 							className="bg-base-300 rounded-lg p-4 border border-primary/20 hover:border-primary/40 transition-all flex flex-col"
 						>
-							<div className="flex items-center gap-2 mb-3">
-								{tier.icon}
-								<h3 className="text-xl font-bold">{tier.name}</h3>
-							</div>
-							<p className="text-2xl font-bold text-base-content mb-2">
-								{tier.price}
-							</p>
-							<p className="text-sm text-base-content/70 mb-3">
-								{tier.description}
-							</p>
-							<ul className="space-y-1 mb-4">
-								{tier.features.map((feature, idx) => (
-									<li key={idx} className="text-sm flex items-center gap-2">
-										<FaGem className="text-xs text-accent min-w-4 min-h-4" />
-										{feature}
-									</li>
-								))}
-							</ul>
-
-							{/* Emotes for this tier */}
-							<div className="mb-4">
-								<p className="text-sm font-semibold mb-2 text-base-content/80">
-									Emotes included:
-								</p>
-								<div className="flex flex-wrap gap-2">
-									{tier.emotes.map((emote, index) => (
-										<div
-											key={index}
-											className="flex flex-col items-center gap-2"
-										>
-											<img
-												src={`/images/emotes/${emote.image}`}
-												alt={emote.name}
-												className="w-6 h-6 md:w-8 md:h-8"
-											/>
-										</div>
-									))}
+							<div className="flex flex-col justify-space-between align-center h-full">
+								<div className="flex flex-col h-full">
+									<div className="flex items-center gap-2 mb-3">
+										{tier.icon}
+										<h3 className="text-xl font-bold">{tier.name}</h3>
+									</div>
+									<p className="text-2xl font-bold text-base-content mb-2">
+										{tier.price}
+									</p>
+									<p className="text-sm text-base-content/70 mb-3">
+										{tier.description}
+									</p>
+									<ul className="space-y-1 mb-4">
+										{tier.features.map((feature, idx) => (
+											<li key={idx} className="text-sm flex items-center gap-2">
+												<img
+													src={HeartAccent}
+													alt="Heart"
+													className="w-4 h-4"
+												/>
+												{feature}
+											</li>
+										))}
+									</ul>
 								</div>
-							</div>
+								<div>
+									{/* Emotes for this tier */}
+									<div className="mb-4">
+										<p className="text-sm font-semibold mb-2 text-base-content/80">
+											Emotes included:
+										</p>
+										<div className="flex flex-wrap gap-2">
+											{tier.emotes.map((emote, index) => (
+												<div
+													key={index}
+													className="flex flex-col items-center gap-2"
+												>
+													<img
+														src={`/images/emotes/${emote.image}`}
+														alt={emote.name}
+														className="w-6 h-6 md:w-8 md:h-8"
+													/>
+												</div>
+											))}
+										</div>
+									</div>
 
-							{/* Button aligned to bottom */}
-							<div className="mt-auto pt-4">
-								<a
-									href={`https://twitch.tv/${twitchChannel}/subscribe?tier=${index + 1}`}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="btn w-full btn-accent hover:bg-accent/80 text-white"
-								>
-									Subscribe {tier.name}
-								</a>
+									{/* Button aligned to bottom */}
+									<div className="mt-auto pt-4">
+										<a
+											href={`https://twitch.tv/${twitchChannel}/subscribe?tier=${index + 1}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="btn w-full btn-accent hover:bg-accent/80 text-white"
+										>
+											Subscribe {tier.name}
+										</a>
+									</div>
+								</div>
 							</div>
 						</div>
 					))}
@@ -219,7 +234,7 @@ const Support = () => {
 			{/* Ko-fi Section */}
 			<div className="bg-base-200 rounded-lg p-6 shadow-lg">
 				<div className="flex items-center gap-3 mb-6">
-					<FaCoffee className="text-4xl text-orange-500" />
+					<img src={Kofi} alt="Kofi" className="w-16" />
 					<div>
 						<h2 className="text-2xl font-bold text-primary">
 							Donate Monetarily
@@ -231,7 +246,7 @@ const Support = () => {
 				</div>
 
 				<div className="bg-base-300 rounded-lg p-6 text-center">
-					<div className="max-w-md mx-auto">
+					<div className="max-w-md mx-auto flex flex-col items-center">
 						<h3 className="text-xl font-bold mb-3">Support League of Paris</h3>
 						<p className="text-base-content/70 mb-6">
 							Each donation goes directly to me without cuts taken. These
@@ -242,10 +257,13 @@ const Support = () => {
 							href={kofiLink}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="btn btn-accent btn-lg gap-2"
+							className="w-full flex justify-center"
 						>
-							<FaCoffee />
-							Donate
+							<img
+								src={SupportOnKofi}
+								alt="Support on Kofi"
+								className="w-48 h-auto"
+							/>
 						</a>
 					</div>
 				</div>
