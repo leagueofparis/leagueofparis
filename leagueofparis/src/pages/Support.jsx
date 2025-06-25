@@ -216,7 +216,7 @@ const Support = () => {
 									</div>
 
 									{/* Button aligned to bottom */}
-									<div className="mt-auto pt-4">
+									{/* <div className="mt-auto pt-4">
 										<a
 											href={`https://twitch.tv/${twitchChannel}/subscribe?tier=${index + 1}`}
 											target="_blank"
@@ -225,7 +225,7 @@ const Support = () => {
 										>
 											Subscribe {tier.name}
 										</a>
-									</div>
+									</div> */}
 								</div>
 							</div>
 						</div>
