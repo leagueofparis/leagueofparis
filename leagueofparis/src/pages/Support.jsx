@@ -34,14 +34,10 @@ const Support = () => {
 	const subscriptionTiers = [
 		{
 			name: "Tier 1",
-			price: "$4.99/month",
+			price: "$5.99/month",
 			description: "Basic subscription with emotes and badges",
 			icon: <FaHeart className="text-red-500" />,
-			features: [
-				"Ad-free streams",
-				"Chat during Subscriber-Only mode",
-				"Not affected by chat slow-mode",
-			],
+			features: ["Ad-free streams", "Subscription badge in Discord"],
 			emotes: tier1Emotes,
 		},
 		{
@@ -49,11 +45,11 @@ const Support = () => {
 			price: "$9.99/month",
 			description: "Enhanced subscription with more perks",
 			icon: <FaStar className="text-yellow-500" />,
+
 			features: [
-				"5 Sub emotes",
-				"Animated sub badge",
-				"Priority chat",
-				"Exclusive content",
+				"Ad-free streams",
+				"Subscription badge in Discord",
+				"Friends on all applicable platforms",
 			],
 			emotes: tier1Emotes,
 		},
@@ -63,10 +59,10 @@ const Support = () => {
 			description: "Premium subscription with maximum benefits",
 			icon: <FaCrown className="text-purple-500" />,
 			features: [
-				"All sub emotes",
-				"Animated badge",
-				"VIP status",
-				"Personal shoutouts",
+				"Ad-free streams",
+				"Subscription badge in Discord",
+				"Friends on all applicable platforms",
+				"Penpal with Paris Program (opt in to receive a handwritten letter by Paris each month)",
 			],
 			emotes: tier1Emotes,
 		},
@@ -108,7 +104,7 @@ const Support = () => {
 						href={`https://twitch.tv/${twitchChannel}`}
 						target="_blank"
 						rel="noopener noreferrer"
-						className="btn btn-secondary btn-lg gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+						className="btn btn-accent gap-2 hover:bg-accent/80 text-white"
 					>
 						<FaTwitch />
 						Follow on Twitch
@@ -210,7 +206,7 @@ const Support = () => {
 									href={`https://twitch.tv/${twitchChannel}/subscribe?tier=${index + 1}`}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="btn w-full bg-purple-600 hover:bg-purple-700 border-purple-600 hover:border-purple-700 text-white"
+									className="btn w-full btn-accent hover:bg-accent/80 text-white"
 								>
 									Subscribe {tier.name}
 								</a>
@@ -225,7 +221,9 @@ const Support = () => {
 				<div className="flex items-center gap-3 mb-6">
 					<FaCoffee className="text-4xl text-orange-500" />
 					<div>
-						<h2 className="text-2xl font-bold text-primary">Buy Me a Coffee</h2>
+						<h2 className="text-2xl font-bold text-primary">
+							Donate Monetarily
+						</h2>
 						<p className="text-primary/70">
 							One-time support to help keep the streams going!
 						</p>
@@ -234,19 +232,20 @@ const Support = () => {
 
 				<div className="bg-base-300 rounded-lg p-6 text-center">
 					<div className="max-w-md mx-auto">
-						<h3 className="text-xl font-bold mb-3">Support the Stream</h3>
+						<h3 className="text-xl font-bold mb-3">Support League of Paris</h3>
 						<p className="text-base-content/70 mb-6">
-							Every coffee helps me continue creating content and improving the
-							stream quality. Your support means the world to me! 💕
+							Each donation goes directly to me without cuts taken. These
+							donations are used to directly support all streams and content
+							creation. Your support means the world to me!
 						</p>
 						<a
 							href={kofiLink}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="btn btn-warning btn-lg gap-2"
+							className="btn btn-accent btn-lg gap-2"
 						>
 							<FaCoffee />
-							Buy Me a Coffee
+							Donate
 						</a>
 					</div>
 				</div>
@@ -267,7 +266,6 @@ const Support = () => {
 						<ul className="text-sm space-y-1">
 							<li>• Watch live streams</li>
 							<li>• Chat and interact</li>
-							<li>• Share with friends</li>
 							<li>• Follow on social media</li>
 						</ul>
 					</div>
@@ -279,9 +277,8 @@ const Support = () => {
 						</p>
 						<ul className="text-sm space-y-1">
 							<li>• Share stream clips</li>
-							<li>• Recommend to friends</li>
-							<li>• Leave positive reviews</li>
 							<li>• Join the Discord community</li>
+							<li>• Help Paris find collaborators</li>
 						</ul>
 					</div>
 				</div>
@@ -294,8 +291,8 @@ const Support = () => {
 				</h2>
 				<p className="text-lg text-base-content">
 					Whether you subscribe, donate, or just watch and chat - every bit of
-					support helps me continue doing what I love. You're all amazing and
-					I'm so grateful for this community!
+					support helps me continue doing what I love. You are all amazing and I
+					am so grateful for this community!
 				</p>
 			</div>
 		</div>

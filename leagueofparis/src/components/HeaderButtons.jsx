@@ -39,7 +39,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 		{ path: "/gallery", label: "Gallery", tooltip: "Check out my art!" },
 		{
 			path: "/uploads",
-			label: "Content Manager",
+			label: "Admin",
 			requiredRole: "admin",
 		},
 		{ path: "/support", label: "Support", tooltip: "Support the stream" },
@@ -67,7 +67,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 								if (item.requiredRole && profile?.role === item.requiredRole) {
 									return (
 										<div
-											className="tooltip tooltip-bottom text-primary"
+											className="tooltip tooltip-bottom"
 											data-tip={item.tooltip}
 										>
 											<a
