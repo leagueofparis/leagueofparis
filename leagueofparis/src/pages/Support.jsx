@@ -173,7 +173,7 @@ const Support = () => {
 							<ul className="space-y-1 mb-4">
 								{tier.features.map((feature, idx) => (
 									<li key={idx} className="text-sm flex items-center gap-2">
-										<FaGem className="text-xs text-accent" />
+										<FaGem className="text-xs text-accent min-w-4 min-h-4" />
 										{feature}
 									</li>
 								))}
