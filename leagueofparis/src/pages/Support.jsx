@@ -265,6 +265,9 @@ const Support = () => {
 								className="w-48 h-auto"
 							/>
 						</a>
+						<p className="text-sm text-base-content/70 mt-2 italic">
+							Any donation made is non-refundable
+						</p>
 					</div>
 				</div>
 			</div>
