@@ -137,7 +137,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 									aria-label="close sidebar"
 									className="drawer-overlay"
 								></label>
-								<ul className="menu p-4 w-60 text-xl min-h-full bg-base-200 text-base-content">
+								<ul className="menu p-4 w-60 text-xl min-h-full bg-base-300 text-base-content">
 									{navItems.map((item) => {
 										if (
 											item.requiredRole &&
