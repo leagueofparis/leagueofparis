@@ -30,18 +30,10 @@ const SpotifyAuth = () => {
 		try {
 			const code = rawCode.trim();
 
-			const response = await invokeEdgeFunction("spotify-auth", {
+			const tokenData = await invokeEdgeFunction("spotify-auth", {
 				code: code.trim(),
 			});
 
-			if (!response.ok) {
-				console.log(response);
-				const errorData = await response.json();
-				console.error("Spotify token exchange failed:", errorData);
-				throw new Error("Failed to exchange code for tokens");
-			}
-
-			const tokenData = await response.json();
 			console.log("Received token data:", tokenData);
 			setTokens(tokenData);
 		} catch (err) {
