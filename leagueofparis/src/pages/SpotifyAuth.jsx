@@ -39,7 +39,6 @@ const SpotifyAuth = () => {
 				},
 				body: JSON.stringify({
 					code,
-					redirect_uri: REDIRECT_URI,
 				}),
 			});
 
