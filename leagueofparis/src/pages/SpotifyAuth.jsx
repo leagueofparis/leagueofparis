@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { invokeEdgeFunction } from "../supabaseClient";
 
 const SpotifyAuth = () => {
 	const [tokens, setTokens] = useState(null);
@@ -31,7 +32,7 @@ const SpotifyAuth = () => {
 			// to exchange the code for tokens, as the client secret should not be exposed
 			// For development purposes, you can use a simple proxy or backend endpoint
 
-			const response = await fetch("/api/spotify/token", {
+			const response = await invokeEdgeFunction("spotify-auth", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
