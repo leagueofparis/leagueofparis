@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
+import SpotifyAuth from "./pages/SpotifyAuth";
 
 function App() {
 	useEffect(() => {
@@ -82,6 +83,7 @@ function App() {
 							</Layout>
 						}
 					/>
+					<Route path="/spotify-auth" element={<SpotifyAuth />} />
 				</Routes>
 			</Router>
 		</DeviceProvider>
