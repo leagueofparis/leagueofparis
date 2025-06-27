@@ -28,11 +28,11 @@ const SpotifyAuth = () => {
 
 	const exchangeCodeForTokens = async (rawCode) => {
 		try {
-			const code = rawCode.trim(); // ✅ Remove extra newline or whitespace
+			const code = rawCode.trim();
 
-			const formData = new FormData();
-			formData.append("code", code);
-			const response = await invokeEdgeFunction("spotify-auth", formData);
+			const response = await invokeEdgeFunction("spotify-auth", {
+				code: code.trim(),
+			});
 
 			if (!response.ok) {
 				const errorData = await response.json();
