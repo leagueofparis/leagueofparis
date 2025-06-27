@@ -7,7 +7,7 @@ const SpotifyAuth = () => {
 
 	// Spotify OAuth configuration
 	const CLIENT_ID = "2426e168991d4f90bc0ae1123b21115f"; // Replace with your actual client ID
-	const REDIRECT_URI = "https://dev.leagueofparis.com/spotify-auth";
+	const REDIRECT_URI = window.location.origin + "/spotify-auth";
 	const SCOPES = [
 		"user-read-private",
 		"user-read-email",
@@ -31,19 +31,16 @@ const SpotifyAuth = () => {
 			// to exchange the code for tokens, as the client secret should not be exposed
 			// For development purposes, you can use a simple proxy or backend endpoint
 
-			const response = await fetch(
-				"https://dev.leagueofparis.com:3001/api/spotify/token",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						code,
-						redirect_uri: REDIRECT_URI,
-					}),
-				}
-			);
+			const response = await fetch("/api/spotify/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					code,
+					redirect_uri: REDIRECT_URI,
+				}),
+			});
 
 			if (!response.ok) {
 				throw new Error("Failed to exchange code for tokens");
