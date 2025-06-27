@@ -50,7 +50,7 @@ const SpotifyAuth = () => {
 	useEffect(() => {
 		// Check if we have a code in the URL (return from Spotify OAuth)
 		const urlParams = new URLSearchParams(window.location.search);
-		const code = urlParams.get("code");
+		const code = urlParams.get("code").trim().replace("\n", "");
 		const error = urlParams.get("error");
 
 		if (error) {
