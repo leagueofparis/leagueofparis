@@ -32,15 +32,7 @@ const SpotifyAuth = () => {
 			// to exchange the code for tokens, as the client secret should not be exposed
 			// For development purposes, you can use a simple proxy or backend endpoint
 
-			const response = await invokeEdgeFunction("spotify-auth", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					code,
-				}),
-			});
+			const response = await invokeEdgeFunction("spotify-auth", { code });
 
 			if (!response.ok) {
 				throw new Error("Failed to exchange code for tokens");
