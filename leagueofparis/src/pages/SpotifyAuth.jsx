@@ -35,6 +35,7 @@ const SpotifyAuth = () => {
 			});
 
 			if (!response.ok) {
+				console.log(response);
 				const errorData = await response.json();
 				console.error("Spotify token exchange failed:", errorData);
 				throw new Error("Failed to exchange code for tokens");
