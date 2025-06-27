@@ -26,23 +26,25 @@ const SpotifyAuth = () => {
 		window.location.href = authUrl;
 	};
 
-	const exchangeCodeForTokens = async (code) => {
+	const exchangeCodeForTokens = async (rawCode) => {
 		try {
-			// Note: In a real application, you would send this to your backend
-			// to exchange the code for tokens, as the client secret should not be exposed
-			// For development purposes, you can use a simple proxy or backend endpoint
+			const code = rawCode.trim(); // ✅ Remove extra newline or whitespace
 
 			const response = await invokeEdgeFunction("spotify-auth", { code });
 
 			if (!response.ok) {
+				const errorData = await response.json();
+				console.error("Spotify token exchange failed:", errorData);
 				throw new Error("Failed to exchange code for tokens");
 			}
 
 			const tokenData = await response.json();
+			console.log("Received token data:", tokenData);
 			setTokens(tokenData);
-			setLoading(false);
 		} catch (err) {
+			console.error("Token exchange error:", err);
 			setError(err.message);
+		} finally {
 			setLoading(false);
 		}
 	};
@@ -50,7 +52,7 @@ const SpotifyAuth = () => {
 	useEffect(() => {
 		// Check if we have a code in the URL (return from Spotify OAuth)
 		const urlParams = new URLSearchParams(window.location.search);
-		const code = urlParams.get("code").trim().replace("\n", "");
+		const code = urlParams.get("code");
 		const error = urlParams.get("error");
 
 		if (error) {
