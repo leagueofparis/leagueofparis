@@ -9,20 +9,22 @@ export default defineConfig({
 	plugins: [react(), tailwindcss()],
 	server: {
 		proxy: {
-			// Proxy API requests to the backend server
+			// Change '/api' to match the path you use for your API requests
 			"/api": {
-				target: "https://dev.leagueofparis.com:3001", // Dev server backend
+				target: process.env.VITE_API_URL, // Replace with your API's port
 				changeOrigin: true,
-				secure: true, // Use HTTPS for dev server
+				secure: false,
+				// Optional: rewrite the path if your API doesn't have '/api' prefix
+				rewrite: (path) => path.replace(/^\/api/, ""),
 			},
 			"/auth": {
-				target: "https://dev.leagueofparis.com:3001",
+				target: process.env.VITE_API_URL,
 				changeOrigin: true,
-				secure: true,
+				secure: false,
 				rewrite: (path) => path.replace(/^\/auth/, "/api/auth"),
 			},
 		},
 		host: true,
-		port: 5173, // Frontend port (changed from 3001)
+		port: 3000,
 	},
 });

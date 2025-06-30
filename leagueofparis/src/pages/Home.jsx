@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import Schedule from "../components/Schedule";
 import ImageCarousel from "../components/ImageCarousel";
 import AboutMe from "../components/AboutMe";
+import YoutubeEmbed from "../components/YoutubeEmbed";
 import { getAnnouncements } from "../supabaseClient";
 
 function Home() {
@@ -130,7 +131,10 @@ function Home() {
 						<WillowWednesday />
 					</div>
 					<div className="w-full">
-						<AboutMe />
+						<div className="flex flex-col items-center justify-center gap-4 w-full">
+							<YoutubeEmbed videoId="gQVhqgeVskU" />
+							<AboutMe />
+						</div>
 					</div>
 				</div>
 			)}
@@ -145,11 +149,12 @@ function Home() {
 						/>
 						<Schedule />
 					</div>
-					<div className="flex flex-row items-center justify-center gap-4 w-full">
+					<div className="flex flex-row items-start justify-center gap-4 w-full">
 						<div className="w-1/2">
 							<WillowWednesday />
 						</div>
-						<div className="w-1/2">
+						<div className="w-1/2 flex flex-col items-center justify-center gap-4">
+							<YoutubeEmbed videoId="gQVhqgeVskU" />
 							<AboutMe />
 						</div>
 					</div>
