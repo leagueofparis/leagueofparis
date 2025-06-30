@@ -3,6 +3,7 @@ import { ToggleTheme } from "../utilities/ToggleTheme";
 import { FaSun, FaMoon, FaHamburger } from "react-icons/fa";
 import SignInButton from "./SignInButton"; // Adjust the path as necessary
 import ParisLogo from "../../public/images/paris.png"; // Adjust the path as necessary
+import NewParisLogo from "../../public/images/logo.png";
 import { useUser } from "../contexts/UserContext";
 import ProfileButton from "./ProfileButton";
 import { useDevice } from "../contexts/DeviceContext";
@@ -35,14 +36,14 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 
 	const navItems = [
 		{ path: "/", label: "Home", isMobile: true },
-		{ path: "/gallery", label: "Gallery" },
+		{ path: "/gallery", label: "Gallery", tooltip: "Check out my art!" },
 		{
 			path: "/uploads",
-			label: "Content Manager",
+			label: "Admin",
 			requiredRole: "admin",
 		},
-		// { path: "/support", label: "Support" },
-		{ path: "/contact", label: "Contact" },
+		{ path: "/support", label: "Support", tooltip: "Support the stream" },
+		{ path: "/contact", label: "Contact", tooltip: "Contact me!" },
 	];
 
 	return (
@@ -50,9 +51,9 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 			<div className="flex items-center gap-4">
 				<button>
 					<img
-						src={ParisLogo}
+						src={NewParisLogo}
 						alt="League of Paris Logo"
-						className="h-16 w-16 rounded-full cursor-pointer pt-2"
+						className="h-18 w-auto cursor-pointer p-2"
 						onClick={() => redirectUrl("")}
 					/>
 				</button>
@@ -67,7 +68,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 									return (
 										<div
 											className="tooltip tooltip-bottom"
-											data-tip={item.label}
+											data-tip={item.tooltip}
 										>
 											<a
 												key={item.path}
@@ -84,7 +85,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 									return (
 										<div
 											className="tooltip tooltip-bottom"
-											data-tip={item.label}
+											data-tip={item.tooltip}
 										>
 											<a
 												key={item.path}
@@ -136,7 +137,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 									aria-label="close sidebar"
 									className="drawer-overlay"
 								></label>
-								<ul className="menu p-4 w-60 text-xl min-h-full bg-base-200 text-base-content">
+								<ul className="menu p-4 w-60 text-xl min-h-full bg-base-300 text-base-content">
 									{navItems.map((item) => {
 										if (
 											item.requiredRole &&

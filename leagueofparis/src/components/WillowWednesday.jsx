@@ -5,7 +5,7 @@ const WillowWednesday = () => {
 	return (
 		<div className="w-full">
 			<img
-				src="/images/willow_wed_banner.jpg"
+				src="/images/willow_wed_banner.png"
 				alt="Willow Wednesday"
 				className="w-full h-auto rounded-t-lg"
 			/>

@@ -6,19 +6,19 @@
 	default: true;
 	color-scheme: "light";
 
-	--color-base-100: #f5c1f0;
-	--color-base-200: #f8a7ff;
-	--color-base-300: #d677a5;
+	--color-base-100: #9c646f;
+	--color-base-200: #dac4c6;
+	--color-base-300: #3a3c5b;
 
-	--color-base-content: #711742;
+	--color-base-content: #d4cfcb;
 
-	--color-primary: #97295e;
+	--color-primary: #3a3c5b;
 	--color-primary-content: #ffffff;
 
 	--color-secondary: #d677a5;
 	--color-secondary-content: #3b0a24;
 
-	--color-accent: #bf41ae;
+	--color-accent: #dea393;
 	--color-accent-content: #fff1f8;
 
 	--color-neutral: #b98dad;
