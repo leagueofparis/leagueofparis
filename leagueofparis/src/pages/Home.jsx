@@ -40,6 +40,8 @@ function Home() {
 
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
 	//text-teal-400 hover:text-teal-100
+
+	const isDev = import.meta.env.VITE_ENV === "development" || window.location.hostname === "localhost" || window.location.hostname.includes("dev.leagueofparis.com");
 	return (
 		<div
 			id="link-container"
@@ -132,7 +134,7 @@ function Home() {
 					</div>
 					<div className="w-full">
 						<div className="flex flex-col items-center justify-center gap-4 w-full">
-							<YoutubeEmbed videoId="gQVhqgeVskU" />
+							{isDev && <YoutubeEmbed videoId="gQVhqgeVskU" />}
 							<AboutMe />
 						</div>
 					</div>
@@ -154,7 +156,7 @@ function Home() {
 							<WillowWednesday />
 						</div>
 						<div className="w-1/2 flex flex-col items-center justify-center gap-4">
-							<YoutubeEmbed videoId="gQVhqgeVskU" />
+							{isDev && <YoutubeEmbed videoId="gQVhqgeVskU" />}
 							<AboutMe />
 						</div>
 					</div>
