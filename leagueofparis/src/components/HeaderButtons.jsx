@@ -67,6 +67,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 								if (item.requiredRole && profile?.role === item.requiredRole) {
 									return (
 										<div
+											key={item.path}
 											className="tooltip tooltip-bottom"
 											data-tip={item.tooltip}
 										>
@@ -84,6 +85,7 @@ export default function HeaderButtons({ onSignIn, onSignOut }) {
 								} else if (!item.requiredRole) {
 									return (
 										<div
+											key={item.path}
 											className="tooltip tooltip-bottom"
 											data-tip={item.tooltip}
 										>
