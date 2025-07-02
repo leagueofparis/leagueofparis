@@ -12,6 +12,7 @@ import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
+import Account from "./pages/Account";
 
 function App() {
 	useEffect(() => {
@@ -55,6 +56,16 @@ function App() {
 							<Layout>
 								<Login />
 							</Layout>
+						}
+					/>
+					<Route
+						path="/account"
+						element={
+							<ProtectedRoute requireAuth={true}>
+								<Layout>
+									<Account />
+								</Layout>
+							</ProtectedRoute>
 						}
 					/>
 					<Route

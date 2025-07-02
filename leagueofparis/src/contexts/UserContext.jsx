@@ -82,3 +82,26 @@ export function UserProvider({ children }) {
 export function useUser() {
 	return useContext(UserContext);
 }
+
+export async function discordLogin() {
+	return supabase.auth.signInWithOAuth({
+		provider: "discord",
+		options: {
+			redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}`,
+			queryParams: {
+				access_type: "offline",
+				prompt: "consent",
+			},
+		},
+	});
+}
+
+export async function twitchLogin() {
+	return supabase.auth.signInWithOAuth({
+		provider: "twitch",
+		options: {
+			redirectTo: `${import.meta.env.VITE_FRONTEND_URL || window.location.origin}`,
+		},
+	});
+}
+
