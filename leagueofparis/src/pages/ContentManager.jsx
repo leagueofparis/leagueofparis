@@ -4,7 +4,11 @@ import {
 	getAvailableFolders,
 	createAnnouncement,
 	getAnnouncements,
+	invokeEdgeFunction,
+	getFeaturedVideo,
+
 } from "../supabaseClient";
+import YoutubeEmbed from "../components/YoutubeEmbed";
 
 function ContentManager() {
 	const [file, setFile] = useState(null);
@@ -26,6 +30,11 @@ function ContentManager() {
 	const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
 	const [announcementKey, setAnnouncementKey] = useState("");
 	const [expirationDate, setExpirationDate] = useState("");
+
+	const [featuredVideo, setFeaturedVideo] = useState(null);
+	const [featureVideoUrl, setFeatureVideoUrl] = useState("");
+	const [featureVideoStartDate, setFeatureVideoStartDate] = useState(null);
+	const [featureVideoEndDate, setFeatureVideoEndDate] = useState(null);
 
 	useEffect(() => {
 		const fetchFolders = async () => {
@@ -56,6 +65,18 @@ function ContentManager() {
 
 		fetchFolders();
 		fetchAnnouncements();
+	}, []);
+
+	useEffect(() => {
+		const fetchFeaturedVideo = async () => {
+			try {
+				const data = await getFeaturedVideo();
+				setFeaturedVideo(data);
+			} catch (error) {
+				console.error("Error fetching featured video:", error);
+			}
+		};
+		fetchFeaturedVideo();
 	}, []);
 
 	const handleFileChange = (e) => {
@@ -165,9 +186,27 @@ function ContentManager() {
 		return new Date(expirationDate) <= new Date();
 	};
 
+	const handleSaveFeaturedVideo = async () => {
+		const body = {
+			youtube_url: featureVideoUrl,
+		};
+
+		if (featureVideoStartDate) body.start_date = featureVideoStartDate;
+		if (featureVideoEndDate) body.end_date = featureVideoEndDate;
+
+		try {
+			console.log(body);
+			await invokeEdgeFunction("featured-video", body);
+
+		} catch (err) {
+			console.error("Request failed:", err.message);
+		}
+	};
+
+
 	return (
 		<div className="min-h-screen py-10 px-2">
-			<div className="mx-auto max-w-6xl">
+			<div className="w-full flex flex-col gap-8 justify-center items-center">
 				<h1 className="text-3xl font-extrabold mb-2 text-base-content">
 					Content Manager
 				</h1>
@@ -175,18 +214,18 @@ function ContentManager() {
 					Upload files and manage announcements.
 				</p>
 
-				<div className="grid md:grid-cols-2 gap-8">
+				<div className="gap-8 flex flex-col md:flex-row w-full justify-center items-start">
 					{/* File Upload Section */}
-					<div className="card bg-base-300 shadow-xl">
-						<div className="card-body items-center">
-							<h2 className="card-title text-xl font-bold mb-4">
+					<div className="card bg-base-200 shadow-xl w-full md:w-1/3">
+						<div className="card-body items-start">
+							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
 								Upload Files
 							</h2>
 
 							{/* Folder Selection */}
 							<div className="w-full mb-4">
 								<label className="label">
-									<span className="label-text">Select Folder</span>
+									<span className="label-text text-primary">Select Folder</span>
 								</label>
 								<select
 									className="select select-bordered w-full"
@@ -207,23 +246,40 @@ function ContentManager() {
 							</div>
 
 							{/* File Input */}
-							<div className="w-full mb-4">
+							<div className="w-1/2 mb-4">
 								<label className="label">
-									<span className="label-text">Select Files</span>
+									<span className="label-text text-primary">Select Files</span>
 								</label>
-								<input
-									type="file"
-									onChange={handleFileChange}
-									className="file-input file-input-bordered w-full"
-									multiple={true}
-									accept="image/*"
-								/>
+
+								<div className="relative">
+									<input
+										id="fileInput"
+										type="file"
+										onChange={handleFileChange}
+										className="hidden"
+										multiple
+										accept="image/*"
+									/>
+									<label
+										htmlFor="fileInput"
+										className="btn btn-secondary w-full text-white cursor-pointer"
+									>
+										Choose Files
+									</label>
+								</div>
+
+								{/* Optional: show selected file names */}
+								{file && file.length > 0 && (
+									<div className="mt-2 text-sm text-primary truncate">
+										{Array.from(file).map((f) => f.name).join(", ")}
+									</div>
+								)}
 							</div>
 
 							{/* Upload Key */}
 							<div className="w-full mb-4">
 								<label className="label">
-									<span className="label-text">Upload Key</span>
+									<span className="label-text text-primary">Upload Key</span>
 								</label>
 								<input
 									type="password"
@@ -280,15 +336,14 @@ function ContentManager() {
 
 							{/* Status Message */}
 							<div
-								className={`mt-4 min-h-[24px] text-center font-medium ${
-									status.includes("failed") ||
-									status.includes("Invalid") ||
-									status.includes("Failed")
+								className={`mt-4 min-h-[24px] text-center font-medium ${status.includes("failed") ||
+										status.includes("Invalid") ||
+										status.includes("Failed")
 										? "text-red-600"
 										: status
 											? "text-success"
 											: ""
-								}`}
+									}`}
 							>
 								{status}
 							</div>
@@ -296,16 +351,16 @@ function ContentManager() {
 					</div>
 
 					{/* Announcement Manager Section */}
-					<div className="card bg-base-300 shadow-xl">
+					<div className="card bg-base-200 shadow-xl w-full md:w-1/3">
 						<div className="card-body items-center">
-							<h2 className="card-title text-xl font-bold mb-4">
+							<h2 className="card-title text-xl text-primary font-bold mb-4">
 								Announcement Manager
 							</h2>
 
 							{/* Announcement Content */}
 							<div className="w-full mb-4">
 								<label className="label">
-									<span className="label-text">Announcement Content</span>
+									<span className="label-text text-primary">Announcement Content</span>
 								</label>
 								<textarea
 									className="textarea textarea-bordered w-full h-32"
@@ -322,7 +377,7 @@ function ContentManager() {
 							{/* Expiration Date */}
 							<div className="w-full mb-4">
 								<label className="label">
-									<span className="label-text">Expiration Date (Optional)</span>
+									<span className="label-text text-primary">Expiration Date (Optional)</span>
 								</label>
 								<input
 									type="datetime-local"
@@ -336,7 +391,7 @@ function ContentManager() {
 							{/* Announcement Key */}
 							<div className="w-full mb-4">
 								<label className="label">
-									<span className="label-text">Announcement Key</span>
+									<span className="label-text text-primary">Announcement Key</span>
 								</label>
 								<input
 									type="password"
@@ -362,21 +417,20 @@ function ContentManager() {
 
 							{/* Announcement Status */}
 							<div
-								className={`mt-4 min-h-[24px] text-center font-medium ${
-									announcementStatus.includes("Failed") ||
-									announcementStatus.includes("Invalid")
+								className={`mt-4 min-h-[24px] text-center font-medium ${announcementStatus.includes("Failed") ||
+										announcementStatus.includes("Invalid")
 										? "text-red-600"
 										: announcementStatus
 											? "text-success"
 											: ""
-								}`}
+									}`}
 							>
 								{announcementStatus}
 							</div>
 
 							{/* Recent Announcements */}
 							<div className="w-full mt-6">
-								<h3 className="text-lg font-semibold mb-3">
+								<h3 className="text-lg font-semibold mb-3 text-primary">
 									Recent Announcements
 								</h3>
 								{loadingAnnouncements ? (
@@ -427,6 +481,79 @@ function ContentManager() {
 										No announcements yet
 									</div>
 								)}
+							</div>
+						</div>
+					</div>
+
+					<div className="card bg-base-200 shadow-xl w-full md:w-1/3 ">
+						<div className="card-body items-center">
+							<h2 className="card-title text-xl text-primary font-bold mb-4">
+								Featured Video
+							</h2>
+							<div className="w-full mb-4">
+								<label className="label">
+									<span className="label-text text-primary">Youtube URL</span>
+								</label>
+								<input
+									type="text"
+									placeholder="Enter youtube url"
+									className="input input-bordered w-full"
+									value={featureVideoUrl}
+									onChange={(e) => setFeatureVideoUrl(e.target.value)}
+								/>
+							</div>
+							<div className="w-full mb-4">
+								<label className="label">
+									<span className="label-text text-primary">Start Date</span>
+								</label>
+								<input
+									type="datetime-local"
+									className="input input-bordered w-full"
+									value={featureVideoStartDate}
+									onChange={(e) => setFeatureVideoStartDate(e.target.value)}
+								/>
+							</div>
+							<div className="w-full mb-4">
+								<label className="label">
+									<span className="label-text text-primary">End Date</span>
+								</label>
+								<input
+									type="datetime-local"
+									className="input input-bordered w-full"
+									value={featureVideoEndDate}
+									onChange={(e) => setFeatureVideoEndDate(e.target.value)}
+								/>
+							</div>
+							<button
+								className="btn btn-primary w-full"
+								onClick={handleSaveFeaturedVideo}
+							>
+								Save
+							</button>
+						</div>
+						<div className="card-body items-center">
+							<div className="w-full mb-4">
+								<label className="label">
+									<span className="label-text text-primary font-bold">Current Featured Video</span>
+								</label>
+								<div className="text-xl text-primary font-bold">
+									<div className="flex flex-row justify-between">
+										<label className="label">
+											<span className="label-text">Start Date: {new Date(featuredVideo?.start_date).toLocaleDateString("en-US", {
+												month: "short",
+												day: "numeric",
+											})}</span>
+										</label>
+										<label className="label">
+											<span className="label-text">End Date: {new Date(featuredVideo?.end_date).toLocaleDateString("en-US", {
+												month: "short",
+												day: "numeric",
+											})}</span>
+										</label>
+									</div>
+
+									<YoutubeEmbed videoId={featuredVideo?.value} />
+								</div>
 							</div>
 						</div>
 					</div>

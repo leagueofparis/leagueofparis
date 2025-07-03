@@ -16,11 +16,12 @@ import Schedule from "../components/Schedule";
 import ImageCarousel from "../components/ImageCarousel";
 import AboutMe from "../components/AboutMe";
 import YoutubeEmbed from "../components/YoutubeEmbed";
-import { getAnnouncements } from "../supabaseClient";
+import { getAnnouncements, getFeaturedVideo } from "../supabaseClient";
 
 function Home() {
 	const [mobile, setMobile] = useState(false);
 	const [announcements, setAnnouncements] = useState([]);
+	const [featuredVideo, setFeaturedVideo] = useState(null);
 	useEffect(() => {
 		function handleResize() {
 			setMobile(window.innerWidth <= 768);
@@ -36,6 +37,14 @@ function Home() {
 			setAnnouncements(announcements);
 		};
 		fetchAnnouncements();
+	}, []);
+
+	useEffect(() => {
+		const fetchFeaturedVideo = async () => {
+			const featuredVideo = await getFeaturedVideo();
+			setFeaturedVideo(featuredVideo);
+		};
+		fetchFeaturedVideo();
 	}, []);
 
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
@@ -134,7 +143,7 @@ function Home() {
 					</div>
 					<div className="w-full">
 						<div className="flex flex-col items-center justify-center gap-4 w-full">
-							{isDev && <YoutubeEmbed videoId="gQVhqgeVskU" />}
+							{featuredVideo && <YoutubeEmbed videoId={featuredVideo?.value} />}
 							<AboutMe />
 						</div>
 					</div>
@@ -156,7 +165,7 @@ function Home() {
 							<WillowWednesday />
 						</div>
 						<div className="w-1/2 flex flex-col items-center justify-center gap-4">
-							{isDev && <YoutubeEmbed videoId="gQVhqgeVskU" />}
+							{featuredVideo && <YoutubeEmbed videoId={featuredVideo?.value} />}
 							<AboutMe />
 						</div>
 					</div>
