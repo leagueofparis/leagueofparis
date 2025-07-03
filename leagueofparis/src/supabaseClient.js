@@ -137,6 +137,14 @@ export async function invokeEdgeFunction(functionName, formData) {
 	return data;
 }
 
+export async function getFeaturedVideo() {
+	const { data, error } = await supabase.from("settings").select("*").eq("key", "featured_video").single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
 export async function getAvailableFolders() {
 	const { data, error } = await supabase.storage
 		.from(bucket)
