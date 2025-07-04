@@ -16,6 +16,9 @@ const SpotifyAuth = () => {
 		"playlist-read-collaborative",
 		"user-library-read",
 		"user-modify-playback-state",
+		"user-read-playback-state",
+		"user-read-currently-playing",
+		"user-read-playback-position"
 	];
 
 	const handleSpotifyLogin = () => {
