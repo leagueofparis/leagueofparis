@@ -138,7 +138,11 @@ export async function invokeEdgeFunction(functionName, formData) {
 }
 
 export async function getFeaturedVideo() {
-	const { data, error } = await supabase.from("settings").select("*").eq("key", "featured_video").single();
+	const { data, error } = await supabase
+		.from("settings")
+		.select("*")
+		.eq("key", "featured_video")
+		.single();
 	if (error) {
 		throw error;
 	}
@@ -206,5 +210,17 @@ export async function getAnnouncements(includeExpired = false) {
 		});
 	}
 
+	return data;
+}
+
+export async function getUsedWillowWednesdays() {
+	const { data, error } = await supabase
+		.from("willow-images")
+		.select("*")
+		.order("created_at", { ascending: false })
+		.limit(10);
+	if (error) {
+		throw error;
+	}
 	return data;
 }

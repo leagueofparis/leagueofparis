@@ -13,6 +13,7 @@ import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
 import Account from "./pages/Account";
+import WillowWednesdays from "./pages/WillowWednesdays";
 
 function App() {
 	useEffect(() => {
@@ -95,6 +96,14 @@ function App() {
 						}
 					/>
 					<Route path="/spotify-auth" element={<SpotifyAuth />} />
+					<Route
+						path="/willow"
+						element={
+							<Layout>
+								<WillowWednesdays />
+							</Layout>
+						}
+					/>
 				</Routes>
 			</Router>
 		</DeviceProvider>
