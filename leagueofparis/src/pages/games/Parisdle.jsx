@@ -3,6 +3,8 @@ import { supabase } from "../../supabaseClient";
 import { useUser } from "../../contexts/UserContext";
 import AnswerForm from "../../components/parisdle/AnswerForm";
 import StatsCard from "../../components/parisdle/StatsCard";
+import { Link } from "react-router-dom";
+import { isAdmin } from "../../utilities/auth";
 
 function formatDateLocal(date = new Date()) {
 	// Daily rotation by user's local date
@@ -139,6 +141,14 @@ function Parisdle() {
 				</div>
 
 				<StatsCard user={user} />
+
+				{isAdmin && (
+					<div className="flex justify-end">
+						<Link to="/games/parisdle/admin" className="btn btn-primary">
+							Parislde Admin
+						</Link>
+					</div>
+				)}
 			</div>
 		</div>
 	);

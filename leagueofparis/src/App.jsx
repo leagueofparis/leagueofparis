@@ -13,6 +13,7 @@ import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
 import Parisdle from "./pages/games/Parisdle";
+import ParisdleAdmin from "./pages/games/ParisdleAdmin";
 import WillowWednesdays from "./pages/WillowWednesdays";
 import Account from "./pages/Account";
 
@@ -102,6 +103,16 @@ function App() {
 							<ProtectedRoute requiredRole="user" requireAuth={true}>
 								<Layout>
 									<Parisdle />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/games/parisdle/admin"
+						element={
+							<ProtectedRoute requiredRole="admin" requireAuth={true}>
+								<Layout>
+									<ParisdleAdmin />
 								</Layout>
 							</ProtectedRoute>
 						}
