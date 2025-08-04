@@ -88,45 +88,58 @@ function Parisdle() {
 	}
 
 	return (
-		<div className="w-1/3 mx-auto grid gap-6">
-			<div className="card bg-base-200 shadow">
-				<div className="card-body">
-					<h2 className="card-title text-primary">
-						Today’s Question{" "}
-						<span className="text-secondary">({formateDateDisplay()})</span>
-					</h2>
-					{!question && (
-						<div className="alert alert-warning">
-							No question scheduled for today yet. Check back later!
-						</div>
-					)}
-					{question && (
-						<>
-							<p className="text-lg text-primary">{question.question}</p>
-							{submission ? (
-								<div
-									className={`alert ${submission.is_correct ? "alert-success" : "alert-error"} mt-4`}
-								>
-									You answered: <b>{submission.submitted_answer}</b>. Result:{" "}
-									{submission.is_correct ? "Correct!" : "Incorrect."}
-								</div>
-							) : user ? (
-								<AnswerForm
-									user={user}
-									question={question}
-									onSubmitted={onSubmitted}
-								/>
-							) : (
-								<div className="alert alert-info mt-4">
-									Please sign in to submit your answer.
-								</div>
-							)}
-						</>
-					)}
+		<div className="min-h-screen bg-base-100 p-4">
+			<div className="max-w-lg mx-auto space-y-4">
+				<div className="card bg-base-200 shadow-lg">
+					<div className="card-body p-4 sm:p-6">
+						<h2 className="card-title text-primary text-xl sm:text-2xl flex-col sm:flex-row items-start sm:items-center gap-2">
+							<span>Today's Question</span>
+							<span className="text-secondary text-sm sm:text-base font-normal">
+								({formateDateDisplay()})
+							</span>
+						</h2>
+						{!question && (
+							<div className="alert alert-warning text-sm">
+								No question scheduled for today yet. Check back later!
+							</div>
+						)}
+						{question && (
+							<>
+								<p className="text-base sm:text-lg text-primary leading-relaxed mt-4">
+									{question.question}
+								</p>
+								{submission ? (
+									<div
+										className={`alert ${submission.is_correct ? "alert-success" : "alert-error"} mt-4 text-sm sm:text-base`}
+									>
+										<div>
+											<strong>Your answer:</strong>{" "}
+											{submission.submitted_answer}
+											<br />
+											<strong>Result:</strong>{" "}
+											{submission.is_correct ? "Correct! 🎉" : "Incorrect 😅"}
+										</div>
+									</div>
+								) : user ? (
+									<div className="mt-4">
+										<AnswerForm
+											user={user}
+											question={question}
+											onSubmitted={onSubmitted}
+										/>
+									</div>
+								) : (
+									<div className="alert alert-info mt-4 text-sm sm:text-base">
+										Please sign in to submit your answer.
+									</div>
+								)}
+							</>
+						)}
+					</div>
 				</div>
-			</div>
 
-			<StatsCard user={user} />
+				<StatsCard user={user} />
+			</div>
 		</div>
 	);
 }
