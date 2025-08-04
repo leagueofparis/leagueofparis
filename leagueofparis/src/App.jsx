@@ -12,12 +12,6 @@ import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
-<<<<<<< Updated upstream
-import Account from "./pages/Account";
-import WillowWednesdays from "./pages/WillowWednesdays";
-=======
-import Parisdle from "./pages/games/parisdle";
->>>>>>> Stashed changes
 
 function App() {
 	useEffect(() => {
