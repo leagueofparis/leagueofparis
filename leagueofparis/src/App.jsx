@@ -12,6 +12,8 @@ import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
+import Parisdle from "./pages/games/parisdle";
+import WillowWednesdays from "./pages/WillowWednesdays";
 
 function App() {
 	useEffect(() => {
