@@ -12,8 +12,9 @@ import { DeviceProvider } from "./contexts/DeviceContext";
 import Gallery from "./pages/Gallery";
 import Support from "./pages/Support";
 import SpotifyAuth from "./pages/SpotifyAuth";
-import Account from "./pages/Account";
+import Parisdle from "./pages/games/parisdle";
 import WillowWednesdays from "./pages/WillowWednesdays";
+import Account from "./pages/Account";
 
 function App() {
 	useEffect(() => {
@@ -95,6 +96,17 @@ function App() {
 							</Layout>
 						}
 					/>
+					<Route
+						path="/games/parisdle"
+						element={
+							<ProtectedRoute requiredRole="user" requireAuth={true}>
+								<Layout>
+									<Parisdle />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+
 					<Route path="/spotify-auth" element={<SpotifyAuth />} />
 					<Route
 						path="/willow"
