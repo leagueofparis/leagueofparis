@@ -50,7 +50,10 @@ function Home() {
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
 	//text-teal-400 hover:text-teal-100
 
-	const isDev = import.meta.env.VITE_ENV === "development" || window.location.hostname === "localhost" || window.location.hostname.includes("dev.leagueofparis.com");
+	const isDev =
+		import.meta.env.VITE_ENV === "development" ||
+		window.location.hostname === "localhost" ||
+		window.location.hostname.includes("dev.leagueofparis.com");
 	return (
 		<div
 			id="link-container"
@@ -95,7 +98,7 @@ function Home() {
 					<FaYoutube size={36} className={iconClasses} />
 				</a>
 				<a
-					href="https://open.spotify.com/user/3o21ubwap21drbbd11dmjdtr4?si=5c06565a676f4651"
+					href="https://open.spotify.com/user/314airciex5pec7d25uvgjwog5n4?si=GkxnTBLiT_G_wLFsPHB0cw"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
