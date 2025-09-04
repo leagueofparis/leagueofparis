@@ -111,11 +111,11 @@ export default function AnswerForm({ user, question, onSubmitted }) {
 							<input
 								type="radio"
 								name="mc"
-								className="radio"
+								className="radio radio-primary"
 								checked={value === opt}
 								onChange={() => setValue(opt)}
 							/>
-							<span className="label-text">
+							<span className="label-text text-primary">
 								<b>{String.fromCharCode(65 + i)}.</b> {opt}
 							</span>
 						</label>

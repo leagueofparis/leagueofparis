@@ -70,7 +70,7 @@ function Home() {
 					<FaTwitch size={36} className={iconClasses} />
 				</a>
 				<a
-					href="https://discord.gg/upGPAyHqPT"
+					href="https://discord.gg/dRPfRWQCCk"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
