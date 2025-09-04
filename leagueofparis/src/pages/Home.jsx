@@ -98,7 +98,7 @@ function Home() {
 					<FaYoutube size={36} className={iconClasses} />
 				</a>
 				<a
-					href="https://open.spotify.com/user/3o21ubwap21drbbd11dmjdtr4?si=5c06565a676f4651"
+					href="https://open.spotify.com/user/314airciex5pec7d25uvgjwog5n4?si=GkxnTBLiT_G_wLFsPHB0cw"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
