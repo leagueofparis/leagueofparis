@@ -7,7 +7,7 @@ const SpotifyAuth = () => {
 	const [loading, setLoading] = useState(false);
 
 	// Spotify OAuth configuration
-	const CLIENT_ID = "2426e168991d4f90bc0ae1123b21115f"; // Replace with your actual client ID
+	const CLIENT_ID = "75b18517bebd4866b04bb224c8bf8ec4"; // Replace with your actual client ID
 	const REDIRECT_URI = window.location.origin + "/spotify-auth";
 	const SCOPES = [
 		"user-read-private",
@@ -18,7 +18,8 @@ const SpotifyAuth = () => {
 		"user-modify-playback-state",
 		"user-read-playback-state",
 		"user-read-currently-playing",
-		"user-read-playback-position"
+		"user-read-recently-played",
+		"user-read-playback-position",
 	];
 
 	const handleSpotifyLogin = () => {
