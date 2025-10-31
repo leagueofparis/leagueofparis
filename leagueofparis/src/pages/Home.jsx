@@ -129,7 +129,7 @@ function Home() {
 			{isBirthday && (
 				<div className="my-4">
 					<h2
-						className="text-3xl md:text-4xl font-bold text-center birthday-text"
+						className="text-3xl md:text-4xl font-bold text-center birthday-text whitespace-nowrap"
 						style={{
 							backgroundImage:
 								"linear-gradient(90deg, #FF69B4, #FF1493, #00CED1, #32CD32, #FFD700, #FF6347, #9370DB, #00BFFF, #FF8C00, #FF00FF, #FF69B4, #FF1493, #00CED1, #32CD32, #FFD700, #FF6347, #9370DB, #00BFFF, #FF8C00, #FF00FF)",
