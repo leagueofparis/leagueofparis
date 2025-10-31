@@ -17,6 +17,7 @@ import ImageCarousel from "../components/ImageCarousel";
 import AboutMe from "../components/AboutMe";
 import YoutubeEmbed from "../components/YoutubeEmbed";
 import { getAnnouncements, getFeaturedVideo } from "../supabaseClient";
+import confetti from "canvas-confetti";
 
 function Home() {
 	const [mobile, setMobile] = useState(false);
@@ -47,6 +48,65 @@ function Home() {
 		fetchFeaturedVideo();
 	}, []);
 
+	useEffect(() => {
+		const today = new Date();
+		const month = today.getMonth() + 1; // getMonth() returns 0-11, so add 1
+		const day = today.getDate();
+
+		// Check if today is October 31st (10/31)
+		if (month === 10 && day === 31) {
+			// Birthday party colors - bright festive colors
+			const birthdayColors = [
+				"#FF69B4", // Hot pink
+				"#FF1493", // Deep pink
+				"#00CED1", // Dark turquoise
+				"#32CD32", // Lime green
+				"#FFD700", // Gold
+				"#FF6347", // Tomato
+				"#9370DB", // Medium purple
+				"#00BFFF", // Deep sky blue
+				"#FF8C00", // Dark orange
+				"#FF00FF", // Magenta
+			];
+
+			// Trigger snow effect
+			const duration = 60000; // 60 seconds
+			const end = Date.now() + duration;
+
+			const interval = setInterval(() => {
+				if (Date.now() > end) {
+					clearInterval(interval);
+					return;
+				}
+
+				// Randomly select a color from the birthday colors array
+				const randomColor =
+					birthdayColors[
+						Math.floor(Math.random() * birthdayColors.length)
+					];
+
+				// Snow effect - particles falling from random positions at the top
+				confetti({
+					particleCount: 1,
+					startVelocity: 0,
+					ticks: 200,
+					origin: {
+						x: Math.random(),
+						y: Math.random() - 0.2, // Start slightly above the viewport
+					},
+					colors: [randomColor],
+					shapes: ["circle"],
+					gravity: 0.3,
+					drift: 0.5,
+					scalar: 1.2,
+				});
+			}, 50); // Spawn snowflakes more frequently for continuous effect
+
+			// Cleanup function to clear interval if component unmounts
+			return () => clearInterval(interval);
+		}
+	}, []);
+
 	var iconClasses = "transform hover:scale-110 transition-all duration-300";
 	//text-teal-400 hover:text-teal-100
 
@@ -54,6 +114,11 @@ function Home() {
 		import.meta.env.VITE_ENV === "development" ||
 		window.location.hostname === "localhost" ||
 		window.location.hostname.includes("dev.leagueofparis.com");
+
+	// Check if today is October 31st for birthday message
+	const today = new Date();
+	const isBirthday = today.getMonth() + 1 === 10 && today.getDate() === 31;
+
 	return (
 		<div
 			id="link-container"
@@ -61,6 +126,24 @@ function Home() {
 		>
 			<img src={MainImage} className="w-36 rounded-full"></img>
 			<h1 className="text-4xl font-bold whitespace-nowrap">League of Paris</h1>
+			{isBirthday && (
+				<div className="my-4">
+					<h2
+						className="text-3xl md:text-4xl font-bold text-center birthday-text"
+						style={{
+							backgroundImage:
+								"linear-gradient(90deg, #FF69B4, #FF1493, #00CED1, #32CD32, #FFD700, #FF6347, #9370DB, #00BFFF, #FF8C00, #FF00FF, #FF69B4, #FF1493, #00CED1, #32CD32, #FFD700, #FF6347, #9370DB, #00BFFF, #FF8C00, #FF00FF)",
+							backgroundSize: "200% 100%",
+							WebkitBackgroundClip: "text",
+							WebkitTextFillColor: "transparent",
+							backgroundClip: "text",
+							color: "transparent",
+						}}
+					>
+						🎉 Happy Birthday Paris! 🎉
+					</h2>
+				</div>
+			)}
 			<div className="flex space-x-4 py-4">
 				<a
 					href="https://twitch.tv/leagueofparis"
