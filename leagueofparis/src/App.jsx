@@ -131,9 +131,7 @@ function App() {
 					<Route
 						path="/schedule"
 						element={
-							<Layout>
-								<SchedulePage />
-							</Layout>
+							<SchedulePage />
 						}
 					/>
 				</Routes>

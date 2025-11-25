@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
 import DevSchedule from "../../public/images/Stream_Schedule.png";
+import { fetchRecentImage } from "../utilities/scheduleImage";
 
 export default function Schedule({ folder = "schedules", className = "" }) {
 	const [imageUrl, setImageUrl] = useState(null);
@@ -15,60 +15,24 @@ export default function Schedule({ folder = "schedules", className = "" }) {
 		window.location.hostname === "dev.leagueofparis.com";
 
 	useEffect(() => {
-		async function fetchRecentImage() {
+		async function loadImage() {
 			setLoading(true);
 			setError(null);
 			setImageUrl(null);
 			setFileName(null);
 
-			if (isDev) {
-				console.log(`[DEV] Fetching images from folder: ${folder}`);
-			}
-
-			const { data, error } = await supabase.storage
-				.from("willow")
-				.list(folder, { limit: 100 });
-
-			if (error) {
-				if (isDev) {
-					console.error(`[DEV] Error fetching from ${folder}:`, error);
-				}
-				setError("Failed to list files: " + error.message);
+			try {
+				const result = await fetchRecentImage(folder);
+				setImageUrl(result.url);
+				setFileName(result.fileName);
+			} catch (err) {
+				setError(err.message);
+			} finally {
 				setLoading(false);
-				return;
 			}
-
-			if (!data || data.length === 0) {
-				if (isDev) {
-					console.warn(`[DEV] No files found in folder: ${folder}`);
-				}
-				setError("No files found in this folder.");
-				setLoading(false);
-				return;
-			}
-
-			// Find the most recently modified file
-			const sorted = [...data].sort(
-				(a, b) =>
-					new Date(b.updated_at || b.created_at) -
-					new Date(a.updated_at || a.created_at)
-			);
-			const recent = sorted[0];
-
-			if (isDev) {
-				console.log(`[DEV] Selected file: ${recent.name}`);
-				console.log(`[DEV] File details:`, recent);
-			}
-
-			setFileName(recent.name);
-			const url = supabase.storage
-				.from("willow")
-				.getPublicUrl(`${folder}/${recent.name}`).data.publicUrl;
-			setImageUrl(url);
-			setLoading(false);
 		}
-		fetchRecentImage();
-	}, [folder, isDev]);
+		loadImage();
+	}, [folder]);
 
 	if (loading)
 		return (
