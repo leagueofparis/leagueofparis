@@ -16,6 +16,7 @@ import Parisdle from "./pages/games/Parisdle";
 import ParisdleAdmin from "./pages/games/ParisdleAdmin";
 import WillowWednesdays from "./pages/WillowWednesdays";
 import Account from "./pages/Account";
+import SchedulePage from "./pages/SchedulePage";
 
 function App() {
 	useEffect(() => {
@@ -124,6 +125,14 @@ function App() {
 						element={
 							<Layout>
 								<WillowWednesdays />
+							</Layout>
+						}
+					/>
+					<Route
+						path="/schedule"
+						element={
+							<Layout>
+								<SchedulePage />
 							</Layout>
 						}
 					/>
