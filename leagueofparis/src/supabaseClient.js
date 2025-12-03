@@ -224,3 +224,50 @@ export async function getUsedWillowWednesdays() {
 	}
 	return data;
 }
+
+// Milestones CRUD functions
+export async function getMilestones() {
+	const { data, error } = await supabase
+		.from("milestones")
+		.select("*")
+		.order("date", { ascending: false });
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function createMilestone(milestone) {
+	const { data, error } = await supabase
+		.from("milestones")
+		.insert(milestone)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function updateMilestone(id, milestone) {
+	const { data, error } = await supabase
+		.from("milestones")
+		.update(milestone)
+		.eq("id", id)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function deleteMilestone(id) {
+	const { error } = await supabase
+		.from("milestones")
+		.delete()
+		.eq("id", id);
+	if (error) {
+		throw error;
+	}
+}

@@ -17,6 +17,8 @@ import ParisdleAdmin from "./pages/games/ParisdleAdmin";
 import WillowWednesdays from "./pages/WillowWednesdays";
 import Account from "./pages/Account";
 import SchedulePage from "./pages/SchedulePage";
+import MilestonesManager from "./pages/MilestonesManager";
+import Timeline from "./pages/Timeline";
 
 function App() {
 	useEffect(() => {
@@ -132,6 +134,24 @@ function App() {
 						path="/schedule"
 						element={
 							<SchedulePage />
+						}
+					/>
+					<Route
+						path="/milestones"
+						element={
+							<ProtectedRoute requiredRole="admin" requireAuth={true}>
+								<Layout>
+									<MilestonesManager />
+								</Layout>
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/timeline"
+						element={
+							<Layout>
+								<Timeline />
+							</Layout>
 						}
 					/>
 				</Routes>
