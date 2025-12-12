@@ -1,5 +1,6 @@
 import HeaderButtons from "./HeaderButtons";
 import { removeToken } from "../utilities/auth";
+import Snowfall from "react-snowfall";
 
 export default function Layout({ children }) {
 	async function signIn() {
@@ -12,6 +13,16 @@ export default function Layout({ children }) {
 
 	return (
 		<div className="min-h-screen flex flex-col overflow-x-hidden">
+			<Snowfall
+				snowflakeCount={100}
+				style={{
+					position: "fixed",
+					width: "100vw",
+					height: "100vh",
+					pointerEvents: "none",
+					zIndex: 1000,
+				}}
+			/>
 			<header className="w-full">
 				<div className="flex justify-between items-center w-full px-4">
 					<HeaderButtons onSignIn={signIn} onSignOut={signOut} />
