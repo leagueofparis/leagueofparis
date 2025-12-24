@@ -14,6 +14,14 @@ import {
 } from "../supabaseClient";
 import StatForm from "../components/wrapped/StatForm";
 import { fetchAllTwitchStats } from "../utilities/twitchStats";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Switch } from "../components/ui/switch";
+import { Badge } from "../components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 function WrappedManager() {
 	const [collections, setCollections] = useState([]);
@@ -315,115 +323,108 @@ function WrappedManager() {
 				<div className="w-full flex flex-col gap-8 justify-center items-center max-w-6xl mx-auto">
 					<div className="w-full flex justify-between items-center">
 						<div>
-							<h1 className="text-3xl font-extrabold mb-2 text-base-content">
+							<h1 className="text-3xl font-extrabold mb-2 text-foreground">
 								{selectedCollection?.title || "Manage Stats"}
 							</h1>
-							<p className="text-base-content/70">
+							<p className="text-muted-foreground">
 								Manage stats for this collection
 							</p>
 						</div>
-						<button
+						<Button
+							variant="ghost"
 							onClick={() => {
 								setSelectedCollectionId(null);
 								setStats([]);
 							}}
-							className="btn btn-ghost"
 						>
 							Back to Collections
-						</button>
+						</Button>
 					</div>
 
 					{/* Twitch API Section */}
-					<div className="card bg-base-200 shadow-xl w-full">
-						<div className="card-body">
-							<h2 className="text-xl text-primary font-bold mb-4">
-								Import from Twitch API
-							</h2>
-							<div className="space-y-4">
-								<div>
-									<label className="label">
-										<span className="label-text">Channel Name</span>
-									</label>
-									<input
-										type="text"
-										className="input input-bordered w-full"
-										value={twitchChannelName}
-										onChange={(e) => setTwitchChannelName(e.target.value)}
-										placeholder="leagueofparis"
-									/>
-								</div>
-								<div>
-									<label className="label">
-										<span className="label-text">Twitch Access Token</span>
-									</label>
-									<input
-										type="password"
-										className="input input-bordered w-full"
-										value={twitchAccessToken}
-										onChange={(e) => setTwitchAccessToken(e.target.value)}
-										placeholder="Enter Twitch OAuth access token"
-									/>
-								</div>
-								<button
-									onClick={handleFetchTwitchStats}
-									className="btn btn-primary"
-									disabled={loadingTwitch || !twitchAccessToken.trim()}
-								>
-									{loadingTwitch ? "Fetching..." : "Fetch Twitch Stats"}
-								</button>
+					<Card className="w-full">
+						<CardHeader>
+							<CardTitle className="text-primary">Import from Twitch API</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="twitch-channel">Channel Name</Label>
+								<Input
+									id="twitch-channel"
+									type="text"
+									value={twitchChannelName}
+									onChange={(e) => setTwitchChannelName(e.target.value)}
+									placeholder="leagueofparis"
+								/>
 							</div>
-						</div>
-					</div>
+							<div className="space-y-2">
+								<Label htmlFor="twitch-token">Twitch Access Token</Label>
+								<Input
+									id="twitch-token"
+									type="password"
+									value={twitchAccessToken}
+									onChange={(e) => setTwitchAccessToken(e.target.value)}
+									placeholder="Enter Twitch OAuth access token"
+								/>
+							</div>
+							<Button
+								onClick={handleFetchTwitchStats}
+								disabled={loadingTwitch || !twitchAccessToken.trim()}
+							>
+								{loadingTwitch && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+								{loadingTwitch ? "Fetching..." : "Fetch Twitch Stats"}
+							</Button>
+						</CardContent>
+					</Card>
 
 					{/* Stats List */}
-					<div className="card bg-base-200 shadow-xl w-full">
-						<div className="card-body">
-							<div className="flex justify-between items-center mb-4">
-								<h2 className="text-xl text-primary font-bold">Stats</h2>
-								<button
-									onClick={() => {
-										setEditingStatId(null);
-										setShowStatForm(true);
-									}}
-									className="btn btn-primary btn-sm"
-								>
-									Add Stat
-								</button>
-							</div>
-
+					<Card className="w-full">
+						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+							<CardTitle className="text-primary">Stats</CardTitle>
+							<Button
+								size="sm"
+								onClick={() => {
+									setEditingStatId(null);
+									setShowStatForm(true);
+								}}
+							>
+								Add Stat
+							</Button>
+						</CardHeader>
+						<CardContent>
 							{loading && stats.length === 0 ? (
-								<div className="text-center">
-									<span className="loading loading-spinner loading-sm"></span>
-									<span className="ml-2">Loading...</span>
+								<div className="flex items-center justify-center py-4">
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									<span>Loading...</span>
 								</div>
 							) : stats.length > 0 ? (
-								<div className="space-y-4 max-h-[600px] overflow-y-auto">
+								<div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
 									{stats.map((stat, index) => (
 										<div
 											key={stat.id}
-											className="bg-base-300 rounded-lg p-4 space-y-2"
+											className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border"
 										>
 											<div className="flex justify-between items-start">
 												<div className="flex-1">
-													<h3 className="text-lg font-bold text-primary-content">
+													<h3 className="text-lg font-bold text-foreground">
 														{stat.title}
 													</h3>
 													<p className="text-2xl font-bold text-primary mt-2">
 														{stat.value}
 													</p>
 													{stat.description && (
-														<p className="text-sm text-base-content/70 mt-1">
+														<p className="text-sm text-muted-foreground mt-1">
 															{stat.description}
 														</p>
 													)}
-													<div className="text-xs text-base-content/60 mt-2">
+													<div className="text-xs text-muted-foreground mt-2">
 														<strong>Source:</strong> {stat.source || "manual"}
 													</div>
 												</div>
 											</div>
 
 											{stat.media_url && (
-												<div className="w-full h-32 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden mt-2">
+												<div className="w-full h-32 bg-muted rounded-lg flex items-center justify-center overflow-hidden mt-2 border">
 													{stat.media_type === "image" ? (
 														<img
 															src={stat.media_url}
@@ -440,60 +441,65 @@ function WrappedManager() {
 												</div>
 											)}
 
-											<div className="flex gap-2 mt-3">
-												<button
-													className="btn btn-sm btn-primary"
+											<div className="flex gap-2 mt-3 items-center">
+												<Button
+													size="sm"
 													onClick={() => handleEditStat(stat)}
 													disabled={loading}
 												>
 													Edit
-												</button>
-												<button
-													className="btn btn-sm btn-error"
+												</Button>
+												<Button
+													size="sm"
+													variant="destructive"
 													onClick={() => handleDeleteStat(stat.id)}
 													disabled={loading}
 												>
 													Delete
-												</button>
-												{index > 0 && (
-													<button
-														className="btn btn-sm btn-ghost"
-														onClick={() => handleMoveStat(stat.id, "up")}
-														disabled={loading}
-														title="Move up"
-													>
-														↑
-													</button>
-												)}
-												{index < stats.length - 1 && (
-													<button
-														className="btn btn-sm btn-ghost"
-														onClick={() => handleMoveStat(stat.id, "down")}
-														disabled={loading}
-														title="Move down"
-													>
-														↓
-													</button>
-												)}
+												</Button>
+												<div className="flex ml-auto gap-1">
+													{index > 0 && (
+														<Button
+															size="icon"
+															variant="ghost"
+															onClick={() => handleMoveStat(stat.id, "up")}
+															disabled={loading}
+															title="Move up"
+														>
+															↑
+														</Button>
+													)}
+													{index < stats.length - 1 && (
+														<Button
+															size="icon"
+															variant="ghost"
+															onClick={() => handleMoveStat(stat.id, "down")}
+															disabled={loading}
+															title="Move down"
+														>
+															↓
+														</Button>
+													)}
+												</div>
 											</div>
 										</div>
 									))}
 								</div>
 							) : (
-								<div className="text-center text-base-content/70">
+								<div className="text-center text-muted-foreground py-8">
 									No stats yet. Add your first stat!
 								</div>
 							)}
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
 					{/* Status Message */}
 					{status && (
 						<div
 							className={`w-full text-center font-medium ${
 								status.includes("Failed") || status.includes("Invalid")
-									? "text-red-600"
-									: "text-success"
+									? "text-destructive"
+									: "text-green-600"
 							}`}
 						>
 							{status}
@@ -511,22 +517,22 @@ function WrappedManager() {
 			<div className="min-h-screen py-10 px-2">
 				<div className="w-full flex flex-col gap-8 justify-center items-center max-w-4xl mx-auto">
 					<div className="w-full flex justify-between items-center">
-						<h1 className="text-3xl font-extrabold text-base-content">
+						<h1 className="text-3xl font-extrabold text-foreground">
 							{editingStat ? "Edit Stat" : "Create New Stat"}
 						</h1>
-						<button
+						<Button
+							variant="ghost"
 							onClick={() => {
 								setShowStatForm(false);
 								setEditingStatId(null);
 							}}
-							className="btn btn-ghost"
 						>
 							Cancel
-						</button>
+						</Button>
 					</div>
 
-					<div className="card bg-base-200 shadow-xl w-full">
-						<div className="card-body">
+					<Card className="w-full">
+						<CardContent className="pt-6">
 							<StatForm
 								stat={editingStat}
 								onSubmit={handleStatSubmit}
@@ -536,8 +542,8 @@ function WrappedManager() {
 								}}
 								loading={loading}
 							/>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 		);
@@ -547,31 +553,32 @@ function WrappedManager() {
 	return (
 		<div className="min-h-screen py-10 px-2">
 			<div className="w-full flex flex-col gap-8 justify-center items-center max-w-6xl mx-auto">
-				<h1 className="text-3xl font-extrabold mb-2 text-base-content">
-					Wrapped Collections Manager
-				</h1>
-				<p className="mb-8 text-base-content/70 text-lg">
-					Create and manage wrapped collections and stats.
-				</p>
+				<div className="text-center">
+					<h1 className="text-3xl font-extrabold mb-2 text-foreground">
+						Wrapped Collections Manager
+					</h1>
+					<p className="text-muted-foreground text-lg">
+						Create and manage wrapped collections and stats.
+					</p>
+				</div>
 
 				<div className="gap-8 flex flex-col lg:flex-row w-full justify-center items-start">
 					{/* Form Section */}
-					<div className="card bg-base-200 shadow-xl w-full lg:w-1/2">
-						<div className="card-body">
-							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
+					<Card className="w-full lg:w-1/2">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">
 								{editingCollectionId ? "Edit Collection" : "Create New Collection"}
-							</h2>
-
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
 							<form onSubmit={handleCollectionSubmit} className="space-y-4">
-								<div>
-									<label className="label">
-										<span className="label-text text-primary">
-											Title <span className="text-red-500">*</span>
-										</span>
-									</label>
-									<input
+								<div className="space-y-2">
+									<Label htmlFor="title">
+										Title <span className="text-destructive">*</span>
+									</Label>
+									<Input
+										id="title"
 										type="text"
-										className="input input-bordered w-full"
 										value={collectionTitle}
 										onChange={(e) => setCollectionTitle(e.target.value)}
 										placeholder="e.g., 2024 Wrapped"
@@ -580,27 +587,23 @@ function WrappedManager() {
 								</div>
 
 								<div className="flex gap-4">
-									<div className="flex-1">
-										<label className="label">
-											<span className="label-text text-primary">
-												Year <span className="text-red-500">*</span>
-											</span>
-										</label>
-										<input
+									<div className="flex-1 space-y-2">
+										<Label htmlFor="year">
+											Year <span className="text-destructive">*</span>
+										</Label>
+										<Input
+											id="year"
 											type="number"
-											className="input input-bordered w-full"
 											value={year}
 											onChange={(e) => setYear(parseInt(e.target.value))}
 											required
 										/>
 									</div>
-									<div className="flex-1">
-										<label className="label">
-											<span className="label-text text-primary">Period</span>
-										</label>
-										<input
+									<div className="flex-1 space-y-2">
+										<Label htmlFor="period">Period</Label>
+										<Input
+											id="period"
 											type="text"
-											className="input input-bordered w-full"
 											value={period}
 											onChange={(e) => setPeriod(e.target.value)}
 											placeholder="e.g., Q1, Annual"
@@ -608,107 +611,92 @@ function WrappedManager() {
 									</div>
 								</div>
 
-								<div>
-									<label className="label">
-										<span className="label-text text-primary">Description</span>
-									</label>
-									<textarea
-										className="textarea textarea-bordered w-full h-24"
+								<div className="space-y-2">
+									<Label htmlFor="description">Description</Label>
+									<Textarea
+										id="description"
+										className="h-24"
 										value={collectionDescription}
 										onChange={(e) => setCollectionDescription(e.target.value)}
 										placeholder="Collection description (optional)"
 									/>
 								</div>
 
-								<div>
-									<label className="label">
-										<span className="label-text text-primary">Cover Image URL</span>
-									</label>
-									<input
-										type="url"
-										className="input input-bordered w-full"
-										value={coverImage}
-										onChange={(e) => {
-											setCoverImage(e.target.value);
-											setCoverImageFile(null);
-										}}
-										placeholder="Cover image URL (optional)"
-										disabled={!!coverImageFile}
-									/>
-									<div className="text-center text-sm text-base-content/70 my-2">
-										OR
-									</div>
-									<div>
-										<input
-											id="coverImageFileInput"
-											type="file"
+								<div className="space-y-2">
+									<Label htmlFor="coverImage">Cover Image URL</Label>
+									<div className="space-y-2">
+										<Input
+											id="coverImage"
+											type="url"
+											value={coverImage}
 											onChange={(e) => {
-												setCoverImageFile(e.target.files?.[0] || null);
-												setCoverImage("");
+												setCoverImage(e.target.value);
+												setCoverImageFile(null);
 											}}
-											className="hidden"
-											accept="image/*"
+											placeholder="Cover image URL (optional)"
+											disabled={!!coverImageFile}
 										/>
-										<label
-											htmlFor="coverImageFileInput"
-											className={`btn btn-secondary w-full text-white cursor-pointer ${
-												coverImage ? "btn-disabled" : ""
-											}`}
-										>
-											{coverImageFile ? coverImageFile.name : "Upload Cover Image"}
-										</label>
-									</div>
-									{coverImageFile && (
-										<div className="mt-2">
-											<label className="label">
-												<span className="label-text text-primary">
-													Upload Key <span className="text-red-500">*</span>
-												</span>
-											</label>
-											<input
-												type="password"
-												className="input input-bordered w-full"
-												value={uploadKey}
-												onChange={(e) => setUploadKey(e.target.value)}
-												placeholder="Enter upload key"
+										<div className="text-center text-sm text-muted-foreground">OR</div>
+										<div className="relative">
+											<Input
+												id="coverImageFileInput"
+												type="file"
+												onChange={(e) => {
+													setCoverImageFile(e.target.files?.[0] || null);
+													setCoverImage("");
+												}}
+												className="cursor-pointer"
+												accept="image/*"
 											/>
 										</div>
-									)}
+										{coverImageFile && (
+											<div className="space-y-2">
+												<Label htmlFor="uploadKey">
+													Upload Key <span className="text-destructive">*</span>
+												</Label>
+												<Input
+													id="uploadKey"
+													type="password"
+													value={uploadKey}
+													onChange={(e) => setUploadKey(e.target.value)}
+													placeholder="Enter upload key"
+												/>
+											</div>
+										)}
+									</div>
 								</div>
 
-								<div className="form-control">
-									<label className="label cursor-pointer">
-										<span className="label-text text-primary">Published</span>
-										<input
-											type="checkbox"
-											className="toggle toggle-primary"
-											checked={isPublished}
-											onChange={(e) => setIsPublished(e.target.checked)}
-										/>
-									</label>
+								<div className="flex items-center space-x-2">
+									<Switch
+										id="published"
+										checked={isPublished}
+										onCheckedChange={setIsPublished}
+									/>
+									<Label htmlFor="published">Published</Label>
 								</div>
 
-								<div className="flex gap-2">
-									<button
+								<div className="flex gap-2 pt-2">
+									<Button
 										type="submit"
-										className="btn btn-primary flex-1"
+										className="flex-1"
 										disabled={loading || !collectionTitle.trim()}
 									>
+										{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 										{loading
 											? "Saving..."
 											: editingCollectionId
 											? "Update Collection"
 											: "Create Collection"}
-									</button>
+									</Button>
 									{editingCollectionId && (
-										<button
+										<Button
 											type="button"
-											className="btn btn-ghost"
+											variant="ghost"
 											onClick={resetCollectionForm}
 											disabled={loading}
 										>
 											Cancel
-										</button>
+										</Button>
 									)}
 								</div>
 
@@ -716,57 +704,56 @@ function WrappedManager() {
 									<div
 										className={`min-h-[24px] text-center font-medium ${
 											status.includes("Failed") || status.includes("Invalid")
-												? "text-red-600"
-												: "text-success"
+												? "text-destructive"
+												: "text-green-600"
 										}`}
 									>
 										{status}
 									</div>
 								)}
 							</form>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
 					{/* Collections List */}
-					<div className="card bg-base-200 shadow-xl w-full lg:w-1/2">
-						<div className="card-body">
-							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
-								All Collections
-							</h2>
-
+					<Card className="w-full lg:w-1/2">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">All Collections</CardTitle>
+						</CardHeader>
+						<CardContent>
 							{loading && collections.length === 0 ? (
-								<div className="text-center">
-									<span className="loading loading-spinner loading-sm"></span>
-									<span className="ml-2">Loading...</span>
+								<div className="flex items-center justify-center py-4">
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									<span>Loading...</span>
 								</div>
 							) : collections.length > 0 ? (
-								<div className="space-y-4 max-h-[600px] overflow-y-auto">
+								<div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
 									{collections.map((collection) => (
 										<div
 											key={collection.id}
-											className="bg-base-300 rounded-lg p-4 space-y-2"
+											className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border"
 										>
 											<div className="flex justify-between items-start">
 												<div className="flex-1">
-													<h3 className="text-lg font-bold text-primary-content">
+													<h3 className="text-lg font-bold text-foreground">
 														{collection.title}
 													</h3>
-													<div className="text-sm text-base-content/70 mt-1">
-														{collection.year}
-														{collection.period && ` • ${collection.period}`}
+													<div className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+														<span>{collection.year}</span>
+														{collection.period && <span>• {collection.period}</span>}
 														{collection.is_featured && (
-															<span className="badge badge-warning badge-sm ml-2">
+															<Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500/30">
 																Featured
-															</span>
+															</Badge>
 														)}
 														{collection.is_published && (
-															<span className="badge badge-success badge-sm ml-2">
+															<Badge variant="secondary" className="bg-green-500/20 text-green-600 dark:text-green-400 hover:bg-green-500/30">
 																Published
-															</span>
+															</Badge>
 														)}
 													</div>
 													{collection.description && (
-														<p className="text-sm text-base-content/70 mt-1">
+														<p className="text-sm text-muted-foreground mt-1">
 															{collection.description}
 														</p>
 													)}
@@ -774,7 +761,7 @@ function WrappedManager() {
 											</div>
 
 											{collection.cover_image && (
-												<div className="w-full h-32 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden mt-2">
+												<div className="w-full h-32 bg-muted rounded-lg flex items-center justify-center overflow-hidden mt-2 border">
 													<img
 														src={collection.cover_image}
 														alt={collection.title}
@@ -784,47 +771,50 @@ function WrappedManager() {
 											)}
 
 											<div className="flex flex-wrap gap-2 mt-3">
-												<button
-													className="btn btn-sm btn-primary"
+												<Button
+													size="sm"
 													onClick={() => setSelectedCollectionId(collection.id)}
 													disabled={loading}
 												>
 													Manage Stats
-												</button>
-												<button
-													className="btn btn-sm btn-secondary"
+												</Button>
+												<Button
+													size="sm"
+													variant="secondary"
 													onClick={() => handleEditCollection(collection)}
 													disabled={loading}
 												>
 													Edit
-												</button>
+												</Button>
 												{!collection.is_featured && (
-													<button
-														className="btn btn-sm btn-warning"
+													<Button
+														size="sm"
+														variant="outline"
 														onClick={() => handleSetFeatured(collection.id)}
 														disabled={loading}
 													>
 														Set Featured
-													</button>
+													</Button>
 												)}
-												<button
-													className="btn btn-sm btn-error"
+												<Button
+													size="sm"
+													variant="destructive"
 													onClick={() => handleDeleteCollection(collection.id)}
 													disabled={loading}
 												>
 													Delete
-												</button>
+												</Button>
 											</div>
 										</div>
 									))}
 								</div>
 							) : (
-								<div className="text-center text-base-content/70">
+								<div className="text-center text-muted-foreground py-8">
 									No collections yet. Create your first collection!
 								</div>
 							)}
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 		</div>
@@ -832,4 +822,3 @@ function WrappedManager() {
 }
 
 export default WrappedManager;
-

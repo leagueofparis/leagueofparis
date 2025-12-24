@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { uploadImage } from "../../supabaseClient";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 	const [title, setTitle] = useState("");
@@ -122,16 +127,13 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-4">
-			{/* Title */}
-			<div>
-				<label className="label">
-					<span className="label-text text-primary">
-						Title <span className="text-red-500">*</span>
-					</span>
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="title">
+					Title <span className="text-destructive">*</span>
+				</Label>
+				<Input
+					id="title"
 					type="text"
-					className="input input-bordered w-full"
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
 					placeholder="e.g., Total Hours Streamed"
@@ -139,16 +141,13 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 				/>
 			</div>
 
-			{/* Value */}
-			<div>
-				<label className="label">
-					<span className="label-text text-primary">
-						Value <span className="text-red-500">*</span>
-					</span>
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="value">
+					Value <span className="text-destructive">*</span>
+				</Label>
+				<Input
+					id="value"
 					type="text"
-					className="input input-bordered w-full"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
 					placeholder="e.g., 1,234 or League of Legends"
@@ -156,27 +155,22 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 				/>
 			</div>
 
-			{/* Description */}
-			<div>
-				<label className="label">
-					<span className="label-text text-primary">Description</span>
-				</label>
-				<textarea
-					className="textarea textarea-bordered w-full h-24"
+			<div className="space-y-2">
+				<Label htmlFor="description">Description</Label>
+				<Textarea
+					id="description"
+					className="h-24"
 					value={description}
 					onChange={(e) => setDescription(e.target.value)}
 					placeholder="Fun description or context for this stat (optional)"
 				/>
 			</div>
 
-			{/* Media URL Input */}
-			<div>
-				<label className="label">
-					<span className="label-text text-primary">Media URL</span>
-				</label>
-				<input
+			<div className="space-y-2">
+				<Label htmlFor="mediaUrl">Media URL</Label>
+				<Input
+					id="mediaUrl"
 					type="url"
-					className="input input-bordered w-full"
 					value={mediaUrl}
 					onChange={(e) => handleMediaUrlChange(e.target.value)}
 					placeholder="Image, video, or Twitch clip URL (optional)"
@@ -184,44 +178,30 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 				/>
 			</div>
 
-			{/* OR divider */}
 			{(mediaUrl || mediaFile) && (
-				<div className="text-center text-sm text-base-content/70">OR</div>
+				<div className="text-center text-sm text-muted-foreground">OR</div>
 			)}
 
-			{/* File Upload */}
-			<div>
-				<label className="label">
-					<span className="label-text text-primary">Upload Media</span>
-				</label>
+			<div className="space-y-2">
+				<Label htmlFor="mediaFile">Upload Media</Label>
 				<div className="relative">
-					<input
+					<Input
 						id="mediaFileInput"
 						type="file"
 						onChange={handleMediaFileChange}
-						className="hidden"
+						className="cursor-pointer"
 						accept="image/*,video/*"
 						disabled={!!mediaUrl}
 					/>
-					<label
-						htmlFor="mediaFileInput"
-						className={`btn btn-secondary w-full text-white cursor-pointer ${
-							mediaUrl ? "btn-disabled" : ""
-						}`}
-					>
-						{mediaFile ? mediaFile.name : "Upload Image or Video"}
-					</label>
 				</div>
 				{mediaFile && (
-					<div className="mt-2">
-						<label className="label">
-							<span className="label-text text-primary">
-								Upload Key <span className="text-red-500">*</span>
-							</span>
-						</label>
-						<input
+					<div className="space-y-2 pt-2">
+						<Label htmlFor="uploadKey">
+							Upload Key <span className="text-destructive">*</span>
+						</Label>
+						<Input
+							id="uploadKey"
 							type="password"
-							className="input input-bordered w-full"
 							value={uploadKey}
 							onChange={(e) => setUploadKey(e.target.value)}
 							placeholder="Enter upload key"
@@ -231,13 +211,10 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 				)}
 			</div>
 
-			{/* Preview */}
 			{(mediaUrl || mediaFile) && (
-				<div>
-					<label className="label">
-						<span className="label-text text-primary">Preview</span>
-					</label>
-					<div className="w-full h-48 bg-base-300 rounded-lg flex items-center justify-center overflow-hidden">
+				<div className="space-y-2">
+					<Label>Preview</Label>
+					<div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center overflow-hidden border">
 						{mediaFile ? (
 							mediaType === "image" ? (
 								<img
@@ -270,29 +247,28 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 				</div>
 			)}
 
-			{/* Error Message */}
 			{error && (
-				<div className="text-red-600 text-sm text-center">{error}</div>
+				<div className="text-destructive text-sm text-center font-medium">{error}</div>
 			)}
 
-			{/* Buttons */}
-			<div className="flex gap-2">
-				<button
+			<div className="flex gap-2 pt-2">
+				<Button
 					type="submit"
-					className="btn btn-primary flex-1"
+					className="flex-1"
 					disabled={loading || !title.trim() || !value.trim()}
 				>
+					{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 					{loading ? "Saving..." : stat ? "Update Stat" : "Create Stat"}
-				</button>
+				</Button>
 				{onCancel && (
-					<button
+					<Button
 						type="button"
-						className="btn btn-ghost"
+						variant="ghost"
 						onClick={onCancel}
 						disabled={loading}
 					>
 						Cancel
-					</button>
+					</Button>
 				)}
 			</div>
 		</form>
@@ -300,4 +276,3 @@ const StatForm = ({ stat, onSubmit, onCancel, loading }) => {
 };
 
 export default StatForm;
-

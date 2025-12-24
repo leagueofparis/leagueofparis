@@ -6,6 +6,12 @@ import {
 	deleteMilestone,
 	uploadImage,
 } from "../supabaseClient";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Loader2 } from "lucide-react";
 
 function MilestonesManager() {
 	const [milestones, setMilestones] = useState([]);
@@ -175,32 +181,32 @@ function MilestonesManager() {
 	return (
 		<div className="min-h-screen py-10 px-2">
 			<div className="w-full flex flex-col gap-8 justify-center items-center max-w-6xl mx-auto">
-				<h1 className="text-3xl font-extrabold mb-2 text-base-content">
-					Milestones Manager
-				</h1>
-				<p className="mb-8 text-base-content/70 text-lg">
-					Create and manage milestones.
-				</p>
+				<div className="text-center">
+					<h1 className="text-3xl font-extrabold mb-2 text-foreground">
+						Milestones Manager
+					</h1>
+					<p className="text-muted-foreground text-lg">
+						Create and manage milestones.
+					</p>
+				</div>
 
 				<div className="gap-8 flex flex-col lg:flex-row w-full justify-center items-start">
 					{/* Form Section */}
-					<div className="card bg-base-200 shadow-xl w-full lg:w-1/2">
-						<div className="card-body">
-							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
+					<Card className="w-full lg:w-1/2">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">
 								{editingId ? "Edit Milestone" : "Create New Milestone"}
-							</h2>
-
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
 							<form onSubmit={handleSubmit} className="space-y-4">
-								{/* Title */}
-								<div className="w-full">
-									<label className="label">
-										<span className="label-text text-primary">
-											Title <span className="text-red-500">*</span>
-										</span>
-									</label>
-									<input
+								<div className="space-y-2">
+									<Label htmlFor="title">
+										Title <span className="text-destructive">*</span>
+									</Label>
+									<Input
+										id="title"
 										type="text"
-										className="input input-bordered w-full"
 										value={title}
 										onChange={(e) => setTitle(e.target.value)}
 										placeholder="Enter milestone title"
@@ -208,96 +214,73 @@ function MilestonesManager() {
 									/>
 								</div>
 
-								{/* Description */}
-								<div className="w-full">
-									<label className="label">
-										<span className="label-text text-primary">Description</span>
-									</label>
-									<textarea
-										className="textarea textarea-bordered w-full h-24"
+								<div className="space-y-2">
+									<Label htmlFor="description">Description</Label>
+									<Textarea
+										id="description"
+										className="h-24"
 										value={description}
 										onChange={(e) => setDescription(e.target.value)}
 										placeholder="Enter milestone description (optional)"
 									/>
 								</div>
 
-								{/* Date */}
-								<div className="w-full">
-									<label className="label">
-										<span className="label-text text-primary">
-											Date <span className="text-red-500">*</span>
-										</span>
-									</label>
-									<input
+								<div className="space-y-2">
+									<Label htmlFor="date">
+										Date <span className="text-destructive">*</span>
+									</Label>
+									<Input
+										id="date"
 										type="datetime-local"
-										className="input input-bordered w-full"
 										value={date}
 										onChange={(e) => setDate(e.target.value)}
 										required
 									/>
 								</div>
 
-								{/* Link */}
-								<div className="w-full">
-									<label className="label">
-										<span className="label-text text-primary">Link</span>
-									</label>
-									<input
+								<div className="space-y-2">
+									<Label htmlFor="link">Link</Label>
+									<Input
+										id="link"
 										type="url"
-										className="input input-bordered w-full"
 										value={link}
 										onChange={(e) => setLink(e.target.value)}
 										placeholder="https://example.com (optional)"
 									/>
 								</div>
 
-								{/* Image Upload or URL */}
-								<div className="w-full">
-									<label className="label">
-										<span className="label-text text-primary">Image</span>
-									</label>
+								<div className="space-y-2">
+									<Label htmlFor="image">Image</Label>
 									<div className="space-y-2">
-										{/* Image URL Input */}
-										<input
+										<Input
+											id="image"
 											type="url"
-											className="input input-bordered w-full"
 											value={image}
 											onChange={(e) => {
 												setImage(e.target.value);
-												setImageFile(null); // Clear file if URL is entered
+												setImageFile(null);
 											}}
 											placeholder="Image URL (optional)"
 											disabled={!!imageFile}
 										/>
-										<div className="text-center text-sm text-base-content/70">
-											OR
-										</div>
-										{/* File Upload */}
+										<div className="text-center text-sm text-muted-foreground">OR</div>
 										<div className="relative">
-											<input
+											<Input
 												id="imageFileInput"
 												type="file"
 												onChange={handleImageChange}
-												className="hidden"
+												className="cursor-pointer"
 												accept="image/*"
 											/>
-											<label
-												htmlFor="imageFileInput"
-												className="btn btn-secondary w-full text-white cursor-pointer"
-											>
-												{imageFile ? imageFile.name : "Upload Image File"}
-											</label>
 										</div>
 										{imageFile && (
-											<div className="w-full">
-												<label className="label">
-													<span className="label-text text-primary">
-														Upload Key <span className="text-red-500">*</span>
-													</span>
-												</label>
-												<input
+											<div className="space-y-2 pt-2">
+												<Label htmlFor="uploadKey">
+													Upload Key <span className="text-destructive">*</span>
+												</Label>
+												<Input
+													id="uploadKey"
 													type="password"
-													className="input input-bordered w-full"
 													value={uploadKey}
 													onChange={(e) => setUploadKey(e.target.value)}
 													placeholder="Enter upload key"
@@ -307,13 +290,10 @@ function MilestonesManager() {
 									</div>
 								</div>
 
-								{/* Preview Image */}
 								{(image || imageFile) && (
-									<div className="w-full">
-										<label className="label">
-											<span className="label-text text-primary">Preview</span>
-										</label>
-										<div className="w-full h-48 bg-base-300 rounded-lg flex items-center justify-center overflow-hidden">
+									<div className="space-y-2">
+										<Label>Preview</Label>
+										<div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center overflow-hidden border">
 											{imageFile ? (
 												<img
 													src={URL.createObjectURL(imageFile)}
@@ -331,146 +311,145 @@ function MilestonesManager() {
 													}}
 												/>
 											) : null}
-											<span style={{ display: "none" }} className="text-base-content/70">
+											<span style={{ display: "none" }} className="text-muted-foreground">
 												Failed to load image
 											</span>
 										</div>
 									</div>
 								)}
 
-								{/* Buttons */}
-								<div className="flex gap-2 w-full">
-									<button
+								<div className="flex gap-2 w-full pt-2">
+									<Button
 										type="submit"
-										className="btn btn-primary flex-1"
+										className="flex-1"
 										disabled={loading || !title.trim() || !date}
 									>
+										{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 										{loading
 											? "Saving..."
 											: editingId
 											? "Update Milestone"
 											: "Create Milestone"}
-									</button>
+									</Button>
 									{editingId && (
-										<button
+										<Button
 											type="button"
-											className="btn btn-ghost"
+											variant="ghost"
 											onClick={handleCancel}
 											disabled={loading}
 										>
 											Cancel
-										</button>
+										</Button>
 									)}
 								</div>
 
-								{/* Status Message */}
 								<div
 									className={`min-h-[24px] text-center font-medium ${
 										status.includes("Failed") || status.includes("Invalid")
-											? "text-red-600"
+											? "text-destructive"
 											: status
-											? "text-success"
+											? "text-green-600"
 											: ""
 									}`}
 								>
 									{status}
 								</div>
 							</form>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
 					{/* Milestones List Section */}
-					<div className="card bg-base-200 shadow-xl w-full lg:w-1/2">
-						<div className="card-body">
-							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
-								All Milestones
-							</h2>
-
+					<Card className="w-full lg:w-1/2">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">All Milestones</CardTitle>
+						</CardHeader>
+						<CardContent>
 							{loading && milestones.length === 0 ? (
-								<div className="text-center">
-									<span className="loading loading-spinner loading-sm"></span>
-									<span className="ml-2">Loading...</span>
+								<div className="flex items-center justify-center py-8">
+									<Loader2 className="mr-2 h-8 w-8 animate-spin" />
+									<span>Loading...</span>
 								</div>
 							) : milestones.length > 0 ? (
-								<div className="space-y-4 max-h-[600px] overflow-y-auto">
+								<div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
 									{milestones.map((milestone) => (
-										<div
-											key={milestone.id}
-											className="bg-base-300 rounded-lg p-4 space-y-2"
-										>
-											<div className="flex justify-between items-start">
-												<div className="flex-1">
-													<h3 className="text-lg font-bold text-primary-content">
-														{milestone.title}
-													</h3>
-													{milestone.description && (
-														<p className="text-sm text-base-content/70 mt-1">
-															{milestone.description}
-														</p>
-													)}
-													<div className="text-xs text-base-content/60 mt-2 space-y-1">
-														<div>
-															<strong>Date:</strong> {formatDateTime(milestone.date)}
-														</div>
-														{milestone.link && (
-															<div>
-																<strong>Link:</strong>{" "}
-																<a
-																	href={milestone.link}
-																	target="_blank"
-																	rel="noopener noreferrer"
-																	className="link link-primary-content"
-																>
-																	{milestone.link}
-																</a>
-															</div>
+										<Card key={milestone.id} className="bg-muted/50 border-muted">
+											<CardContent className="p-4 space-y-2">
+												<div className="flex justify-between items-start">
+													<div className="flex-1">
+														<h3 className="text-lg font-bold text-foreground">
+															{milestone.title}
+														</h3>
+														{milestone.description && (
+															<p className="text-sm text-muted-foreground mt-1">
+																{milestone.description}
+															</p>
 														)}
-														<div>
-															<strong>Created:</strong> {formatDate(milestone.created_at)}
+														<div className="text-xs text-muted-foreground mt-2 space-y-1">
+															<div>
+																<strong>Date:</strong> {formatDateTime(milestone.date)}
+															</div>
+															{milestone.link && (
+																<div>
+																	<strong>Link:</strong>{" "}
+																	<a
+																		href={milestone.link}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="text-primary hover:underline"
+																	>
+																		{milestone.link}
+																	</a>
+																</div>
+															)}
+															<div>
+																<strong>Created:</strong> {formatDate(milestone.created_at)}
+															</div>
 														</div>
 													</div>
 												</div>
-											</div>
 
-											{milestone.image && (
-												<div className="w-full h-32 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden mt-2">
-													<img
-														src={milestone.image}
-														alt={milestone.title}
-														className="max-w-full max-h-full object-contain"
-														onError={(e) => {
-															e.target.style.display = "none";
-														}}
-													/>
+												{milestone.image && (
+													<div className="w-full h-32 bg-muted rounded-lg flex items-center justify-center overflow-hidden mt-2 border">
+														<img
+															src={milestone.image}
+															alt={milestone.title}
+															className="max-w-full max-h-full object-contain"
+															onError={(e) => {
+																e.target.style.display = "none";
+															}}
+														/>
+													</div>
+												)}
+
+												<div className="flex gap-2 mt-3">
+													<Button
+														size="sm"
+														variant="default"
+														onClick={() => handleEdit(milestone)}
+														disabled={loading}
+													>
+														Edit
+													</Button>
+													<Button
+														size="sm"
+														variant="destructive"
+														onClick={() => handleDelete(milestone.id)}
+														disabled={loading}
+													>
+														Delete
+													</Button>
 												</div>
-											)}
-
-											<div className="flex gap-2 mt-3">
-												<button
-													className="btn btn-sm btn-primary"
-													onClick={() => handleEdit(milestone)}
-													disabled={loading}
-												>
-													Edit
-												</button>
-												<button
-													className="btn btn-sm btn-error"
-													onClick={() => handleDelete(milestone.id)}
-													disabled={loading}
-												>
-													Delete
-												</button>
-											</div>
-										</div>
+											</CardContent>
+										</Card>
 									))}
 								</div>
 							) : (
-								<div className="text-center text-base-content/70">
+								<div className="text-center text-muted-foreground py-8">
 									No milestones yet. Create your first milestone!
 								</div>
 							)}
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 		</div>
@@ -478,4 +457,3 @@ function MilestonesManager() {
 }
 
 export default MilestonesManager;
-
