@@ -10,6 +10,7 @@ import {
 	deleteWrappedStat,
 	reorderWrappedStats,
 	uploadImage,
+	setFeaturedCollection,
 } from "../supabaseClient";
 import StatForm from "../components/wrapped/StatForm";
 import { fetchAllTwitchStats } from "../utilities/twitchStats";
@@ -175,6 +176,20 @@ function WrappedManager() {
 		} catch (error) {
 			console.error("Error deleting collection:", error);
 			setStatus("Failed to delete collection: " + error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleSetFeatured = async (id) => {
+		try {
+			setLoading(true);
+			await setFeaturedCollection(id);
+			setStatus("Collection set as featured!");
+			await fetchCollections();
+		} catch (error) {
+			console.error("Error setting featured collection:", error);
+			setStatus("Failed to set featured: " + error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -739,6 +754,11 @@ function WrappedManager() {
 													<div className="text-sm text-base-content/70 mt-1">
 														{collection.year}
 														{collection.period && ` • ${collection.period}`}
+														{collection.is_featured && (
+															<span className="badge badge-warning badge-sm ml-2">
+																Featured
+															</span>
+														)}
 														{collection.is_published && (
 															<span className="badge badge-success badge-sm ml-2">
 																Published
@@ -763,7 +783,7 @@ function WrappedManager() {
 												</div>
 											)}
 
-											<div className="flex gap-2 mt-3">
+											<div className="flex flex-wrap gap-2 mt-3">
 												<button
 													className="btn btn-sm btn-primary"
 													onClick={() => setSelectedCollectionId(collection.id)}
@@ -778,6 +798,15 @@ function WrappedManager() {
 												>
 													Edit
 												</button>
+												{!collection.is_featured && (
+													<button
+														className="btn btn-sm btn-warning"
+														onClick={() => handleSetFeatured(collection.id)}
+														disabled={loading}
+													>
+														Set Featured
+													</button>
+												)}
 												<button
 													className="btn btn-sm btn-error"
 													onClick={() => handleDeleteCollection(collection.id)}

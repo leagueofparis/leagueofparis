@@ -12,14 +12,14 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 				handleNext();
 			} else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
 				handlePrev();
-			} else if (e.key === "Escape") {
+			} else if (e.key === "Escape" && onBack) {
 				onBack();
 			}
 		};
 
 		window.addEventListener("keydown", handleKeyPress);
 		return () => window.removeEventListener("keydown", handleKeyPress);
-	}, [currentIndex]);
+	}, [currentIndex, onBack]);
 
 	const handleNext = () => {
 		if (currentIndex < stats.length - 1) {
@@ -63,9 +63,11 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
 					<p className="text-xl text-base-content">No stats available</p>
-					<button onClick={onBack} className="btn btn-primary mt-4">
-						Back to Collections
-					</button>
+					{onBack && (
+						<button onClick={onBack} className="btn btn-primary mt-4">
+							Back to Collections
+						</button>
+					)}
 				</div>
 			</div>
 		);
@@ -117,28 +119,30 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 			</div>
 
 			{/* Navigation Buttons */}
-			<div className="fixed top-6 left-4 z-50">
-				<button
-					onClick={onBack}
-					className="btn btn-ghost btn-sm btn-circle bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white border-none"
-					title="Back to Collections"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
+			<div className="fixed top-6 left-4 z-50 flex items-center">
+				{onBack && (
+					<button
+						onClick={onBack}
+						className="btn btn-ghost btn-sm btn-circle bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white border-none"
+						title="Back to Collections"
 					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
-				</button>
-				<span className="ml-3 text-white font-bold text-shadow-sm drop-shadow-md">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="h-5 w-5"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M6 18L18 6M6 6l12 12"
+							/>
+						</svg>
+					</button>
+				)}
+				<span className={`text-white font-bold text-shadow-sm drop-shadow-md ${onBack ? 'ml-3' : ''}`}>
 					{collectionTitle}
 				</span>
 			</div>
