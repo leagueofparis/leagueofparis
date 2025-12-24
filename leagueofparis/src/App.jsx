@@ -19,6 +19,8 @@ import Account from "./pages/Account";
 import SchedulePage from "./pages/SchedulePage";
 import MilestonesManager from "./pages/MilestonesManager";
 import Timeline from "./pages/Timeline";
+import Wrapped from "./pages/Wrapped";
+import WrappedManager from "./pages/WrappedManager";
 
 function App() {
 	useEffect(() => {
@@ -152,6 +154,22 @@ function App() {
 							<Layout>
 								<Timeline />
 							</Layout>
+						}
+					/>
+					<Route
+						path="/wrapped"
+						element={
+							<Wrapped />
+						}
+					/>
+					<Route
+						path="/wrapped/manage"
+						element={
+							<ProtectedRoute requiredRole="admin" requireAuth={true}>
+								<Layout>
+									<WrappedManager />
+								</Layout>
+							</ProtectedRoute>
 						}
 					/>
 				</Routes>
