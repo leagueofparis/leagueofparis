@@ -284,7 +284,7 @@ const TicTacToe = ({ onWin }) => {
 				transition={{ delay: 0.2 }}
 			>
 				<h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-					Beat Me to See Your Stats!
+					Win a game of Tic Tac Toe to see your stats!
 				</h1>
 				<p className="text-white/70 text-lg">
 					You're <span className="text-pink-400 font-bold">X</span>, I'm{" "}
