@@ -14,7 +14,7 @@ const getDisplayValue = (stat) => {
 	return stat.value;
 };
 
-const StatRow = ({ stat, index, delay }) => {
+const StatRow = ({ stat, delay }) => {
 	const value = getDisplayValue(stat);
 	
 	return (
@@ -39,7 +39,7 @@ const StatRow = ({ stat, index, delay }) => {
 	);
 };
 
-const SummaryCard = ({ stats, index = 0, className = "", collectionTitle = "2025 Wrapped" }) => {
+const SummaryCard = ({ stats, index = 0, className = "", collectionTitle = "2025 Wrapped", onRestart, onHome }) => {
 	// Take up to 6 stats for the summary
 	let highlightStats = stats.slice(0, 6);
 	highlightStats.push({
@@ -89,7 +89,6 @@ const SummaryCard = ({ stats, index = 0, className = "", collectionTitle = "2025
 							<StatRow
 								key={idx}
 								stat={stat}
-								index={idx}
 								delay={0.3 + idx * 0.1}
 							/>
 						))}
@@ -105,6 +104,31 @@ const SummaryCard = ({ stats, index = 0, className = "", collectionTitle = "2025
 				>
 					Thanks for an amazing year! 🎉
 				</motion.p>
+
+				{/* Action Buttons */}
+				<motion.div
+					className="mt-6 flex items-center justify-center gap-3"
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 1.2 }}
+				>
+					{onRestart && (
+						<button
+							onClick={onRestart}
+							className="px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-all duration-200 active:scale-95 cursor-pointer"
+						>
+							↺ Start Over
+						</button>
+					)}
+					{onHome && (
+						<button
+							onClick={onHome}
+							className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-medium hover:bg-white/90 transition-all duration-200 active:scale-95 cursor-pointer"
+						>
+							Go Home
+						</button>
+					)}
+				</motion.div>
 			</div>
 		</WrappedBackground>
 	);

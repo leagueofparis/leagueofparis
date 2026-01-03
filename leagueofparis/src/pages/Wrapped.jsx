@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getFeaturedWrappedCollection, getWrappedStats } from "../supabaseClient";
 import StatCarousel from "../components/wrapped/StatCarousel";
 import TicTacToe from "../components/wrapped/TicTacToe";
@@ -115,12 +116,17 @@ const Intro = ({ year, loading, error, featuredCollection, onStart, onRetry }) =
 );
 
 const Wrapped = () => {
+	const navigate = useNavigate();
 	const [featuredCollection, setFeaturedCollection] = useState(null);
 	const [stats, setStats] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [showIntro, setShowIntro] = useState(true);
 	const [showTicTacToe, setShowTicTacToe] = useState(false);
+
+	const handleGoHome = () => {
+		navigate("/");
+	};
 
 	useEffect(() => {
 		fetchFeaturedCollection();
@@ -196,6 +202,7 @@ const Wrapped = () => {
 						<StatCarousel
 							stats={stats}
 							collectionTitle={featuredCollection.title}
+							onBack={handleGoHome}
 						/>
 					) : (
 						<div className="h-full flex items-center justify-center text-white">

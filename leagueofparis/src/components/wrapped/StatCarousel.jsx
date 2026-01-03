@@ -62,6 +62,11 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 		setCurrentIndex(index);
 	};
 
+	const handleRestart = () => {
+		setDirection(-1);
+		setCurrentIndex(0);
+	};
+
 	// Swipe handling with Framer Motion drag
 	const swipeConfidenceThreshold = 10000;
 	const swipePower = (offset, velocity) => {
@@ -187,7 +192,13 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 					}}
 				>
 					{currentSlide.type === "summary" ? (
-						<SummaryCard stats={currentSlide.stats} index={currentIndex} collectionTitle={collectionTitle} />
+						<SummaryCard 
+							stats={currentSlide.stats} 
+							index={currentIndex} 
+							collectionTitle={collectionTitle}
+							onRestart={handleRestart}
+							onHome={onBack}
+						/>
 					) : (
 						<StatCard stat={currentSlide.stat} index={currentSlide.index} />
 					)}
