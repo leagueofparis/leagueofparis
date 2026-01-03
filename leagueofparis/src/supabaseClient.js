@@ -81,12 +81,45 @@ export async function uploadImage(file, folder, key) {
 	formData.append("key", key);
 
 	const response = await invokeEdgeFunction("validate-secret", formData);
+	console.log("Upload response:", response);
+	console.log("Upload response type:", typeof response);
+	console.log("Upload response keys:", response ? Object.keys(response) : "null");
 
 	if (!response) {
-		throw new Error("Upload failed");
+		throw new Error("Upload failed - no response");
 	}
 
-	return response;
+	// Handle different response formats from edge function
+	if (typeof response === "string") {
+		return response;
+	}
+	if (response.url) {
+		return response.url;
+	}
+	if (response.publicUrl) {
+		return response.publicUrl;
+	}
+	if (response.public_url) {
+		return response.public_url;
+	}
+	if (response.data?.publicUrl) {
+		return response.data.publicUrl;
+	}
+	if (response.data?.public_url) {
+		return response.data.public_url;
+	}
+	if (response.path) {
+		// If we get a path, construct the full URL
+		return getImageUrl(response.path);
+	}
+	if (response.Key) {
+		// AWS S3 style response
+		return getImageUrl(response.Key);
+	}
+	
+	// If response is an object but we couldn't find the URL, show what we got
+	console.error("Unexpected upload response format:", JSON.stringify(response, null, 2));
+	throw new Error(`Upload succeeded but could not get URL. Response: ${JSON.stringify(response)}`);
 }
 
 export async function getImageUrls(folder) {
@@ -269,5 +302,195 @@ export async function deleteMilestone(id) {
 		.eq("id", id);
 	if (error) {
 		throw error;
+	}
+}
+
+// Wrapped Collections CRUD functions
+export async function getWrappedCollections(publishedOnly = false) {
+	let query = supabase
+		.from("wrapped_collections")
+		.select("*")
+		.order("year", { ascending: false });
+
+	if (publishedOnly) {
+		query = query.eq("is_published", true);
+	}
+
+	const { data, error } = await query;
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function getFeaturedWrappedCollection() {
+	// First try to get explicitly featured collection
+	const { data: featured, error: featuredError } = await supabase
+		.from("wrapped_collections")
+		.select("*")
+		.eq("is_featured", true)
+		.eq("is_published", true)
+		.single();
+
+	if (!featuredError && featured) {
+		return featured;
+	}
+
+	// Fall back to most recent published collection
+	const { data: recent, error: recentError } = await supabase
+		.from("wrapped_collections")
+		.select("*")
+		.eq("is_published", true)
+		.order("year", { ascending: false })
+		.order("created_at", { ascending: false })
+		.limit(1)
+		.single();
+
+	if (recentError) {
+		throw recentError;
+	}
+	return recent;
+}
+
+export async function setFeaturedCollection(id) {
+	// First, unset any existing featured collection
+	const { error: unsetError } = await supabase
+		.from("wrapped_collections")
+		.update({ is_featured: false })
+		.eq("is_featured", true);
+
+	if (unsetError) {
+		throw unsetError;
+	}
+
+	// Then set the new featured collection
+	const { data, error } = await supabase
+		.from("wrapped_collections")
+		.update({ is_featured: true })
+		.eq("id", id)
+		.select()
+		.single();
+
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function getWrappedCollection(id) {
+	const { data, error } = await supabase
+		.from("wrapped_collections")
+		.select("*")
+		.eq("id", id)
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function createWrappedCollection(collection) {
+	const { data, error } = await supabase
+		.from("wrapped_collections")
+		.insert(collection)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function updateWrappedCollection(id, collection) {
+	const { data, error } = await supabase
+		.from("wrapped_collections")
+		.update(collection)
+		.eq("id", id)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function deleteWrappedCollection(id) {
+	// First delete all stats for this collection
+	const { error: statsError } = await supabase
+		.from("wrapped_stats")
+		.delete()
+		.eq("wrapped_collection_id", id);
+	if (statsError) {
+		throw statsError;
+	}
+
+	// Then delete the collection
+	const { error } = await supabase
+		.from("wrapped_collections")
+		.delete()
+		.eq("id", id);
+	if (error) {
+		throw error;
+	}
+}
+
+// Wrapped Stats CRUD functions
+export async function getWrappedStats(collectionId) {
+	const { data, error } = await supabase
+		.from("wrapped_stats")
+		.select("*")
+		.eq("wrapped_collection_id", collectionId)
+		.order("order", { ascending: true });
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function createWrappedStat(stat) {
+	const { data, error } = await supabase
+		.from("wrapped_stats")
+		.insert(stat)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function updateWrappedStat(id, stat) {
+	const { data, error } = await supabase
+		.from("wrapped_stats")
+		.update(stat)
+		.eq("id", id)
+		.select()
+		.single();
+	if (error) {
+		throw error;
+	}
+	return data;
+}
+
+export async function deleteWrappedStat(id) {
+	const { error } = await supabase
+		.from("wrapped_stats")
+		.delete()
+		.eq("id", id);
+	if (error) {
+		throw error;
+	}
+}
+
+export async function reorderWrappedStats(statIds) {
+	// Update the order of each stat based on its position in the array
+	for (let i = 0; i < statIds.length; i++) {
+		const { error } = await supabase
+			.from("wrapped_stats")
+			.update({ order: i })
+			.eq("id", statIds[i]);
+		if (error) {
+			throw error;
+		}
 	}
 }

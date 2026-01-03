@@ -302,6 +302,20 @@ function Timeline() {
 		);
 	}
 
+	const sortedMilestones = [...milestones].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+	const getSpacingClass = (currentDate, prevDate) => {
+		if (!prevDate) return "mt-0";
+		
+		const diffTime = Math.abs(new Date(currentDate) - new Date(prevDate));
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+		if (diffDays <= 2) return "mt-12"; // Very close
+		if (diffDays <= 7) return "mt-24"; // Close
+		if (diffDays <= 30) return "mt-32"; // Medium
+		return "mt-48"; // Far
+	};
+
 	return (
 		<div className="min-h-screen py-10 px-2">
 			<div className="max-w-7xl mx-auto">
@@ -309,54 +323,53 @@ function Timeline() {
 					Timeline
 				</h1>
 				<p className="text-center text-base-content/70 text-lg mb-12">
-					Journey through our milestones
+					Journey through the 2025 Highlights
 				</p>
 
 				<VerticalTimeline>
-					{milestones
-						.sort((a, b) => new Date(a.date) - new Date(b.date))
-						.map((milestone, index) => {
-							const dateShort = formatDateShort(milestone.date);
-							return (
-								<VerticalTimelineElement
-									key={milestone.id}
-									index={index}
-									date={formatDate(milestone.date)}
-									iconStyle={{
-										background: "var(--fallback-p,oklch(var(--p)/1))",
-										color: "#fff",
-									}}
-									icon={
-										<div className="flex flex-col items-center justify-center leading-tight">
-											<div className="text-xs md:text-sm font-semibold">
-												{dateShort.month}
-											</div>
-											<div className="text-lg md:text-2xl font-bold">
-												{dateShort.day}
-											</div>
-											<div className="text-xs md:text-sm">
-												{dateShort.year}
-											</div>
-										</div>
-									}
-								>
-							<h3 className="text-xl md:text-2xl font-bold text-primary mb-2">
-								{milestone.title}
-							</h3>
-							{milestone.description && (
-								<p className="text-primary/80 mb-4">
-									{milestone.description}
-								</p>
-							)}
+					{sortedMilestones.map((milestone, index) => {
+						const dateShort = formatDateShort(milestone.date);
+						const prevMilestone = index > 0 ? sortedMilestones[index - 1] : null;
+						const spacingClass = getSpacingClass(milestone.date, prevMilestone?.date);
 
-							<MediaRenderer
-								url={milestone.link}
-								title={milestone.title}
-								image={milestone.image}
-							/>
-								</VerticalTimelineElement>
-							);
-						})}
+						return (
+							<VerticalTimelineElement
+								key={milestone.id}
+								index={index}
+								className={spacingClass}
+								date={formatDate(milestone.date)}
+								icon={
+									<div className="flex flex-col items-center justify-center leading-tight w-full h-full">
+										<div className="text-[10px] md:text-xs font-semibold uppercase tracking-wider opacity-90">
+											{dateShort.month}
+										</div>
+										<div className="text-xl md:text-2xl font-extrabold -my-1">
+											{dateShort.day}
+										</div>
+										<div className="text-[10px] md:text-xs opacity-80 font-medium">
+											{dateShort.year}
+										</div>
+									</div>
+								}
+							>
+								<h3 className="text-xl md:text-2xl font-bold text-primary mb-2">
+									{milestone.title}
+								</h3>
+								{milestone.description && (
+									<div 
+										className="text-primary/80 mb-4 font-medium leading-relaxed [&_a]:underline [&_a]:text-secondary hover:[&_a]:text-secondary/80 [&_br]:block"
+										dangerouslySetInnerHTML={{ __html: milestone.description }}
+									/>
+								)}
+
+								<MediaRenderer
+									url={milestone.link}
+									title={milestone.title}
+									image={milestone.image}
+								/>
+							</VerticalTimelineElement>
+						);
+					})}
 				</VerticalTimeline>
 			</div>
 		</div>

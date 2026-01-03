@@ -6,9 +6,16 @@ import {
 	getAnnouncements,
 	invokeEdgeFunction,
 	getFeaturedVideo,
-
 } from "../supabaseClient";
 import YoutubeEmbed from "../components/YoutubeEmbed";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Progress } from "../components/ui/progress";
+import { Loader2 } from "lucide-react";
 
 function ContentManager() {
 	const [file, setFile] = useState(null);
@@ -171,21 +178,6 @@ function ContentManager() {
 		}
 	};
 
-	const formatDate = (dateString) => {
-		return new Date(dateString).toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-			hour: "2-digit",
-			minute: "2-digit",
-		});
-	};
-
-	const isExpired = (expirationDate) => {
-		if (!expirationDate) return false;
-		return new Date(expirationDate) <= new Date();
-	};
-
 	const handleSaveFeaturedVideo = async () => {
 		const body = {
 			youtube_url: featureVideoUrl,
@@ -197,366 +189,296 @@ function ContentManager() {
 		try {
 			console.log(body);
 			await invokeEdgeFunction("featured-video", body);
-
 		} catch (err) {
 			console.error("Request failed:", err.message);
 		}
 	};
 
-
 	return (
 		<div className="min-h-screen py-10 px-2">
-			<div className="w-full flex flex-col gap-8 justify-center items-center">
-				<h1 className="text-3xl font-extrabold mb-2 text-base-content">
-					Content Manager
-				</h1>
-				<p className="mb-8 text-base-content/70 text-lg">
-					Upload files and manage announcements.
-				</p>
+			<div className="w-full flex flex-col gap-8 justify-center items-center max-w-7xl mx-auto">
+				<div className="text-center">
+					<h1 className="text-3xl font-extrabold mb-2 text-foreground">
+						Content Manager
+					</h1>
+					<p className="text-muted-foreground text-lg">
+						Upload files and manage announcements.
+					</p>
+				</div>
 
 				<div className="gap-8 flex flex-col md:flex-row w-full justify-center items-start">
 					{/* File Upload Section */}
-					<div className="card bg-base-200 shadow-xl w-full md:w-1/3">
-						<div className="card-body items-start">
-							<h2 className="text-xl text-primary font-bold mb-4 w-full text-center">
-								Upload Files
-							</h2>
-
-							{/* Folder Selection */}
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Select Folder</span>
-								</label>
-								<select
-									className="select select-bordered w-full"
-									value={selectedFolder}
-									onChange={(e) => setSelectedFolder(e.target.value)}
-									disabled={folders.length === 0}
-								>
-									{folders.length === 0 ? (
-										<option>Loading folders...</option>
-									) : (
-										folders.map((folder) => (
-											<option key={folder} value={folder}>
+					<Card className="w-full md:w-1/3">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">Upload Files</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="folder-select">Select Folder</Label>
+								<Select value={selectedFolder} onValueChange={setSelectedFolder} disabled={folders.length === 0}>
+									<SelectTrigger id="folder-select">
+										<SelectValue placeholder="Select a folder" />
+									</SelectTrigger>
+									<SelectContent>
+										{folders.map((folder) => (
+											<SelectItem key={folder} value={folder}>
 												{folder}
-											</option>
-										))
-									)}
-								</select>
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 
-							{/* File Input */}
-							<div className="w-1/2 mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Select Files</span>
-								</label>
-
-								<div className="relative">
-									<input
+							<div className="space-y-2">
+								<Label htmlFor="fileInput">Select Files</Label>
+								<div className="flex gap-2 items-center">
+									<Input
 										id="fileInput"
 										type="file"
 										onChange={handleFileChange}
-										className="hidden"
 										multiple
 										accept="image/*"
+										className="cursor-pointer"
 									/>
-									<label
-										htmlFor="fileInput"
-										className="btn btn-secondary w-full text-white cursor-pointer"
-									>
-										Choose Files
-									</label>
 								</div>
-
-								{/* Optional: show selected file names */}
 								{file && file.length > 0 && (
-									<div className="mt-2 text-sm text-primary truncate">
+									<div className="text-sm text-muted-foreground truncate">
 										{Array.from(file).map((f) => f.name).join(", ")}
 									</div>
 								)}
 							</div>
 
-							{/* Upload Key */}
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Upload Key</span>
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="upload-key">Upload Key</Label>
+								<Input
+									id="upload-key"
 									type="password"
 									placeholder="Enter upload key"
-									className="input input-bordered w-full"
 									value={key}
 									onChange={(e) => setKey(e.target.value)}
 								/>
 							</div>
 
-							{/* Optional Message for Schedules */}
 							{selectedFolder === "schedules" && (
-								<div className="w-full mb-4">
-									<label className="label">
-										<span className="label-text">
-											Schedule Message (Optional)
-										</span>
-									</label>
-									<input
+								<div className="space-y-2">
+									<Label htmlFor="schedule-message">Schedule Message (Optional)</Label>
+									<Input
+										id="schedule-message"
 										type="text"
 										placeholder="Enter schedule message"
-										className="input input-bordered w-full"
 										value={message}
 										onChange={(e) => setMessage(e.target.value)}
 									/>
 								</div>
 							)}
 
-							{/* Upload Button */}
-							<button
+							<Button
 								onClick={handleUpload}
-								className="btn btn-primary w-full"
+								className="w-full"
 								disabled={loading || !file || !selectedFolder || !key}
 							>
+								{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 								{loading ? "Uploading..." : "Upload Files"}
-							</button>
+							</Button>
 
-							{/* Progress Bar */}
 							{totalFiles > 0 && currentIndex > 0 && (
-								<div className="w-full mt-4">
-									<div className="text-center text-sm mb-2">
+								<div className="space-y-2">
+									<div className="text-center text-sm">
 										{isConverting
 											? `Converting ${currentFileName} (${currentIndex}/${totalFiles})...`
 											: `Uploading ${currentFileName} (${currentIndex}/${totalFiles})...`}
 									</div>
-									<div className="w-full bg-base-200 rounded-full h-2">
-										<div
-											className="bg-primary h-2 rounded-full transition-all duration-300"
-											style={{ width: `${(currentIndex / totalFiles) * 100}%` }}
-										></div>
-									</div>
+									<Progress value={(currentIndex / totalFiles) * 100} />
 								</div>
 							)}
 
-							{/* Status Message */}
 							<div
-								className={`mt-4 min-h-[24px] text-center font-medium ${status.includes("failed") ||
-										status.includes("Invalid") ||
-										status.includes("Failed")
-										? "text-red-600"
+								className={`min-h-[24px] text-center font-medium ${
+									status.includes("failed") ||
+									status.includes("Invalid") ||
+									status.includes("Failed")
+										? "text-destructive"
 										: status
-											? "text-success"
-											: ""
-									}`}
+										? "text-green-600"
+										: ""
+								}`}
 							>
 								{status}
 							</div>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
 					{/* Announcement Manager Section */}
-					<div className="card bg-base-200 shadow-xl w-full md:w-1/3">
-						<div className="card-body items-center">
-							<h2 className="card-title text-xl text-primary font-bold mb-4">
-								Announcement Manager
-							</h2>
-
-							{/* Announcement Content */}
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Announcement Content</span>
-								</label>
-								<textarea
-									className="textarea textarea-bordered w-full h-32"
+					<Card className="w-full md:w-1/3">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">Announcement Manager</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="announcement-content">Announcement Content</Label>
+								<Textarea
+									id="announcement-content"
+									className="h-32"
 									placeholder="Enter your announcement here..."
 									value={announcementContent}
 									onChange={(e) => setAnnouncementContent(e.target.value)}
 									maxLength={500}
 								/>
-								<div className="text-xs text-right text-base-content/70 mt-1">
+								<div className="text-xs text-right text-muted-foreground">
 									{announcementContent.length}/500 characters
 								</div>
 							</div>
 
-							{/* Expiration Date */}
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Expiration Date (Optional)</span>
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="expiration-date">Expiration Date (Optional)</Label>
+								<Input
+									id="expiration-date"
 									type="datetime-local"
-									className="input input-bordered w-full"
 									value={expirationDate}
 									onChange={(e) => setExpirationDate(e.target.value)}
 									min={new Date().toISOString().slice(0, 16)}
 								/>
 							</div>
 
-							{/* Announcement Key */}
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Announcement Key</span>
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="announcement-key">Announcement Key</Label>
+								<Input
+									id="announcement-key"
 									type="password"
 									placeholder="Enter announcement key"
-									className="input input-bordered w-full"
 									value={announcementKey}
 									onChange={(e) => setAnnouncementKey(e.target.value)}
 								/>
 							</div>
 
-							{/* Create Announcement Button */}
-							<button
+							<Button
 								onClick={handleCreateAnnouncement}
-								className="btn btn-primary w-full"
-								disabled={
-									loading ||
-									!announcementContent.trim() ||
-									!announcementKey.trim()
-								}
+								className="w-full"
+								disabled={loading || !announcementContent.trim() || !announcementKey.trim()}
 							>
+								{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 								{loading ? "Creating..." : "Create Announcement"}
-							</button>
+							</Button>
 
-							{/* Announcement Status */}
 							<div
-								className={`mt-4 min-h-[24px] text-center font-medium ${announcementStatus.includes("Failed") ||
-										announcementStatus.includes("Invalid")
-										? "text-red-600"
+								className={`min-h-[24px] text-center font-medium ${
+									announcementStatus.includes("Failed") ||
+									announcementStatus.includes("Invalid")
+										? "text-destructive"
 										: announcementStatus
-											? "text-success"
-											: ""
-									}`}
+										? "text-green-600"
+										: ""
+								}`}
 							>
 								{announcementStatus}
 							</div>
 
-							{/* Recent Announcements */}
-							<div className="w-full mt-6">
-								<h3 className="text-lg font-semibold mb-3 text-primary">
-									Recent Announcements
-								</h3>
+							<div className="mt-6">
+								<h3 className="text-lg font-semibold mb-3 text-primary">Recent Announcements</h3>
 								{loadingAnnouncements ? (
-									<div className="text-center">
-										<span className="loading loading-spinner loading-sm"></span>
-										<span className="ml-2">Loading...</span>
+									<div className="flex items-center justify-center">
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										<span>Loading...</span>
 									</div>
 								) : announcements.length > 0 ? (
-									<div className="flex flex-col items-center justify-center gap-4 w-full mb-4">
-										<div className="bg-base-200 rounded-lg min-w-[300px] pl-2">
+									<div className="space-y-4">
+										<div className="bg-muted rounded-lg p-4">
 											{announcements.map((announcement, index) => (
-												<div key={index} className="text-base-content">
-													<div className="flex flex-row justify-between">
-														<label className="label">
-															{new Date(
-																announcement.created_at
-															).toLocaleDateString("en-US", {
+												<div key={index} className="text-foreground">
+													<div className="flex flex-row justify-between text-sm text-muted-foreground mb-2">
+														<span>
+															{new Date(announcement.created_at).toLocaleDateString("en-US", {
 																month: "short",
 																day: "numeric",
 															})}
-														</label>
-														<label className="label">
-															{announcement.expires_at && (
-																<>
-																	<span className="label-text">Expires:</span>
-																	<label className="label">
-																		{new Date(
-																			announcement.expires_at
-																		).toLocaleDateString("en-US", {
-																			month: "short",
-																			day: "numeric",
-																		})}
-																	</label>
-																</>
-															)}
-														</label>
+														</span>
+														{announcement.expires_at && (
+															<span>
+																Expires:{" "}
+																{new Date(announcement.expires_at).toLocaleDateString("en-US", {
+																	month: "short",
+																	day: "numeric",
+																})}
+															</span>
+														)}
 													</div>
 
-													<div className="text-3xl font-bold ">
-														{announcement.content}
-													</div>
+													<div className="text-xl font-bold">{announcement.content}</div>
 												</div>
 											))}
 										</div>
 									</div>
 								) : (
-									<div className="text-center text-base-content/70">
-										No announcements yet
-									</div>
+									<div className="text-center text-muted-foreground">No announcements yet</div>
 								)}
 							</div>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
-					<div className="card bg-base-200 shadow-xl w-full md:w-1/3 ">
-						<div className="card-body items-center">
-							<h2 className="card-title text-xl text-primary font-bold mb-4">
-								Featured Video
-							</h2>
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Youtube URL</span>
-								</label>
-								<input
+					{/* Featured Video Section */}
+					<Card className="w-full md:w-1/3">
+						<CardHeader>
+							<CardTitle className="text-primary text-center">Featured Video</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="youtube-url">Youtube URL</Label>
+								<Input
+									id="youtube-url"
 									type="text"
 									placeholder="Enter youtube url"
-									className="input input-bordered w-full"
 									value={featureVideoUrl}
 									onChange={(e) => setFeatureVideoUrl(e.target.value)}
 								/>
 							</div>
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">Start Date</span>
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="video-start-date">Start Date</Label>
+								<Input
+									id="video-start-date"
 									type="datetime-local"
-									className="input input-bordered w-full"
 									value={featureVideoStartDate}
 									onChange={(e) => setFeatureVideoStartDate(e.target.value)}
 								/>
 							</div>
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary">End Date</span>
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="video-end-date">End Date</Label>
+								<Input
+									id="video-end-date"
 									type="datetime-local"
-									className="input input-bordered w-full"
 									value={featureVideoEndDate}
 									onChange={(e) => setFeatureVideoEndDate(e.target.value)}
 								/>
 							</div>
-							<button
-								className="btn btn-primary w-full"
-								onClick={handleSaveFeaturedVideo}
-							>
+							<Button onClick={handleSaveFeaturedVideo} className="w-full">
 								Save
-							</button>
-						</div>
-						<div className="card-body items-center">
-							<div className="w-full mb-4">
-								<label className="label">
-									<span className="label-text text-primary font-bold">Current Featured Video</span>
-								</label>
-								<div className="text-xl text-primary font-bold">
-									<div className="flex flex-row justify-between">
-										<label className="label">
-											<span className="label-text">Start Date: {new Date(featuredVideo?.start_date).toLocaleDateString("en-US", {
-												month: "short",
-												day: "numeric",
-											})}</span>
-										</label>
-										<label className="label">
-											<span className="label-text">End Date: {new Date(featuredVideo?.end_date).toLocaleDateString("en-US", {
-												month: "short",
-												day: "numeric",
-											})}</span>
-										</label>
-									</div>
+							</Button>
 
+							<div className="pt-4 border-t">
+								<Label className="font-bold text-primary block mb-2">Current Featured Video</Label>
+								<div className="space-y-2">
+									<div className="flex flex-row justify-between text-sm">
+										<span>
+											Start:{" "}
+											{featuredVideo?.start_date &&
+												new Date(featuredVideo.start_date).toLocaleDateString("en-US", {
+													month: "short",
+													day: "numeric",
+												})}
+										</span>
+										<span>
+											End:{" "}
+											{featuredVideo?.end_date &&
+												new Date(featuredVideo.end_date).toLocaleDateString("en-US", {
+													month: "short",
+													day: "numeric",
+												})}
+										</span>
+									</div>
 									<YoutubeEmbed videoId={featuredVideo?.value} />
 								</div>
 							</div>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 		</div>

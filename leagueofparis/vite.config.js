@@ -1,3 +1,4 @@
+import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
@@ -7,6 +8,22 @@ dotenv.config();
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [react(), tailwindcss()],
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "./src"),
+		},
+		dedupe: ["react", "react-dom"],
+		conditions: ["import", "module", "browser", "default"],
+	},
+	optimizeDeps: {
+		include: ["react-snowfall"],
+		esbuildOptions: {
+			target: "esnext",
+		},
+	},
+	commonjsOptions: {
+		include: [/react-snowfall/, /node_modules/],
+	},
 	server: {
 		proxy: {
 			// Change '/api' to match the path you use for your API requests
