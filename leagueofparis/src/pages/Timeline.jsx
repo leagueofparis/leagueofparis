@@ -323,7 +323,7 @@ function Timeline() {
 					Timeline
 				</h1>
 				<p className="text-center text-base-content/70 text-lg mb-12">
-					Journey through our milestones
+					Journey through the 2025 Highlights
 				</p>
 
 				<VerticalTimeline>
@@ -356,9 +356,10 @@ function Timeline() {
 									{milestone.title}
 								</h3>
 								{milestone.description && (
-									<p className="text-primary/80 mb-4 font-medium leading-relaxed">
-										{milestone.description}
-									</p>
+									<div 
+										className="text-primary/80 mb-4 font-medium leading-relaxed [&_a]:underline [&_a]:text-secondary hover:[&_a]:text-secondary/80 [&_br]:block"
+										dangerouslySetInnerHTML={{ __html: milestone.description }}
+									/>
 								)}
 
 								<MediaRenderer
