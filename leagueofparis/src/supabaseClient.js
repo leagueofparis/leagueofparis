@@ -81,12 +81,45 @@ export async function uploadImage(file, folder, key) {
 	formData.append("key", key);
 
 	const response = await invokeEdgeFunction("validate-secret", formData);
+	console.log("Upload response:", response);
+	console.log("Upload response type:", typeof response);
+	console.log("Upload response keys:", response ? Object.keys(response) : "null");
 
 	if (!response) {
-		throw new Error("Upload failed");
+		throw new Error("Upload failed - no response");
 	}
 
-	return response;
+	// Handle different response formats from edge function
+	if (typeof response === "string") {
+		return response;
+	}
+	if (response.url) {
+		return response.url;
+	}
+	if (response.publicUrl) {
+		return response.publicUrl;
+	}
+	if (response.public_url) {
+		return response.public_url;
+	}
+	if (response.data?.publicUrl) {
+		return response.data.publicUrl;
+	}
+	if (response.data?.public_url) {
+		return response.data.public_url;
+	}
+	if (response.path) {
+		// If we get a path, construct the full URL
+		return getImageUrl(response.path);
+	}
+	if (response.Key) {
+		// AWS S3 style response
+		return getImageUrl(response.Key);
+	}
+	
+	// If response is an object but we couldn't find the URL, show what we got
+	console.error("Unexpected upload response format:", JSON.stringify(response, null, 2));
+	throw new Error(`Upload succeeded but could not get URL. Response: ${JSON.stringify(response)}`);
 }
 
 export async function getImageUrls(folder) {

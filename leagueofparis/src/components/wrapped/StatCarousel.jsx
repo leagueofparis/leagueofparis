@@ -1,10 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import StatCard from "./StatCard";
+import SummaryCard from "./SummaryCard";
 import { motion, AnimatePresence } from "motion/react";
 
 const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [direction, setDirection] = useState(0); // -1 for left, 1 for right, 0 for initial
+
+	// Create slides array with summary at the very end
+	const slides = useMemo(() => {
+		if (!stats || stats.length === 0) return [];
+		
+		// Add all stats first, then summary at the end
+		const result = stats.map((stat, i) => ({ type: "stat", stat, index: i }));
+		
+		// Add summary as the final slide
+		if (stats.length >= 2) {
+			result.push({ type: "summary", stats: stats, index: result.length });
+		}
+		
+		return result;
+	}, [stats]);
+
+	const totalSlides = slides.length;
 
 	useEffect(() => {
 		const handleKeyPress = (e) => {
@@ -22,7 +40,7 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 	}, [currentIndex, onBack]);
 
 	const handleNext = () => {
-		if (currentIndex < stats.length - 1) {
+		if (currentIndex < totalSlides - 1) {
 			setDirection(1);
 			setCurrentIndex(currentIndex + 1);
 		}
@@ -35,7 +53,7 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 		}
 	};
 
-	const goToStat = (index) => {
+	const goToSlide = (index) => {
 		if (index > currentIndex) {
 			setDirection(1);
 		} else if (index < currentIndex) {
@@ -58,7 +76,7 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 		}
 	};
 
-	if (!stats || stats.length === 0) {
+	if (!stats || stats.length === 0 || slides.length === 0) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
@@ -73,28 +91,22 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 		);
 	}
 
-	const currentStat = stats[currentIndex];
+	const currentSlide = slides[currentIndex];
 
 	const variants = {
 		enter: (direction) => ({
-			x: direction > 0 ? 1000 : -1000,
+			x: direction > 0 ? 100 : -100,
 			opacity: 0,
-			scale: 0.8,
-			rotateY: direction > 0 ? 45 : -45,
 		}),
 		center: {
 			zIndex: 1,
 			x: 0,
 			opacity: 1,
-			scale: 1,
-			rotateY: 0,
 		},
 		exit: (direction) => ({
 			zIndex: 0,
-			x: direction < 0 ? 1000 : -1000,
+			x: direction < 0 ? 100 : -100,
 			opacity: 0,
-			scale: 0.8,
-			rotateY: direction < 0 ? 45 : -45,
 		}),
 	};
 
@@ -102,11 +114,11 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 		<div className="relative min-h-screen overflow-hidden bg-black">
 			{/* Story Progress Bars */}
 			<div className="fixed top-0 left-0 w-full z-50 flex gap-1 p-2 pt-4">
-				{stats.map((_, index) => (
+				{slides.map((_, index) => (
 					<div 
 						key={index} 
 						className="h-1 flex-1 bg-white/30 rounded-full overflow-hidden cursor-pointer"
-						onClick={() => goToStat(index)}
+						onClick={() => goToSlide(index)}
 					>
 						<motion.div 
 							className="h-full bg-white"
@@ -148,7 +160,7 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 			</div>
 
 			{/* Animated Content */}
-			<AnimatePresence initial={false} custom={direction} mode="wait">
+			<AnimatePresence initial={false} custom={direction} mode="popLayout">
 				<motion.div
 					key={currentIndex}
 					custom={direction}
@@ -156,12 +168,10 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 					initial="enter"
 					animate="center"
 					exit="exit"
-					transition={{
-						x: { type: "spring", stiffness: 300, damping: 30 },
-						opacity: { duration: 0.2 },
-						scale: { duration: 0.4 },
-						rotateY: { duration: 0.4 }
-					}}
+				transition={{
+					x: { type: "tween", duration: 0.25, ease: [0.4, 0, 0.2, 1] },
+					opacity: { duration: 0.2, ease: "easeOut" },
+				}}
 					className="absolute w-full h-full"
 					drag="x"
 					dragConstraints={{ left: 0, right: 0 }}
@@ -176,21 +186,48 @@ const StatCarousel = ({ stats, onBack, collectionTitle }) => {
 						}
 					}}
 				>
-					<StatCard stat={currentStat} index={currentIndex} />
+					{currentSlide.type === "summary" ? (
+						<SummaryCard stats={currentSlide.stats} index={currentIndex} collectionTitle={collectionTitle} />
+					) : (
+						<StatCard stat={currentSlide.stat} index={currentSlide.index} />
+					)}
 				</motion.div>
 			</AnimatePresence>
 
-			{/* Previous/Next Touch Areas (invisible but clickable) */}
+			{/* Touch Areas - tap sides to navigate */}
 			<div 
-				className="absolute top-0 left-0 w-1/4 h-full z-40 cursor-pointer hidden md:block"
+				className="absolute top-0 left-0 w-1/3 h-full z-40 cursor-pointer group"
 				onClick={handlePrev} 
-				title="Previous"
-			/>
+			>
+				{/* Left arrow - always visible when not on first slide */}
+				{currentIndex > 0 && (
+					<div className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm group-hover:bg-black/30 transition-all duration-200 group-active:scale-90">
+						<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white/60 group-hover:text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+						</svg>
+					</div>
+				)}
+			</div>
 			<div 
-				className="absolute top-0 right-0 w-1/4 h-full z-40 cursor-pointer hidden md:block"
+				className="absolute top-0 right-0 w-1/3 h-full z-40 cursor-pointer group"
 				onClick={handleNext} 
-				title="Next"
-			/>
+			>
+				{/* Right arrow - always visible when not on last slide */}
+				{currentIndex < totalSlides - 1 && (
+					<div className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm group-hover:bg-black/30 transition-all duration-200 group-active:scale-90">
+						<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white/60 group-hover:text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+						</svg>
+					</div>
+				)}
+			</div>
+
+			{/* Minimal slide counter at bottom */}
+			<div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+				<span className="text-white/40 text-xs font-medium">
+					{currentIndex + 1} / {totalSlides}
+				</span>
+			</div>
 		</div>
 	);
 };
