@@ -70,7 +70,17 @@ const SummaryCard = ({ stats, index = 0, className = "", collectionTitle = "2025
 							initial={{ opacity: 0, y: -20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.2 }}
+							className="flex flex-col items-center"
 						>
+							{/* Profile Image */}
+							<motion.img
+								src="https://static-cdn.jtvnw.net/jtv_user_pictures/ddcb628f-9f99-4b5c-a355-54902e1d9023-profile_image-300x300.png"
+								alt="Profile"
+								className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white/20 shadow-xl mb-4"
+								initial={{ opacity: 0, scale: 0.5 }}
+								animate={{ opacity: 1, scale: 1 }}
+								transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+							/>
 							<p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-2">
 								Your Year in Review
 							</p>
